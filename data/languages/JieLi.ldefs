@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<language_definitions>
+	<language processor="JieLi pi32"
+		  endian="little"
+		  size="32"
+		  variant="default"
+		  version="1.0"
+		  slafile="pi32.sla"
+		  processorspec="pi32.pspec"
+		  id="pi32:LE:32:default">
+		<description>JieLi's pi32 architecture</description>
+		<compiler name="default" spec="pi32.cspec" id="default" />
+	</language>
+
+	<language processor="JieLi pi32v2"
+		  endian="little"
+		  size="32"
+		  variant="default"
+		  version="1.0"
+		  slafile="pi32v2.sla"
+		  processorspec="pi32.pspec"
+		  id="pi32v2:LE:32:default">
+		<description>JieLi's pi32v2 architecture</description>
+		<compiler name="default" spec="pi32.cspec" id="default" />
+	</language>
+
+	<!-- Not sure
+	<language processor="JieLi q32s"
+		  endian="little"
+		  size="32"
+		  variant="default"
+		  version="1.0"
+		  slafile="q32s.sla"
+		  processorspec="q32s.pspec"
+		  id="q32s:LE:32:default">
+		<description>JieLi's q32s architecture</description>
+		<compiler name="default" spec="q32s.cspec" id="default" />
+	</language>
+	!-->
+</language_definitions>

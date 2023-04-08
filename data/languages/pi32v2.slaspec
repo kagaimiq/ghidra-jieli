@@ -1,0 +1,370 @@
+define endian    = little;
+define alignment = 2;
+
+define space ram      type=ram_space      size=4 default;
+define space register type=register_space size=4;
+
+#############################################################################
+#
+# General purpose registers
+#
+define register offset=0x0 size=4
+[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 ];
+
+# Paired registers
+define register offset=0x0 size=8
+[ r0_r1 r2_r3 r4_r5 r6_r7 r8_r9 r10_r11 r12_r13 r14_r15 ];
+
+#
+# Special function registers
+#
+define register offset=0x100 size=4
+[ reti rete retx rets sr4 psr cnum sr7 sr8 sr9 sr10 icfg usp ssp sp pc ];
+
+#############################################################################
+#
+# Instruction tokens
+#
+
+# Base word
+define token instr(16)
+	group = (13,15)
+
+	#
+	# instruction type fields
+	#
+	ins0012 = (0,12)
+	ins0412 = (4,12)
+
+	#
+	# immediate fields
+	#
+	imm0002 = (0,2)
+
+	#
+	# register fields
+	#
+	regA = (0,3)
+	regB = (4,7)
+
+	sregA = (0,3)
+
+	regAl = (0,2)
+	regBl = (4,6)
+	regCh = (7,9)
+;
+
+# Used by the group=7 instrucions
+define token instr2(16)
+	imm1631 = (0,15)
+;
+
+# Even more bits for some group=7 instruction
+define token instr3(16)
+	imm3247 = (0,15)
+;
+
+#############################################################################
+#
+# Variables
+#
+
+attach variables [ regAl regBl ]
+	[ r0 r1 r2 r3 r4 r5 r6 r7 ];
+
+attach variables [ regCh ]
+	[ r8 r9 r10 r11 r12 r13 r14 r15 ];
+
+attach variables [ regA ]
+	[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 ];
+
+attach variables [ sregA ]
+	[ reti rete retx rets sr4 psr cnum sr7 sr8 sr9 sr10 icfg usp ssp sp pc ];
+
+#############################################################################
+#
+# Stuff
+#
+
+# TODO
+
+#############################################################################
+#
+# Instructions
+#
+
+define pcodeop nop;
+define pcodeop Idle;
+define pcodeop Breakpoint;
+define pcodeop HBreakpoint;
+define pcodeop ContextSync;
+define pcodeop SystemCall;
+define pcodeop SSync;
+define pcodeop BTBClear;
+define pcodeop ClearLock;
+define pcodeop SetLock;
+define pcodeop DisableInterrupts;
+define pcodeop EnableInterrupts;
+define pcodeop SoftwareInterrupt;
+define pcodeop CachePrefetch;
+define pcodeop ICacheFlush;
+define pcodeop CacheFlush;
+define pcodeop CacheFlushInvalidate;
+
+define pcodeop TODO;
+
+############################################################################################
+# Group 0 #
+###########
+
+#
+# nop
+#
+:nop is group=0 & ins0012=0x0000
+{
+	nop();
+}
+
+#
+# idle
+#
+:idle is group=0 & ins0012=0x0001
+{
+	Idle();
+}
+
+#
+# bkpt
+#
+:bkpt is group=0 & ins0012=0x0002
+{
+	Breakpoint();
+}
+
+#
+# hbkpt
+#
+:hbkpt is group=0 & ins0012=0x0003
+{
+	HBreakpoint();
+}
+
+#
+# csync
+#
+:csync is group=0 & ins0012=0x0020
+{
+	ContextSync();
+}
+
+#
+# syscall
+#
+:syscall is group=0 & ins0012=0x0021
+{
+	SystemCall();
+}
+
+#
+# ssync
+#
+:ssync is group=0 & ins0012=0x0022
+{
+	SSync();
+}
+
+#
+# btbclr
+#
+:btbclr is group=0 & ins0012=0x0023
+{
+	BTBClear();
+}
+
+#
+# lockclr
+#
+:lockclr is group=0 & ins0012=0x0040
+{
+	ClearLock();
+}
+
+#
+# lockset
+#
+:lockset is group=0 & ins0012=0x0041
+{
+	SetLock();
+}
+
+#
+# cli
+#
+:cli is group=0 & ins0012=0x0060
+{
+	DisableInterrupts();
+}
+
+#
+# sti
+#
+:sti is group=0 & ins0012=0x0061
+{
+	EnableInterrupts();
+}
+
+#
+# rts
+#
+:rts is group=0 & ins0012=0x0080
+{
+	return [rets];
+}
+
+#
+# rti
+#
+:rti is group=0 & ins0012=0x0081
+{
+	ssp = sp;
+	sp = usp;
+	return [reti];
+}
+
+#
+# rtx
+#
+:rtx is group=0 & ins0012=0x0082
+{
+	# probably swaps the stack pointers too..
+	return [retx];
+}
+
+#
+# rte
+#
+:rte is group=0 & ins0012=0x0083
+{
+	# probably swaps the stack pointers too..
+	return [rete];
+}
+
+#
+# swi imm3
+#
+:swi imm0002 is group=0 & ins0412=0x00A & imm0002
+{
+	SoftwareInterrupt(imm0002:1);
+}
+
+#
+# testset b[rA]
+#
+:testset "b"[regA] is group=0 & ins0412=0x00B & regA
+{
+	TODO(regA:4);
+}
+
+#
+# call rA
+#
+:call regA is group=0 & ins0412=0x00C & regA
+{
+	call regA;
+}
+
+#
+# goto rA
+#
+:goto regA is group=0 & ins0412=0x00D & regA
+{
+	goto regA;
+}
+
+#
+# cli rA
+#
+:cli regA is group=0 & ins0412=0x00E & regA
+{
+	DisableInterrupts(regA:4);
+}
+
+#
+# sti rA
+#
+:sti regA is group=0 & ins0412=0x00F & regA
+{
+	EnableInterrupts(regA:4);
+}
+
+#
+# tbb rA
+#
+:tbb regA is group=0 & ins0412=0x010 & regA
+{
+	TODO(regA:4);
+}
+
+#
+# tbh rA
+#
+:tbh regA is group=0 & ins0412=0x011 & regA
+{
+	TODO(regA:4);
+}
+
+#
+# pfetch [rA]
+#
+:pfetch [regA] is group=0 & ins0412=0x020 & regA
+{
+	CachePrefetch(regA:4);
+}
+
+#
+# iflush [rA]
+#
+:iflush [regA] is group=0 & ins0412=0x021 & regA
+{
+	ICacheFlush(regA:4);
+}
+
+#
+# flush [rA]
+#
+:flush [regA] is group=0 & ins0412=0x022 & regA
+{
+	CacheFlush(regA:4);
+}
+
+#
+# flushinv [rA]
+#
+:flushinv [regA] is group=0 & ins0412=0x023 & regA
+{
+	CacheFlushInvalidate(regA:4);
+}
+
+############################################################################################
+# Group 7 #
+###########
+
+#
+# rA = imm32
+# <G> mov rA, imm32
+#
+:mov regA, imm32 is group=7 & ins0412=0x1FC & regA ; imm1631 ; imm3247
+[ imm32 = imm1631 | (imm3247 << 16); ]
+{
+	regA = imm32;
+}
+
+#
+# srA = imm32
+# <G> mov srA, imm32
+#
+:mov sregA, imm32 is group=7 & ins0412=0x1FE & sregA ; imm1631 ; imm3247
+[ imm32 = imm1631 | (imm3247 << 16); ]
+{
+	sregA = imm32;
+}

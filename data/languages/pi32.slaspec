@@ -1,0 +1,923 @@
+define endian    = little;
+define alignment = 2;
+
+define space ram      type=ram_space      size=4 default;
+define space register type=register_space size=4;
+
+#############################################################################
+#
+# General purpose registers
+#
+define register offset=0x0 size=4
+[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 sp ];
+
+#
+# Special function registers
+#
+define register offset=0x100 size=4
+[ reti rete sfr2 sfr3 maccl macch rets psr sfr8 sfr9 ie1 ssp ie0 icfg pc usp ];
+
+# Multiply accumulator (maccl + macch)
+define register offset=0x110 size=8
+[ macc ];
+
+#############################################################################
+#
+# Instruction tokens
+#
+
+# Base word
+define token instr(16)
+	group = (13,15)
+
+	#
+	# instruction type fields
+	#
+	ins0012 = (0,12)
+	ins0612 = (6,12)
+	ins0712 = (7,12)
+	ins0812 = (8,12)
+	ins0912 = (9,12)
+	ins1012 = (10,12)
+	ins1112 = (11,12)
+	ins1212 = (12,12)
+
+	ins0811 = (8,11)
+	ins0407 = (4,7)
+	ins0607 = (6,7)
+	ins0305 = (3,5)
+	ins0303 = (3,3)
+
+	#
+	# immediate fields
+	#
+	imm0004  = (0,4)
+	imm0005  = (0,5)
+	imm0007s = (0,7) signed
+	imm0307  = (3,7)
+	imm0310s = (3,10) signed
+	imm0609s = (6,9) signed
+	imm0812  = (8,12)
+
+	#
+	# register fields
+	#
+	regAl  = (0,2)
+	regAh  = (0,2)
+	regBl  = (3,5)
+	regBh  = (3,5)
+	sregAl = (0,2)
+	sregAh = (0,2)
+	sregBl = (3,5)
+	sregBh = (3,5)
+	regAs  = (6,6)
+	regBs  = (7,7)
+
+	regCl  = (6,8)
+
+	#
+	# address fields
+	#
+	addr0007  = (0,7)
+	addr0007s = (0,7) signed
+	addr0010s = (0,10) signed
+	addr0410s = (4,10) signed
+
+	addr0305s = (3,5) signed
+	addr0610  = (6,10)
+
+	addr0610s = (6,10) signed
+
+	addr0608s = (6,8) signed
+	addr0910  = (9,10)
+
+	addr0609s = (6,9) signed
+	addr1010  = (10,10)
+
+	#
+	# branch block
+	#
+	bra0001 = (0,1)
+	bra0203 = (2,3)
+	bra0305 = (3,5)
+	bra0507 = (5,7)
+;
+
+# Used by the group=7 instrucions
+define token instr2(16)
+	imm1631 = (0,15)
+
+	addr1619s = (0,3) signed
+	addr2031  = (4,15)
+;
+
+#############################################################################
+#
+# Variables
+#
+
+attach variables [ regAl regBl regCl ]
+	[ r0 r1 r2 r3 r4 r5 r6 r7 ];
+
+attach variables [ regAh regBh ]
+	[ r8 r9 r10 r11 r12 r13 r14 sp ];
+
+attach variables [ sregAl sregBl ]
+	[ reti rete sfr2 sfr3 maccl macch rets psr ];
+
+attach variables [ sregAh sregBh ]
+	[ sfr8 sfr9 ie1 ssp ie0 icfg pc usp ];
+
+# ARM-like PSR bits for NZCV (didn't figure out the real HW deal yet..)
+@define N	"psr[31,1]"
+@define Z	"psr[30,1]"
+@define C	"psr[29,1]"
+@define V	"psr[28,1]"
+
+# real PSR bits
+@define PSR_I	"psr[3,1]"
+
+#############################################################################
+#
+# Stuff
+#
+
+#
+# 7-bit address immediate (pc-relative)
+#
+jaddr7: res is addr0410s
+	[ res = (addr0410s << 1) + inst_next; ]
+	{ export *:4 res; }
+
+#
+# 8-bit address immediate (pc-relative)
+#
+jaddr8: res is addr0007s
+	[ res = (addr0007s << 1) + inst_next; ]
+	{ export *:4 res; }
+
+#
+# 11-bit address immediate (pc-relative)
+#
+jaddr11: res is addr0010s
+	[ res = (addr0010s << 1) + inst_next; ]
+	{ export *:4 res; }
+
+#
+# 24-bit address immediate (pc-relative)
+#
+jaddr24: res is addr0007 ; addr1619s & addr2031
+	[ res = ((addr1619s << 21) | (addr0007 << 13) | (addr2031 << 1)) + inst_next; ]
+	{ export *:4 res; }
+
+#
+# Register constants
+#
+regAf: regAl is regAs=0 & regAl { export regAl; }
+regAf: regAh is regAs=1 & regAh { export regAh; }
+regBf: regBl is regBs=0 & regBl { export regBl; }
+regBf: regBh is regBs=1 & regBh { export regBh; }
+
+sregAf: sregAl is regAs=0 & sregAl { export sregAl; }
+sregAf: sregAh is regAs=1 & sregAh { export sregAh; }
+sregBf: sregBl is regBs=0 & sregBl { export sregBl; }
+sregBf: sregBh is regBs=1 & sregBh { export sregBh; }
+
+#
+# Conditions
+#
+
+#eq       s (nzcv == 0)
+#ne       s (nzcv != 0)
+#cs         (nzcv >= 0)
+#cc         (nzcv <  0)
+#mi
+#pl
+#vs
+#vc
+#hi         (nzcv >  0)
+#ls         (nzcv <= 0)
+#ge       s (nzcv >= 0)
+#lt       s (nzcv <  0)
+#gt       s (nzcv >  0)
+#le       s (nzcv <= 0)
+
+# if (<cond>) { <true> } else { <false> }
+cond0407: "eq" is ins0407=0x0 { tmp:1 = ($(Z)) == 1;                 export tmp; }
+cond0407: "ne" is ins0407=0x1 { tmp:1 = ($(Z)) == 0;                 export tmp; }
+cond0407: "cs" is ins0407=0x2 { tmp:1 = ($(C)) == 1;                 export tmp; }
+cond0407: "cc" is ins0407=0x3 { tmp:1 = ($(C)) == 0;                 export tmp; }
+cond0407: "mi" is ins0407=0x4 { tmp:1 = ($(N)) == 1;                 export tmp; }
+cond0407: "pl" is ins0407=0x5 { tmp:1 = ($(N)) == 0;                 export tmp; }
+cond0407: "vs" is ins0407=0x6 { tmp:1 = ($(V)) == 1;                 export tmp; }
+cond0407: "vc" is ins0407=0x7 { tmp:1 = ($(V)) == 0;                 export tmp; }
+cond0407: "hi" is ins0407=0x8 { tmp:1 = ($(C) || $(Z)) == 0;         export tmp; }	# NOT SURE
+cond0407: "ls" is ins0407=0x9 { tmp:1 = ($(C) || $(Z)) == 1;         export tmp; }	# NOT SURE
+cond0407: "ge" is ins0407=0xA { tmp:1 = ($(N) ^^ $(V)) == 0;         export tmp; }
+cond0407: "lt" is ins0407=0xB { tmp:1 = ($(N) ^^ $(V)) == 1;         export tmp; }
+cond0407: "gt" is ins0407=0xC { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 0; export tmp; }
+cond0407: "le" is ins0407=0xD { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 1; export tmp; }
+cond0407: ""   is ins0407=0xE { tmp:1 = 1;                           export tmp; }
+
+# if (<cond>) goto X
+cond0811: "eq" is ins0811=0x0 { tmp:1 = ($(Z)) == 1;                 export tmp; }
+cond0811: "ne" is ins0811=0x1 { tmp:1 = ($(Z)) == 0;                 export tmp; }
+cond0811: "cs" is ins0811=0x2 { tmp:1 = ($(C)) == 1;                 export tmp; }
+cond0811: "cc" is ins0811=0x3 { tmp:1 = ($(C)) == 0;                 export tmp; }
+cond0811: "mi" is ins0811=0x4 { tmp:1 = ($(N)) == 1;                 export tmp; }
+cond0811: "pl" is ins0811=0x5 { tmp:1 = ($(N)) == 0;                 export tmp; }
+cond0811: "vs" is ins0811=0x6 { tmp:1 = ($(V)) == 1;                 export tmp; }
+cond0811: "vc" is ins0811=0x7 { tmp:1 = ($(V)) == 0;                 export tmp; }
+cond0811: "hi" is ins0811=0x8 { tmp:1 = ($(C) || $(Z)) == 0;         export tmp; }	# NOT SURE
+cond0811: "ls" is ins0811=0x9 { tmp:1 = ($(C) || $(Z)) == 1;         export tmp; }	# NOT SURE
+cond0811: "ge" is ins0811=0xA { tmp:1 = ($(N) ^^ $(V)) == 0;         export tmp; }
+cond0811: "lt" is ins0811=0xB { tmp:1 = ($(N) ^^ $(V)) == 1;         export tmp; }
+cond0811: "gt" is ins0811=0xC { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 0; export tmp; }
+cond0811: "le" is ins0811=0xD { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 1; export tmp; }
+cond0811: ""   is ins0811=0xE { tmp:1 = 1;                           export tmp; }
+
+#############################################################################
+#
+# Instructions
+#
+
+define pcodeop nop;
+define pcodeop ContextSync;
+define pcodeop Idle;
+define pcodeop DisableInterrupts;
+define pcodeop EnableInterrupts;
+define pcodeop SoftwareInterrupt;
+define pcodeop SoftwareException;
+define pcodeop CacheFlush;
+define pcodeop CacheFlushInvalidate;
+define pcodeop ICacheFlush;
+define pcodeop CachePrefetch;
+
+define pcodeop TODO;
+
+############################################################################################
+# Group 0 #
+###########
+
+#
+# nop
+#
+:nop is group=0 & ins0012=0x0000
+{
+	nop();
+}
+
+#
+# csync
+#
+:csync is group=0 & ins0012=0x0008
+{
+	ContextSync();
+}
+
+#
+# idle
+#
+:idle is group=0 & ins0012=0x0010
+{
+	Idle();
+}
+
+#
+# rts
+#
+:rts is group=0 & ins0012=0x0020
+{
+	return [rets];
+}
+
+#
+# rti
+#
+:rti is group=0 & ins0012=0x0030
+{
+	ssp = sp;
+	sp = usp;
+	return [reti];
+}
+
+#
+# rte
+#
+:rte is group=0 & ins0012=0x0038
+{
+	# probably swaps the stack pointers too..
+	return [rete];
+}
+
+#
+# cli
+#
+:cli is group=0 & ins0012=0x0040
+{
+	$(PSR_I) = 0;
+	DisableInterrupts();
+}
+
+#
+# sti
+#
+:sti is group=0 & ins0012=0x0060
+{
+	$(PSR_I) = 1;
+	EnableInterrupts();
+}
+
+#
+# swi n
+#
+:swi imm0005 is group=0 & ins0612=0x02 & imm0005
+{
+	SoftwareInterrupt(imm0005:1);
+}
+
+#
+# except n
+#
+:except imm0005 is group=0 & ins0612=0x03 & imm0005
+{
+	SoftwareException(imm0005:1);
+}
+
+#
+# rep rA { <N instrunction words> }
+# rep <N instruction words>, rA
+#
+:rep bra0305, regAf is group=0 & ins0712=0x02 & bra0305 & regAf
+{
+	TODO(bra0305:1, regAf:4);
+}
+
+#
+# goto rA
+# j rA
+#
+:j regAf is group=0 & ins0712=0x03 & ins0305=0x4 & regAf
+{
+	goto regAf;
+}
+
+#
+# call rA
+#
+:call regAf is group=0 & ins0712=0x03 & ins0305=0x5 & regAf
+{
+	call regAf;
+}
+
+
+#
+# rep rA { <N instrunction words> }
+# rep <N instruction words>, rA
+#
+:rep bra0507, imm0004 is group=0 & ins0812=0x12 & bra0507 & imm0004
+{
+	TODO(bra0507:1, imm0004:1);
+}
+
+#
+# if (<cond>) { <true block> } else { <else block> }
+# if<cond> <else block> <true block>
+#
+###:if^cond0407 bra0203, bra0001 is group=0 & ins0812=0x03 & cond0407 & bra0203 & bra0001
+###{
+###	TODO(cond0407:1, bra0203:1, bra0001:1);
+###}
+
+#
+# call reladdr8
+#
+:call jaddr8 is group=0 & ins0812=0x4 & jaddr8
+{
+	call jaddr8;
+}
+
+#
+# goto reladdr11
+# j reladdr11
+#
+:j jaddr11 is group=0 & ins1112=1 & jaddr11
+{
+	goto jaddr11;
+}
+
+#
+# if (<cond>) goto reladdr8
+# j<cond> reladdr8
+#
+:j^cond0811 jaddr8 is group=0 & ins1212=1 & cond0811 & jaddr8
+{
+	if (cond0811)
+		goto jaddr8;
+}
+
+############################################################################################
+# Group 1 #
+###########
+
+#
+# if (rA == 0) goto reladdr7
+# jz rA, reladdr7
+#
+:jz regAl, jaddr7 is group=1 & ins1112=0 & ins0303=0 & jaddr7 & regAl
+{
+	if (regAl == 0)
+		goto jaddr7;
+}
+
+#
+# if (rA != 0) goto reladdr7
+# jnz rA, reladdr7
+#
+:jnz regAl, jaddr7 is group=1 & ins1112=0 & ins0303=1 & jaddr7 & regAl
+{
+	if (regAl != 0)
+		goto jaddr7;
+}
+
+#
+# rA = [addr(reladdr8)]
+# lw rA, reladdr8
+#
+:lw regAl, raddr8 is group=1 & ins1112=1 & regAl & addr0305s & addr0610
+[ raddr8 = (addr0305s << 7) | (addr0610 << 2); ]
+{
+	local addr:4 = (inst_next & ~3) + raddr8;
+	regAl = *:4 addr;
+}
+
+############################################################################################
+# Group 2/3 #
+#############
+
+#
+# rA = [sp + reladdr8]
+# lw rA, sp, reladdr8
+#
+:lw regAl, sp, raddr8 is group=2 & ins1112=0 & regAl & sp & addr0305s & addr0610
+[ raddr8 = (addr0305s << 7) | (addr0610 << 2); ]
+{
+	local addr:4 = sp + raddr8;
+	regAl = *:4 addr;
+}
+
+#
+# rA = [rB + reladdr5]
+# lw rA, rB, reladdr5
+#
+:lw regAl, regBl, raddr5 is group=2 & ins1112=1 & regAl & regBl & addr0610s
+[ raddr5 = addr0610s << 2; ]
+{
+	local addr:4 = regBl + raddr5;
+	regAl = *:4 addr;
+}
+
+#
+# rA = h[rB + reladdr5]
+# lhz rA, rB, reladdr5
+#
+:lhz regAl, regBl, raddr5 is group=2 & ins1112=2 & regAl & regBl & addr0609s & addr1010
+[ raddr5 = (addr0609s << 2) | (addr1010 << 1); ]
+{
+	local addr:4 = regBl + raddr5;
+	regAl = zext(*:2 addr);
+}
+
+#
+# rA = b[rB + reladdr5]
+# lbz rA, rB, reladdr5
+#
+:lbz regAl, regBl, raddr5 is group=2 & ins1112=3 & regAl & regBl & addr0608s & addr0910
+[ raddr5 = (addr0608s << 2) | addr0910; ]
+{
+	local addr:4 = regBl + raddr5;
+	regAl = zext(*:1 addr);
+}
+
+#
+# [sp + reladdr8] = rA
+# sw rA, sp, reladdr8
+#
+:sw regAl, sp, raddr8 is group=3 & ins1112=0 & regAl & sp & addr0305s & addr0610
+[ raddr8 = (addr0305s << 7) | (addr0610 << 2); ]
+{
+	local addr:4 = sp + raddr8;
+	*:4 addr = regAl;
+}
+
+#
+# [rB + reladdr5] = rA
+# sw rA, rB, reladdr5
+#
+:sw regAl, regBl, raddr5 is group=3 & ins1112=1 & regAl & regBl & addr0610s
+[ raddr5 = addr0610s << 2; ]
+{
+	local addr:4 = regBl + raddr5;
+	*:4 addr = regAl;
+}
+
+#
+# h[rB + reladdr5] = rA
+# sh rA, rB, reladdr5
+#
+:sh regAl, regBl, raddr5 is group=3 & ins1112=2 & regAl & regBl & addr0609s & addr1010
+[ raddr5 = (addr0609s << 2) | (addr1010 << 1); ]
+{
+	local addr:4 = regBl + raddr5;
+	*:2 addr = regAl;
+}
+
+#
+# b[rB + reladdr5] = rA
+# sb rA, rB, reladdr5
+#
+:sb regAl, regBl, raddr5 is group=3 & ins1112=3 & regAl & regBl & addr0608s & addr0910
+[ raddr5 = (addr0608s << 2) | addr0910; ]
+{
+	local addr:4 = regBl + raddr5;
+	*:1 addr = regAl;
+}
+
+############################################################################################
+# Group 4/5 #
+#############
+
+#
+# rA = imm8s
+# movs rA, imm8s
+#
+:movs regAl, imm0310s is group=4 & ins1112=0 & imm0310s & regAl
+{
+	regAl = imm0310s;
+}
+
+#
+# rA += imm8s
+# add rA, imm8s
+#
+:add regAl, imm0310s is group=4 & ins1112=1 & imm0310s & regAl
+{
+	regAl = regAl + imm0310s;
+}
+
+#
+# rA = sp + imm8s
+# add rA, sp, imm8s
+#
+:add regAl, sp, imm0310s is group=4 & ins1112=2 & imm0310s & regAl & sp
+{
+	regAl = sp + imm0310s;
+}
+
+#
+# cmp rA, imm8s
+#
+:cmp regAl, imm0310s is group=4 & ins1112=3 & imm0310s & regAl
+{
+	TODO(regAl:4, imm0310s:1);
+}
+
+#
+# rA = rB << shamt
+# lsl rA, rB, shamt
+#
+:lsl regAl, regBl, imm0812 is group=5 & ins0607=0 & regAl & regBl & imm0812
+{
+	regAl = regBl << imm0812;
+}
+
+#
+# rA = rB >> shamt
+# lsr rA, rB, shamt
+#
+:lsr regAl, regBl, imm0812 is group=5 & ins0607=1 & regAl & regBl & imm0812
+{
+	regAl = regBl >> imm0812;
+}
+
+#
+# rA = rB <<< shamt
+# qasl rA, rB, shamt
+#
+:qasl regAl, regBl, imm0812 is group=5 & ins0607=2 & regAl & regBl & imm0812
+{
+	# TODO: extend the LSB
+	regAl = regBl << imm0812;
+}
+
+#
+# rA = rB >>> shamt
+# qasr rA, rB, shamt
+#
+:qasr regAl, regBl, imm0812 is group=5 & ins0607=3 & regAl & regBl & imm0812
+{
+	regAl = regBl s>> imm0812;
+}
+
+############################################################################################
+# Group 6 #
+###########
+
+#
+# mov rA, rB
+# rA = rB
+#
+:mov regAf, regBf is group=6 & ins0812=0x06 & regAf & regBf
+{
+	regAf = regBf;
+}
+
+#
+# mov sfrA, rB
+# sfrA = rB
+#
+:mov sregAf, regBf is group=6 & ins0812=0x07 & sregAf & regBf
+{
+	sregAf = regBf;
+}
+
+#
+# mov rA, sfrB
+# rA = sfrB
+#
+:mov regAf, sregBf is group=6 & ins0812=0x08 & regAf & sregBf
+{
+	regAf = sregBf;
+}
+
+#
+# ???
+# uxtb rA, rB
+#
+:uxtb regAl, regBl is group=6 & ins0612=0x24 & regAl & regBl
+{
+	regAl = zext(regBl:1);
+}
+
+#
+# ???
+# uxth rA, rB
+#
+:uxth regAl, regBl is group=6 & ins0612=0x25 & regAl & regBl
+{
+	regAl = zext(regBl:2);
+}
+
+#
+# ???
+# sxtb rA, rB
+#
+:sxtb regAl, regBl is group=6 & ins0612=0x26 & regAl & regBl
+{
+	regAl = sext(regBl:1);
+}
+
+#
+# ???
+# sxth rA, rB
+#
+:sxth regAl, regBl is group=6 & ins0612=0x27 & regAl & regBl
+{
+	regAl = sext(regBl:2);
+}
+
+#
+# ???
+# addrev rA, rB
+#
+:addrev regAf, regBf is group=6 & ins0812=0x0A & regAf & regBf
+{
+	TODO(regAf:4, regBf:4);
+}
+
+#
+# rA += rB
+# add rA, rB
+#
+:add regAf, regBf is group=6 & ins0812=0x0B & regAf & regBf
+{
+	regAf = regAf + regBf;
+}
+
+#
+# cmn rA, rB
+#
+:cmn regAf, regBf is group=6 & ins0812=0x0C & regAf & regBf
+{
+	TODO(regAf:4, regBf:4);
+}
+
+#
+# sp += imm8s
+# add sp, imm8s
+#
+:add sp, imm0007s is group=6 & ins0812=0x0D & sp & imm0007s
+{
+	sp = sp + imm0007s;
+}
+
+#
+# cmp rA, rB
+#
+:cmp regAf, regBf is group=6 & ins0812=0x0E & regAf & regBf
+{
+	TODO(regAf:4, regBf:4);
+}
+
+#
+# rA <<= rB
+# lsl rA, rB
+#
+:lsl regAl, regBl is group=6 & ins0612=0x3C & regAl & regBl
+{
+	regAl = regAl << regBl;
+}
+
+#
+# rA >>= rB
+# lsr rA, rB
+#
+:lsr regAl, regBl is group=6 & ins0612=0x3D & regAl & regBl
+{
+	regAl = regAl >> regBl;
+}
+
+#
+# rA <<<= rB
+# qasl rA, rB
+#
+:qasl regAl, regBl is group=6 & ins0612=0x3E & regAl & regBl
+{
+	# TODO: extend the LSB
+	regAl = regAl << regBl;
+}
+
+#
+# rA >>>= rB
+# qasr rA, rB
+#
+:qasr regAl, regBl is group=6 & ins0612=0x3F & regAl & regBl
+{
+	regAl = regAl s>> regBl;
+}
+
+#
+# rA = rB + imm4s
+# add rA, rB, imm4s
+#
+:add regAl, regBl, imm0609s is group=6 & ins1012=4 & regAl & regBl & imm0609s
+{
+	regAl = regBl + imm0609s;
+}
+
+#
+# rA = rB + rC
+# add rA, rB, rC
+#
+:add regAl, regBl, regCl is group=6 & ins0912=0xA & regAl & regBl & regCl
+{
+	regAl = regBl + regCl;
+}
+
+#
+# rA = rB - rC
+# sub rA, rB, rC
+#
+:sub regAl, regBl, regCl is group=6 & ins0912=0xB & regAl & regBl & regCl
+{
+	regAl = regBl - regCl;
+}
+
+#
+# rA |= (1 << shamt)
+# bitset rA, shamt
+#
+:bitset regAl, imm0307 is group=6 & ins0812=0x18 & regAl & imm0307
+{
+	regAl = regAl | (1 << imm0307);
+}
+
+#
+# rA ^= (1 << shamt)
+# bittgl rA, shamt
+#
+:bittgl regAl, imm0307 is group=6 & ins0812=0x19 & regAl & imm0307
+{
+	regAl = regAl ^ (1 << imm0307);
+}
+
+#
+# rA |= rB
+# or rA, rB
+#
+:or regAl, regBl is group=6 & ins0612=0x68 & regAl & regBl
+{
+	regAl = regAl | regBl;
+}
+
+#
+# rA ^= rB
+# xor rA, rB
+#
+:xor regAl, regBl is group=6 & ins0612=0x69 & regAl & regBl
+{
+	regAl = regAl ^ regBl;
+}
+
+#
+# rA &= rB
+# and rA, rB
+#
+:and regAl, regBl is group=6 & ins0612=0x6A & regAl & regBl
+{
+	regAl = regAl & regBl;
+}
+
+#
+# ??? rA = ~rB
+# not rA, rB
+#
+:not regAl, regBl is group=6 & ins0612=0x6B & regAl & regBl
+{
+	regAl = ~regBl;
+}
+
+#
+# rA &= ~(1 << shamt)
+# bitclr rA, shamt
+#
+:bitclr regAl, imm0307 is group=6 & ins0812=0x1B & regAl & imm0307
+{
+	regAl = regAl & ~(1 << imm0307);
+}
+
+############################################################################################
+# Group 7 #
+###########
+
+#
+# call reladdr24
+#
+:call jaddr24 is (group=7 & ins0812=0x01) ... & jaddr24
+{
+	call jaddr24;
+}
+
+#
+# rA.l = imm16
+# movl rA, imm16
+#
+:movl regAf, imm1631 is group=7 & ins0712=0x14 & ins0305=0 & regAf ; imm1631
+{
+	regAf[0,16] = imm1631;
+}
+
+#
+# sfrA.l = imm16
+# movl sfrA, imm16
+#
+:movl sregAf, imm1631 is group=7 & ins0712=0x14 & ins0305=1 & sregAf ; imm1631
+{
+	sregAf[0,16] = imm1631;
+}
+
+#
+# rA = imm16
+# movz rA, imm16
+#
+:movz regAf, imm1631 is group=7 & ins0712=0x14 & ins0305=2 & regAf ; imm1631
+{
+	regAf = imm1631;
+}
+
+#
+# rA.h = imm16
+# movh rA, imm16
+#
+:movh regAf, imm1631 is group=7 & ins0712=0x15 & ins0305=0 & regAf ; imm1631
+{
+	regAf[16,16] = imm1631;
+}
+
+#
+# sfrA.h = imm16
+# movh sfrA, imm16
+#
+:movh sregAf, imm1631 is group=7 & ins0712=0x15 & ins0305=1 & sregAf ; imm1631
+{
+	sregAf[16,16] = imm1631;
+}
+
+#
+# goto reladdr24
+# j reladdr24
+#
+:j jaddr24 is (group=7 & ins0812=0x1a) ... & jaddr24
+{
+	goto jaddr24;
+}
