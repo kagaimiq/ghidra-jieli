@@ -61,6 +61,8 @@ define token instr(16)
 	imm0609s = (6,9) signed
 	imm0812  = (8,12)
 
+	imm0007  = (0,7)
+
 	#
 	# register fields
 	#
@@ -78,6 +80,7 @@ define token instr(16)
 	regBs  = (7,7)
 
 	regCl  = (6,8)
+	regDl  = (8,10)
 
 	#
 	# address fields
@@ -123,7 +126,7 @@ define token instr2(16)
 attach variables [ regA ]
 	[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 sp ];
 
-attach variables [ regAl regBl regCl ]
+attach variables [ regAl regBl regCl regDl ]
 	[ r0 r1 r2 r3 r4 r5 r6 r7 ];
 
 attach variables [ regAh regBh ]
@@ -140,23 +143,6 @@ attach variables [ sregAh sregBh ]
 @define C	"psr[1,1]"	# carry
 @define Z	"psr[2,1]"	# zero
 @define N	"psr[3,1]"	# negative
-
-#############################################################################
-#
-# Macros
-#
-
-macro push(reg)
-{
-	sp = sp - 4;
-	*:4 sp = reg;
-}
-
-macro pop(reg)
-{
-	reg = *:4 sp;
-	sp = sp + 4;
-}
 
 #############################################################################
 #
@@ -442,6 +428,8 @@ define pcodeop TODO;
 	SoftwareException(imm0005:1);
 }
 
+
+
 #
 # rep rA { <N instrunction words> }
 # rep <N instruction words>, rA
@@ -467,7 +455,6 @@ define pcodeop TODO;
 {
 	call regAf;
 }
-
 
 #
 # rep rA { <N instrunction words> }
@@ -549,9 +536,21 @@ define pcodeop TODO;
 	regAl = *:4 addr;
 }
 
+#
+# {r`ABCDEFGH`<r0-r7>} = [rD++]
+# lm {r`ABCDEFGH`<r0-r7>}, rD
+#
+###:lm {imm0007}, regDl is group=0 & imm1112=2 & imm0007
+
+#
+# [rD++] = {r`ABCDEFGH`<r0-r7>}
+# sm {r`ABCDEFGH`<r0-r7>}, rD
+#
+###:sm {imm0007}, regDl is group=0 & imm1112=3 & imm0007
+
 ############################################################################################
-# Group 2/3 #
-#############
+# Group 2 #
+###########
 
 #
 # rA = [sp + reladdr8]
@@ -596,6 +595,10 @@ define pcodeop TODO;
 	local addr:4 = regBl + raddr5;
 	regAl = zext(*:1 addr);
 }
+
+############################################################################################
+# Group 3 #
+###########
 
 #
 # [sp + reladdr8] = rA
@@ -642,8 +645,8 @@ define pcodeop TODO;
 }
 
 ############################################################################################
-# Group 4/5 #
-#############
+# Group 4 #
+###########
 
 #
 # rA = imm8s
@@ -682,6 +685,12 @@ define pcodeop TODO;
 	$(C) = regAl < imm0310s;
 	# TODO $(V)
 }
+
+############################################################################################
+# Group 5 #
+###########
+
+## ! TODO, 0 means 32 ! ##
 
 #
 # rA = rB << shamt
@@ -725,8 +734,28 @@ define pcodeop TODO;
 ###########
 
 #
-# mov rA, rB
+# testset b[rA]
+#
+:testset "b"[regA] is group=6 & ins0812=0x03 & regA
+{
+	TODO(regA:4);
+}
+
+#
+# {sr`ABCDEFGH`<sfr0-7>} = [sp++]
+# pops {sr`ABCDEFGH`<sfr0-7>}
+#
+###:pops {imm0007} is group=6 & ins0812=0x04 & imm0007
+
+#
+# [--sp] = {sr`ABCDEFGH`<sfr0-7>}
+# pushs {sr`ABCDEFGH`<sfr0-7>}
+#
+###:pushs {imm0007} is group=6 & ins0812=0x05 & imm0007
+
+#
 # rA = rB
+# mov rA, rB
 #
 :mov regAf, regBf is group=6 & ins0812=0x06 & regAf & regBf
 {
@@ -734,8 +763,8 @@ define pcodeop TODO;
 }
 
 #
-# mov sfrA, rB
 # sfrA = rB
+# mov sfrA, rB
 #
 :mov sregAf, regBf is group=6 & ins0812=0x07 & sregAf & regBf
 {
@@ -743,8 +772,8 @@ define pcodeop TODO;
 }
 
 #
-# mov rA, sfrB
 # rA = sfrB
+# mov rA, sfrB
 #
 :mov regAf, sregBf is group=6 & ins0812=0x08 & regAf & sregBf
 {
@@ -752,7 +781,7 @@ define pcodeop TODO;
 }
 
 #
-# ???
+# rA = rB.b
 # uxtb rA, rB
 #
 :uxtb regAl, regBl is group=6 & ins0612=0x24 & regAl & regBl
@@ -761,7 +790,7 @@ define pcodeop TODO;
 }
 
 #
-# ???
+# rA = rB.l
 # uxth rA, rB
 #
 :uxth regAl, regBl is group=6 & ins0612=0x25 & regAl & regBl
@@ -770,7 +799,7 @@ define pcodeop TODO;
 }
 
 #
-# ???
+# rA = rB.b (s)
 # sxtb rA, rB
 #
 :sxtb regAl, regBl is group=6 & ins0612=0x26 & regAl & regBl
@@ -779,7 +808,7 @@ define pcodeop TODO;
 }
 
 #
-# ???
+# rA = rB.l (s)
 # sxth rA, rB
 #
 :sxth regAl, regBl is group=6 & ins0612=0x27 & regAl & regBl
@@ -788,12 +817,13 @@ define pcodeop TODO;
 }
 
 #
-# ???
+# rA += rB (brev)
 # addrev rA, rB
 #
 :addrev regAf, regBf is group=6 & ins0812=0x0A & regAf & regBf
 {
-	TODO(regAf:4, regBf:4);
+	## TODO --- reverse the regBf !!
+	regAf = regAf + regBf;
 }
 
 #
@@ -806,9 +836,9 @@ define pcodeop TODO;
 }
 
 #
-# cmn rA, rB
+# cmn rB, rA
 #
-:cmn regAf, regBf is group=6 & ins0812=0x0C & regAf & regBf
+:cmn regBf, regAf is group=6 & ins0812=0x0C & regAf & regBf
 {
 	TODO(regAf:4, regBf:4);
 }
@@ -823,13 +853,13 @@ define pcodeop TODO;
 }
 
 #
-# cmp rA, rB
+# cmp rB, rA
 #
-:cmp regAf, regBf is group=6 & ins0812=0x0E & regAf & regBf
+:cmp regBf, regAf is group=6 & ins0812=0x0E & regAf & regBf
 {
-	$(N) = regAf s< regBf;
-	$(Z) = regAf == regBf;
-	$(C) = regAf < regBf;
+	$(N) = regBf s< regAf;
+	$(Z) = regBf == regAf;
+	$(C) = regBf < regAf;
 	# TODO $(V)
 }
 
@@ -943,7 +973,7 @@ define pcodeop TODO;
 }
 
 #
-# ??? rA = ~rB
+# rA = ~rB
 # not rA, rB
 #
 :not regAl, regBl is group=6 & ins0612=0x6B & regAl & regBl
@@ -958,6 +988,110 @@ define pcodeop TODO;
 :bitclr regAl, imm0307 is group=6 & ins0812=0x1B & regAl & imm0307
 {
 	regAl = regAl & ~(1 << imm0307);
+}
+
+#
+# rA += rB + c
+# addc rA, rB
+#
+:addc regAl, regBl is group=6 & ins0612=0x70 & regAl & regBl
+{
+	regAl = regAl + regBl + zext($(C));
+}
+
+#
+# rA -= rB + !c
+# subc rA, rB
+#
+:subc regAl, regBl is group=6 & ins0612=0x71 & regAl & regBl
+{
+	regAl = regAl - regBl + zext(!$(C));
+}
+
+#
+# rA = -rB
+# neg rA, rB
+#
+:neg regAl, regBl is group=6 & ins0612=0x72 & regAl & regBl
+{
+	regAl = -regBl;
+}
+
+#
+# macc <<= shamt6
+# lslmacc shamt6
+#
+:lslmacc imm0005 is group=6 & ins0612=0x73 & imm0005
+{
+	## TODO, smamt=0 is 64 !!
+	macc = macc << imm0005;
+}
+
+#
+# rA <>= rB
+# rotr rA, rB
+#
+:rotr regAl, regBl is group=6 & ins0612=0x74 & regAl & regBl
+{
+	## im too dumb
+	regAl = regBl;
+}
+
+#
+# rA <c>= rB
+# rotrc rA, rB
+#
+:rotrc regAl, regBl is group=6 & ins0612=0x75 & regAl & regBl
+{
+	## im too dumb
+	regAl = regBl;
+}
+
+#
+# macc <<= rA
+# lslmacc rA
+#
+:lslmacc regAf is group=6 & ins0712=0x3B & ins0305=0 & regAf
+{
+	macc = macc << regAf;
+}
+
+#
+# macc >>= rA
+# lsrmacc rA
+#
+:lsrmacc regAf is group=6 & ins0712=0x3C & ins0305=0 & regAf
+{
+	macc = macc >> regAf;
+}
+
+#
+# macc >>>= rA
+# asrmacc rA
+#
+:asrmacc regAf is group=6 & ins0712=0x3D & ins0305=0 & regAf
+{
+	macc = macc s>> regAf;
+}
+
+#
+# macc >>= shamt6
+# lsrmacc shamt6
+#
+:lsrmacc imm0005 is group=6 & ins0612=0x7C & imm0005
+{
+	## TODO, smamt=0 is 64 !!
+	macc = macc >> imm0005;
+}
+
+#
+# macc >>>= shamt6
+# asrmacc shamt6
+#
+:asrmacc imm0005 is group=6 & ins0612=0x7E & imm0005
+{
+	## TODO, smamt=0 is 64 !!
+	macc = macc s>> imm0005;
 }
 
 ############################################################################################
