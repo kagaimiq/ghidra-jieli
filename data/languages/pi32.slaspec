@@ -66,6 +66,7 @@ define token instr(16)
 	regAh  = (0,2)
 	regBl  = (3,5)
 	regBh  = (3,5)
+
 	sregAl = (0,2)
 	sregAh = (0,2)
 	sregBl = (3,5)
@@ -128,14 +129,11 @@ attach variables [ sregAl sregBl ]
 attach variables [ sregAh sregBh ]
 	[ sfr8 sfr9 ie1 ssp ie0 icfg pc usp ];
 
-# ARM-like PSR bits for NZCV (didn't figure out the real HW deal yet..)
-@define N	"psr[31,1]"
-@define Z	"psr[30,1]"
-@define C	"psr[29,1]"
-@define V	"psr[28,1]"
-
-# real PSR bits
-@define PSR_I	"psr[3,1]"
+# PSR bits
+@define V	"psr[0,1]"	# overflow
+@define C	"psr[1,1]"	# carry
+@define Z	"psr[2,1]"	# zero
+@define N	"psr[3,1]"	# negative
 
 #############################################################################
 #
@@ -315,7 +313,6 @@ define pcodeop TODO;
 #
 :cli is group=0 & ins0012=0x0040
 {
-	$(PSR_I) = 0;
 	DisableInterrupts();
 }
 
@@ -324,7 +321,6 @@ define pcodeop TODO;
 #
 :sti is group=0 & ins0012=0x0060
 {
-	$(PSR_I) = 1;
 	EnableInterrupts();
 }
 
