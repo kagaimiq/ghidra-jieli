@@ -9,17 +9,18 @@ define space register type=register_space size=4;
 # General purpose registers
 #
 define register offset=0x0 size=4
-[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 sp ];
+	[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 sp ];
 
 #
 # Special function registers
 #
 define register offset=0x100 size=4
-[ reti rete sfr2 sfr3 maccl macch rets psr sfr8 sfr9 ie1 ssp ie0 icfg pc usp ];
+	[ reti rete sfr2 sfr3 maccl macch rets psr
+	  sfr8 sfr9 ie1  ssp  ie0   icfg  pc   usp ];
 
 # Multiply accumulator (maccl + macch)
 define register offset=0x110 size=8
-[ macc ];
+	[ macc ];
 
 #############################################################################
 #
@@ -34,6 +35,7 @@ define token instr(16)
 	# instruction type fields
 	#
 	ins0012 = (0,12)
+	ins0412 = (4,12)
 	ins0612 = (6,12)
 	ins0712 = (7,12)
 	ins0812 = (8,12)
@@ -62,11 +64,12 @@ define token instr(16)
 	#
 	# register fields
 	#
+	regA   = (0,3)
+
 	regAl  = (0,2)
 	regAh  = (0,2)
 	regBl  = (3,5)
 	regBh  = (3,5)
-
 	sregAl = (0,2)
 	sregAh = (0,2)
 	sregBl = (3,5)
@@ -104,7 +107,7 @@ define token instr(16)
 	bra0507 = (5,7)
 ;
 
-# Used by the group=7 instrucions
+# Used by the group=7 instructions
 define token instr2(16)
 	imm1631 = (0,15)
 
@@ -116,6 +119,9 @@ define token instr2(16)
 #
 # Variables
 #
+
+attach variables [ regA ]
+	[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 sp ];
 
 attach variables [ regAl regBl regCl ]
 	[ r0 r1 r2 r3 r4 r5 r6 r7 ];
@@ -134,6 +140,23 @@ attach variables [ sregAh sregBh ]
 @define C	"psr[1,1]"	# carry
 @define Z	"psr[2,1]"	# zero
 @define N	"psr[3,1]"	# negative
+
+#############################################################################
+#
+# Macros
+#
+
+macro push(reg)
+{
+	sp = sp - 4;
+	*:4 sp = reg;
+}
+
+macro pop(reg)
+{
+	reg = *:4 sp;
+	sp = sp + 4;
+}
 
 #############################################################################
 #
@@ -240,7 +263,13 @@ cond0811: ""   is ins0811=0xE { tmp:1 = 1;                           export tmp;
 #
 
 define pcodeop nop;
+define pcodeop Breakpoint;
+define pcodeop HBreakpoint;
 define pcodeop ContextSync;
+define pcodeop SSync;
+define pcodeop Illegal;
+define pcodeop SetLock;
+define pcodeop ClearLock;
 define pcodeop Idle;
 define pcodeop DisableInterrupts;
 define pcodeop EnableInterrupts;
@@ -266,11 +295,68 @@ define pcodeop TODO;
 }
 
 #
+# bkpt
+#
+:bkpt is group=0 & ins0012=0x0002
+{
+	Breakpoint();
+}
+
+#
+# hbkpt
+#
+:hbkpt is group=0 & ins0012=0x0003
+{
+	HBreakpoint();
+}
+
+#
+# macc = 0
+# clrmacc
+#
+:clrmacc is group=0 & ins0012=0x0004
+{
+	macc = 0;
+}
+
+#
 # csync
 #
 :csync is group=0 & ins0012=0x0008
 {
 	ContextSync();
+}
+
+#
+# ssync
+#
+:ssync is group=0 & ins0012=0x0009
+{
+	SSync();
+}
+
+#
+# illeg
+#
+:illeg is group=0 & ins0012=0x000A
+{
+	Illegal();
+}
+
+#
+# lockset
+#
+:lockset is group=0 & ins0012=0x000C
+{
+	SetLock();
+}
+
+#
+# lockclr
+#
+:lockclr is group=0 & ins0012=0x000D
+{
+	ClearLock();
 }
 
 #
@@ -317,11 +403,27 @@ define pcodeop TODO;
 }
 
 #
+# cli rA
+#
+:cli regA is group=0 & ins0412=0x005 & regA
+{
+	DisableInterrupts(regA:4);
+}
+
+#
 # sti
 #
 :sti is group=0 & ins0012=0x0060
 {
 	EnableInterrupts();
+}
+
+#
+# sti rA
+#
+:sti regA is group=0 & ins0412=0x007 & regA
+{
+	EnableInterrupts(regA:4);
 }
 
 #
@@ -333,9 +435,9 @@ define pcodeop TODO;
 }
 
 #
-# except n
+# excpt n
 #
-:except imm0005 is group=0 & ins0612=0x03 & imm0005
+:excpt imm0005 is group=0 & ins0612=0x03 & imm0005
 {
 	SoftwareException(imm0005:1);
 }
@@ -575,7 +677,10 @@ define pcodeop TODO;
 #
 :cmp regAl, imm0310s is group=4 & ins1112=3 & imm0310s & regAl
 {
-	TODO(regAl:4, imm0310s:1);
+	$(N) = regAl s< imm0310s;
+	$(Z) = regAl == imm0310s;
+	$(C) = regAl < imm0310s;
+	# TODO $(V)
 }
 
 #
@@ -722,7 +827,10 @@ define pcodeop TODO;
 #
 :cmp regAf, regBf is group=6 & ins0812=0x0E & regAf & regBf
 {
-	TODO(regAf:4, regBf:4);
+	$(N) = regAf s< regBf;
+	$(Z) = regAf == regBf;
+	$(C) = regAf < regBf;
+	# TODO $(V)
 }
 
 #
