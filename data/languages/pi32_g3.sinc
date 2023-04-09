@@ -1,0 +1,47 @@
+############################################################################################
+# Group 3 #
+###########
+
+#
+# [sp + reladdr8] = rA
+# sw rA, sp, reladdr8
+#
+:sw regAl, sp, raddr8 is group=3 & ins1112=0 & regAl & sp & addr0305s & addr0610
+[ raddr8 = (addr0305s << 7) | (addr0610 << 2); ]
+{
+	local addr:4 = sp + raddr8;
+	*:4 addr = regAl;
+}
+
+#
+# [rB + reladdr5] = rA
+# sw rA, rB, reladdr5
+#
+:sw regAl, regBl, raddr5 is group=3 & ins1112=1 & regAl & regBl & addr0610s
+[ raddr5 = addr0610s << 2; ]
+{
+	local addr:4 = regBl + raddr5;
+	*:4 addr = regAl;
+}
+
+#
+# h[rB + reladdr5] = rA
+# sh rA, rB, reladdr5
+#
+:sh regAl, regBl, raddr5 is group=3 & ins1112=2 & regAl & regBl & addr0609s & addr1010
+[ raddr5 = (addr0609s << 2) | (addr1010 << 1); ]
+{
+	local addr:4 = regBl + raddr5;
+	*:2 addr = regAl;
+}
+
+#
+# b[rB + reladdr5] = rA
+# sb rA, rB, reladdr5
+#
+:sb regAl, regBl, raddr5 is group=3 & ins1112=3 & regAl & regBl & addr0608s & addr0910
+[ raddr5 = (addr0608s << 2) | addr0910; ]
+{
+	local addr:4 = regBl + raddr5;
+	*:1 addr = regAl;
+}

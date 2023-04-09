@@ -1,0 +1,65 @@
+############################################################################################
+# Group 7 #
+###########
+
+#
+# call reladdr24
+#
+:call jaddr24 is (group=7 & ins0812=0x01) ... & jaddr24
+{
+	call jaddr24;
+}
+
+#
+# rA.l = imm16
+# movl rA, imm16
+#
+:movl regAf, imm1631 is group=7 & ins0712=0x14 & ins0305=0 & regAf ; imm1631
+{
+	regAf[0,16] = imm1631;
+}
+
+#
+# sfrA.l = imm16
+# movl sfrA, imm16
+#
+:movl sregAf, imm1631 is group=7 & ins0712=0x14 & ins0305=1 & sregAf ; imm1631
+{
+	sregAf[0,16] = imm1631;
+}
+
+#
+# rA = imm16
+# movz rA, imm16
+#
+:movz regAf, imm1631 is group=7 & ins0712=0x14 & ins0305=2 & regAf ; imm1631
+{
+	regAf = imm1631;
+}
+
+#
+# rA.h = imm16
+# movh rA, imm16
+#
+:movh regAf, imm1631 is group=7 & ins0712=0x15 & ins0305=0 & regAf ; imm1631
+{
+	regAf[16,16] = imm1631;
+}
+
+#
+# sfrA.h = imm16
+# movh sfrA, imm16
+#
+:movh sregAf, imm1631 is group=7 & ins0712=0x15 & ins0305=1 & sregAf ; imm1631
+{
+	sregAf[16,16] = imm1631;
+}
+
+#
+# goto reladdr24
+# j reladdr24
+#
+:j jaddr24 is (group=7 & ins0812=0x1a) ... & jaddr24
+{
+	goto jaddr24;
+}

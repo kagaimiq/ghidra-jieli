@@ -1,0 +1,232 @@
+############################################################################################
+# Group 0 #
+###########
+
+#
+# nop
+#
+:nop is group=0 & ins0012=0x0000
+{
+	nop();
+}
+
+#
+# bkpt
+#
+:bkpt is group=0 & ins0012=0x0002
+{
+	Breakpoint();
+}
+
+#
+# hbkpt
+#
+:hbkpt is group=0 & ins0012=0x0003
+{
+	HBreakpoint();
+}
+
+#
+# macc = 0
+# clrmacc
+#
+:clrmacc is group=0 & ins0012=0x0004
+{
+	macc = 0;
+}
+
+#
+# csync
+#
+:csync is group=0 & ins0012=0x0008
+{
+	ContextSync();
+}
+
+#
+# ssync
+#
+:ssync is group=0 & ins0012=0x0009
+{
+	SSync();
+}
+
+#
+# illeg
+#
+:illeg is group=0 & ins0012=0x000A
+{
+	Illegal();
+}
+
+#
+# lockset
+#
+:lockset is group=0 & ins0012=0x000C
+{
+	SetLock();
+}
+
+#
+# lockclr
+#
+:lockclr is group=0 & ins0012=0x000D
+{
+	ClearLock();
+}
+
+#
+# idle
+#
+:idle is group=0 & ins0012=0x0010
+{
+	Idle();
+}
+
+#
+# rts
+#
+:rts is group=0 & ins0012=0x0020
+{
+	return [rets];
+}
+
+#
+# rti
+#
+:rti is group=0 & ins0012=0x0030
+{
+	ssp = sp;
+	sp = usp;
+	return [reti];
+}
+
+#
+# rte
+#
+:rte is group=0 & ins0012=0x0038
+{
+	# probably swaps the stack pointers too..
+	return [rete];
+}
+
+#
+# cli
+#
+:cli is group=0 & ins0012=0x0040
+{
+	DisableInterrupts();
+}
+
+#
+# cli rA
+#
+:cli regA is group=0 & ins0412=0x005 & regA
+{
+	DisableInterrupts(regA:4);
+}
+
+#
+# sti
+#
+:sti is group=0 & ins0012=0x0060
+{
+	EnableInterrupts();
+}
+
+#
+# sti rA
+#
+:sti regA is group=0 & ins0412=0x007 & regA
+{
+	EnableInterrupts(regA:4);
+}
+
+#
+# swi n
+#
+:swi imm0005 is group=0 & ins0612=0x02 & imm0005
+{
+	SoftwareInterrupt(imm0005:1);
+}
+
+#
+# excpt n
+#
+:excpt imm0005 is group=0 & ins0612=0x03 & imm0005
+{
+	SoftwareException(imm0005:1);
+}
+
+
+
+#
+# rep rA { <N instrunction words> }
+# rep <N instruction words>, rA
+#
+:rep bra0305, regAf is group=0 & ins0712=0x02 & bra0305 & regAf
+{
+	TODO(bra0305:1, regAf:4);
+}
+
+#
+# goto rA
+# j rA
+#
+:j regAf is group=0 & ins0712=0x03 & ins0305=0x4 & regAf
+{
+	goto regAf;
+}
+
+#
+# call rA
+#
+:call regAf is group=0 & ins0712=0x03 & ins0305=0x5 & regAf
+{
+	call regAf;
+}
+
+#
+# rep rA { <N instrunction words> }
+# rep <N instruction words>, rA
+#
+:rep bra0507, imm0004 is group=0 & ins0812=0x12 & bra0507 & imm0004
+{
+	TODO(bra0507:1, imm0004:1);
+}
+
+#
+# if (<cond>) { <true block> } else { <else block> }
+# if<cond> <else block> <true block>
+#
+###:if^cond0407 bra0203, bra0001 is group=0 & ins0812=0x03 & cond0407 & bra0203 & bra0001
+###{
+###	TODO(cond0407:1, bra0203:1, bra0001:1);
+###}
+
+#
+# call reladdr8
+#
+:call jaddr8 is group=0 & ins0812=0x4 & jaddr8
+{
+	call jaddr8;
+}
+
+#
+# goto reladdr11
+# j reladdr11
+#
+:j jaddr11 is group=0 & ins1112=1 & jaddr11
+{
+	goto jaddr11;
+}
+
+#
+# if (<cond>) goto reladdr8
+# j<cond> reladdr8
+#
+:j^cond0811 jaddr8 is group=0 & ins1212=1 & cond0811 & jaddr8
+{
+	if (cond0811)
+		goto jaddr8;
+}

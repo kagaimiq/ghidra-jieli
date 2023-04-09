@@ -1,0 +1,43 @@
+############################################################################################
+# Group 2 #
+###########
+
+#
+# if (rA == 0) goto reladdr9
+# <G> jz rA, reladdr9
+#
+:jz regAl, jaddr9 is group=2 & ins0707=0 & ins0303=0 & regAl & jaddr9
+{
+	if (regAl == 0)
+		goto jaddr9;
+}
+
+#
+# if (rA != 0) goto reladdr9
+# <G> jnz rA, reladdr9
+#
+:jz regAl, jaddr9 is group=2 & ins0707=1 & ins0303=0 & regAl & jaddr9
+{
+	if (regAl == 0)
+		goto jaddr9;
+}
+
+#
+# rA = b[rB+reladdr5] (u)
+# <G> lbz rA, rB, reladdr5
+#
+:lbz regAl, regBl, imm0812s is group=2 & ins0707=0 & ins0303=1 & regAl & regBl & imm0812s
+{
+	local addr:4 = regBl + imm0812s;
+	regAl = zext(*:1 addr);
+}
+
+#
+# b[rB+reladdr5] = rA
+# <G> sb rA, rB, reladdr5
+#
+:sb regAl, regBl, imm0812s is group=2 & ins0707=1 & ins0303=1 & regAl & regBl & imm0812s
+{
+	local addr:4 = regBl + imm0812s;
+	*:1 addr = regAl;
+}

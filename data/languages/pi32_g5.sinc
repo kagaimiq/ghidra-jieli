@@ -1,0 +1,42 @@
+############################################################################################
+# Group 5 #
+###########
+
+## ! TODO, 0 means 32 ! ##
+
+#
+# rA = rB << shamt
+# lsl rA, rB, shamt
+#
+:lsl regAl, regBl, imm0812 is group=5 & ins0607=0 & regAl & regBl & imm0812
+{
+	regAl = regBl << imm0812;
+}
+
+#
+# rA = rB >> shamt
+# lsr rA, rB, shamt
+#
+:lsr regAl, regBl, imm0812 is group=5 & ins0607=1 & regAl & regBl & imm0812
+{
+	regAl = regBl >> imm0812;
+}
+
+#
+# rA = rB <<< shamt
+# qasl rA, rB, shamt
+#
+:qasl regAl, regBl, imm0812 is group=5 & ins0607=2 & regAl & regBl & imm0812
+{
+	# TODO: extend the LSB
+	regAl = regBl << imm0812;
+}
+
+#
+# rA = rB >>> shamt
+# qasr rA, rB, shamt
+#
+:qasr regAl, regBl, imm0812 is group=5 & ins0607=3 & regAl & regBl & imm0812
+{
+	regAl = regBl s>> imm0812;
+}

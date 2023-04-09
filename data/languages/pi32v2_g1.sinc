@@ -1,0 +1,53 @@
+############################################################################################
+# Group 1 #
+###########
+
+
+#
+# rA |= (1<<shamt)
+# <G> bitset rA, shamt
+#
+:bitset regAl, imm0812 is group=1 & ins0307=0x06 & regAl & imm0812
+{
+	regAl = regAl | (1 << imm0812);
+}
+
+#
+# rA ^= (1<<shamt)
+# <G> bittgl rA, shamt
+#
+:bittgl regAl, imm0812 is group=1 & ins0307=0x07 & regAl & imm0812
+{
+	regAl = regAl ^ (1 << imm0812);
+}
+
+
+#
+# rA = imm8
+# <G> mov rA, imm8
+#
+:mov regAl, imm8 is group=1 & ins0607=1 & regAl & imm0812 & imm0305
+[ imm8 = (imm0305 << 5) | imm0812; ]
+{
+	regAl = imm8;
+}
+
+
+#
+# rA &= ~(1<<shamt)
+# <G> bitclr rA, shamt
+#
+:bitclr regAl, imm0812 is group=1 & ins0307=0x17 & regAl & imm0812
+{
+	regAl = regAl & ~(1 << imm0812);
+}
+
+#
+# rA += imm8
+# <G> add rA, imm8
+#
+:add regAl, imm8 is group=1 & ins0607=3 & regAl & imm0305s & imm0812
+[ imm8 = (imm0305s << 5) | imm0812; ]
+{
+	regAl = regAl + imm8;
+}
