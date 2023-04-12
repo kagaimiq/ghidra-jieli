@@ -175,7 +175,7 @@
 #
 :j regAf is group=0 & ins0712=0x03 & ins0305=0x4 & regAf
 {
-	goto regAf;
+	goto [regAf];
 }
 
 #
@@ -183,7 +183,7 @@
 #
 :call regAf is group=0 & ins0712=0x03 & ins0305=0x5 & regAf
 {
-	call regAf;
+	call [regAf];
 }
 
 #
@@ -199,10 +199,10 @@
 # if (<cond>) { <true block> } else { <else block> }
 # if<cond> <else block> <true block>
 #
-###:if^cond0407 bra0203, bra0001 is group=0 & ins0812=0x03 & cond0407 & bra0203 & bra0001
-###{
-###	TODO(cond0407:1, bra0203:1, bra0001:1);
-###}
+:if^cond0407 bra0203, bra0001 is group=0 & ins0812=0x03 & cond0407 & bra0203 & bra0001
+{
+	TODO(cond0407:1, bra0203:1, bra0001:1);
+}
 
 #
 # call reladdr8

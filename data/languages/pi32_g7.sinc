@@ -2,6 +2,28 @@
 # Group 7 #
 ###########
 
+# 
+# if (<cond>) goto rA
+# j<cond> rA
+#
+:j^cond1619 regF is group=7 & ins0012=0x0000 ; cond1619 & regF
+{
+	if (cond1619)
+		goto regF;
+}
+
+##########################################################################################
+
+#
+# trigger
+#
+:trigger is group=7 & ins0012=0x0080
+{
+	Trigger();
+}
+
+##########################################################################################
+
 #
 # call reladdr24
 #
@@ -9,6 +31,715 @@
 {
 	call jaddr24;
 }
+
+##########################################################################################
+
+#
+# [rA + reladdr10] |= xval
+# memor rA, reladdr10, xval
+#
+:memor regF, reladdr, spimm2431 is (group=7 & ins0812=0x02 & addr0407s ; addr1619 & regF) & spimm2431
+[ reladdr = (addr0407s << 6) | (addr1619 << 2); ]
+{
+	local addr:4 = regF + reladdr;
+	*:4 addr = (*:4 addr) | spimm2431;
+}
+
+#
+# [rA + reladdr10] &= (~xval)
+# memandnot rA, reladdr10, xval
+#
+:memandnot regF, reladdr, spimm2431 is (group=7 & ins0812=0x03 & addr0407s ; addr1619 & regF) & spimm2431
+[ reladdr = (addr0407s << 6) | (addr1619 << 2); ]
+{
+	local addr:4 = regF + reladdr;
+	*:4 addr = (*:4 addr) & ~spimm2431;
+}
+
+##########################################################################################
+
+#
+# rA = b[addr(reladdr12)]
+# lbz rA, reladdr12
+#
+:lbz regE, reladdr is group=7 & ins0012=0x0400 ; addr2231 & addr2021s & regE
+[ reladdr = (addr2021s << 10) | addr2231; ]
+{
+	local addr:4 = inst_next + reladdr;
+	regE = zext(*:1 addr);
+}
+
+#
+# rA = h[addr(reladdr12)]
+# lhz rA, reladdr12
+#
+:lhz regE, reladdr is group=7 & ins0012=0x0410 ; addr2331 & addr2022s & regE
+[ reladdr = (addr2022s << 10) | (addr2331 << 1); ]
+{
+	local addr:4 = (inst_next & ~1) + reladdr;
+	regE = zext(*:2 addr);
+}
+
+#
+# rA = [addr(reladdr12)]
+# lw rA, reladdr12
+#
+:lw regE, reladdr is group=7 & ins0012=0x0420 ; addr2431 & addr2023s & regE
+[ reladdr = (addr2023s << 10) | (addr2431 << 2); ]
+{
+	local addr:4 = (inst_next & ~3) + reladdr;
+	regE = *:4 addr;
+}
+
+#
+# rA = b[addr(reladdr12)] (s)
+# lbs rA, reladdr12
+#
+:lbs regE, reladdr is group=7 & ins0012=0x0480 ; addr2231 & addr2021s & regE
+[ reladdr = (addr2021s << 10) | addr2231; ]
+{
+	local addr:4 = inst_next + reladdr;
+	regE = sext(*:1 addr);
+}
+
+#
+# rA = h[addr(reladdr12)] (s)
+# lhs rA, reladdr12
+#
+:lhs regE, reladdr is group=7 & ins0012=0x0490 ; addr2331 & addr2022s & regE
+[ reladdr = (addr2022s << 10) | (addr2331 << 1); ]
+{
+	local addr:4 = (inst_next & ~1) + reladdr;
+	regE = sext(*:2 addr);
+}
+
+##########################################################################################
+
+#
+# rA = b[rB + rC]
+# lbz rA, rB, rC
+#
+:lbz regE, regF, regG is group=7 & ins0012=0x0700 ; regE & regF & regG
+{
+	local addr:4 = regF + regG;
+	regE = zext(*:1 addr);
+}
+
+#
+# rA = b[++rB = rC]
+# addlbz rA, rB, rC
+#
+:addlbz regE, regF, regG is group=7 & ins0012=0x0704 ; regE & regF & regG
+{
+	regF = regF + regG;
+	regE = zext(*:1 regF);
+}
+
+#
+# rA = b[rB ++= rC]
+# lbzadd rA, rB, rC
+#
+:lbzadd regE, regF, regG is group=7 & ins0012=0x0708 ; regE & regF & regG
+{
+	regE = zext(*:1 regF);
+	regF = regF + regG;
+}
+
+
+
+#
+# rA = h[rB + rC]
+# lhz rA, rB, rC
+#
+:lhz regE, regF, regG is group=7 & ins0012=0x0710 ; regE & regF & regG
+{
+	local addr:4 = regF + regG;
+	regE = zext(*:2 addr);
+}
+
+#
+# rA = h[++rB = rC]
+# addlhz rA, rB, rC
+#
+:addlhz regE, regF, regG is group=7 & ins0012=0x0714 ; regE & regF & regG
+{
+	regF = regF + regG;
+	regE = zext(*:2 regF);
+}
+
+#
+# rA = h[rB ++= rC]
+# lhzadd rA, rB, rC
+#
+:lhzadd regE, regF, regG is group=7 & ins0012=0x0718 ; regE & regF & regG
+{
+	regE = zext(*:2 regF);
+	regF = regF + regG;
+}
+
+
+
+#
+# rA = [rB + rC]
+# lw rA, rB, rC
+#
+:lw regE, regF, regG is group=7 & ins0012=0x0720 ; regE & regF & regG
+{
+	local addr:4 = regF + regG;
+	regE = *:4 addr;
+}
+
+#
+# rA = [++rB = rC]
+# addlw rA, rB, rC
+#
+:addlw regE, regF, regG is group=7 & ins0012=0x0724 ; regE & regF & regG
+{
+	regF = regF + regG;
+	regE = *:4 regF;
+}
+
+#
+# rA = [rB ++= rC]
+# lwadd rA, rB, rC
+#
+:lwadd regE, regF, regG is group=7 & ins0012=0x0728 ; regE & regF & regG
+{
+	regE = *:4 regF;
+	regF = regF + regG;
+}
+
+
+
+#
+# b[rB + rC] = rA
+# sb rA, rB, rC
+#
+:sb regE, regF, regG is group=7 & ins0012=0x0740 ; regE & regF & regG
+{
+	local addr:4 = regF + regG;
+	*:1 addr = regE;
+}
+
+#
+# b[++rB = rC] = rA
+# addsb rA, rB, rC
+#
+:addsb regE, regF, regG is group=7 & ins0012=0x0744 ; regE & regF & regG
+{
+	regF = regF + regG;
+	*:1 regF = regE;
+}
+
+#
+# b[rB ++= rC] = rA
+# sbadd rA, rB, rC
+#
+:sbadd regE, regF, regG is group=7 & ins0012=0x0748 ; regE & regF & regG
+{
+	*:1 regF = regE;
+	regF = regF + regG;
+}
+
+
+
+#
+# h[rB + rC] = rA
+# sh rA, rB, rC
+#
+:sh regE, regF, regG is group=7 & ins0012=0x0750 ; regE & regF & regG
+{
+	local addr:4 = regF + regG;
+	*:2 addr = regE;
+}
+
+#
+# h[++rB = rC] = rA
+# addsh rA, rB, rC
+#
+:addsh regE, regF, regG is group=7 & ins0012=0x0754 ; regE & regF & regG
+{
+	regF = regF + regG;
+	*:2 regF = regE;
+}
+
+#
+# h[rB ++= rC] = rA
+# shadd rA, rB, rC
+#
+:shadd regE, regF, regG is group=7 & ins0012=0x0758 ; regE & regF & regG
+{
+	*:2 regF = regE;
+	regF = regF + regG;
+}
+
+
+
+#
+# [rB + rC] = rA
+# sw rA, rB, rC
+#
+:sw regE, regF, regG is group=7 & ins0012=0x0760 ; regE & regF & regG
+{
+	local addr:4 = regF + regG;
+	*:4 addr = regE;
+}
+
+#
+# [++rB = rC] = rA
+# addsw rA, rB, rC
+#
+:addsw regE, regF, regG is group=7 & ins0012=0x0764 ; regE & regF & regG
+{
+	regF = regF + regG;
+	*:4 regF = regE;
+}
+
+#
+# [rB ++= rC] = rA
+# swadd rA, rB, rC
+#
+:swadd regE, regF, regG is group=7 & ins0012=0x0768 ; regE & regF & regG
+{
+	*:4 regF = regE;
+	regF = regF + regG;
+}
+
+
+
+#
+# rA = b[rB + rC] (s)
+# lbs rA, rB, rC
+#
+:lbs regE, regF, regG is group=7 & ins0012=0x0780 ; regE & regF & regG
+{
+	local addr:4 = regF + regG;
+	regE = sext(*:1 addr);
+}
+
+#
+# rA = b[++rB = rC] (s)
+# addlbs rA, rB, rC
+#
+:addlbs regE, regF, regG is group=7 & ins0012=0x0784 ; regE & regF & regG
+{
+	regF = regF + regG;
+	regE = sext(*:1 regF);
+}
+
+#
+# rA = b[rB ++= rC] (s)
+# lbsadd rA, rB, rC
+#
+:lbsadd regE, regF, regG is group=7 & ins0012=0x0788 ; regE & regF & regG
+{
+	regE = sext(*:1 regF);
+	regF = regF + regG;
+}
+
+
+
+#
+# rA = h[rB + rC] (s)
+# lhs rA, rB, rC
+#
+:lhs regE, regF, regG is group=7 & ins0012=0x0790 ; regE & regF & regG
+{
+	local addr:4 = regF + regG;
+	regE = sext(*:2 addr);
+}
+
+#
+# rA = h[++rB = rC] (s)
+# addlhs rA, rB, rC
+#
+:addlhs regE, regF, regG is group=7 & ins0012=0x0794 ; regE & regF & regG
+{
+	regF = regF + regG;
+	regE = sext(*:2 regF);
+}
+
+#
+# rA = h[rB ++= rC] (s)
+# lhsadd rA, rB, rC
+#
+:lhsadd regE, regF, regG is group=7 & ins0012=0x0798 ; regE & regF & regG
+{
+	regE = sext(*:2 regF);
+	regF = regF + regG;
+}
+
+##########################################################################################
+
+#
+# rA = b[rB + reladdr8]
+# lbz rA, rB, reladdr8
+#
+:lbz regE, regF, reladdr is group=7 & ins0012=0x0800 ; regE & regF & addr2429s & addr3031
+[ reladdr = (addr2429s << 2) | addr3031; ]
+{
+	local addr:4 = regF + reladdr;
+	regE = zext(*:1 addr);
+}
+
+#
+# rA = b[++rB = reladdr8]
+# addlbz rA, rB, reladdr8
+#
+:addlbz regE, regF, reladdr is group=7 & ins0012=0x0804 ; regE & regF & addr2429s & addr3031
+[ reladdr = (addr2429s << 2) | addr3031; ]
+{
+	regF = regF + reladdr;
+	regE = zext(*:1 regF);
+}
+
+#
+# rA = b[rB ++= reladdr8]
+# lbzadd rA, rB, reladdr8
+#
+:lbzadd regE, regF, reladdr is group=7 & ins0012=0x0808 ; regE & regF & addr2429s & addr3031
+[ reladdr = (addr2429s << 2) | addr3031; ]
+{
+	regE = zext(*:1 regF);
+	regF = regF + reladdr;
+}
+
+
+
+#
+# rA = h[rB + reladdr8]
+# lhz rA, rB, reladdr8
+#
+:lhz regE, regF, reladdr is group=7 & ins0012=0x0810 ; regE & regF & addr2430s & addr3131
+[ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
+{
+	local addr:4 = regF + reladdr;
+	regE = zext(*:2 addr);
+}
+
+#
+# rA = h[++rB = reladdr8]
+# addlhz rA, rB, reladdr8
+#
+:addlhz regE, regF, reladdr is group=7 & ins0012=0x0814 ; regE & regF & addr2430s & addr3131
+[ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
+{
+	regF = regF + reladdr;
+	regE = zext(*:2 regF);
+}
+
+#
+# rA = h[rB ++= reladdr8]
+# lhzadd rA, rB, reladdr8
+#
+:lhzadd regE, regF, reladdr is group=7 & ins0012=0x0818 ; regE & regF & addr2430s & addr3131
+[ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
+{
+	regE = zext(*:2 regF);
+	regF = regF + reladdr;
+}
+
+
+
+#
+# rA = [rB + reladdr8]
+# lw rA, rB, reladdr8
+#
+:lw regE, regF, reladdr is group=7 & ins0012=0x0820 ; regE & regF & addr2431s
+[ reladdr = (addr2431s << 2); ]
+{
+	local addr:4 = regF + reladdr;
+	regE = *:4 addr;
+}
+
+#
+# rA = [++rB = reladdr8]
+# addlw rA, rB, reladdr8
+#
+:addlw regE, regF, reladdr is group=7 & ins0012=0x0824 ; regE & regF & addr2431s
+[ reladdr = (addr2431s << 2); ]
+{
+	regF = regF + reladdr;
+	regE = *:4 regF;
+}
+
+#
+# rA = [rB ++= reladdr8]
+# lwadd rA, rB, reladdr8
+#
+:lwadd regE, regF, reladdr is group=7 & ins0012=0x0828 ; regE & regF & addr2431s
+[ reladdr = (addr2431s << 2); ]
+{
+	regE = *:4 regF;
+	regF = regF + reladdr;
+}
+
+
+
+#
+# b[rB + reladdr8] = rA
+# sb rA, rB, reladdr8
+#
+:sb regE, regF, reladdr is group=7 & ins0012=0x0840 ; regE & regF & addr2429s & addr3031
+[ reladdr = (addr2429s << 2) | addr3031; ]
+{
+	local addr:4 = regF + reladdr;
+	*:1 addr = regE;
+}
+
+#
+# b[++rB = reladdr8] = rA
+# addsb rA, rB, reladdr8
+#
+:addsb regE, regF, reladdr is group=7 & ins0012=0x0844 ; regE & regF & addr2429s & addr3031
+[ reladdr = (addr2429s << 2) | addr3031; ]
+{
+	regF = regF + reladdr;
+	*:1 regF = regE;
+}
+
+#
+# b[rB ++= reladdr8] = rA
+# sbadd rA, rB, reladdr8
+#
+:sbadd regE, regF, reladdr is group=7 & ins0012=0x0848 ; regE & regF & addr2429s & addr3031
+[ reladdr = (addr2429s << 2) | addr3031; ]
+{
+	*:1 regF = regE;
+	regF = regF + reladdr;
+}
+
+
+
+#
+# h[rB + reladdr8] = rA
+# sh rA, rB, reladdr8
+#
+:sh regE, regF, reladdr is group=7 & ins0012=0x0850 ; regE & regF & addr2430s & addr3131
+[ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
+{
+	local addr:4 = regF + reladdr;
+	*:2 addr = regE;
+}
+
+#
+# h[++rB = reladdr8] = rA
+# addsh rA, rB, reladdr8
+#
+:addsh regE, regF, reladdr is group=7 & ins0012=0x0854 ; regE & regF & addr2430s & addr3131
+[ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
+{
+	regF = regF + reladdr;
+	*:2 regF = regE;
+}
+
+#
+# h[rB ++= reladdr8] = rA
+# shadd rA, rB, reladdr8
+#
+:shadd regE, regF, reladdr is group=7 & ins0012=0x0858 ; regE & regF & addr2430s & addr3131
+[ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
+{
+	*:2 regF = regE;
+	regF = regF + reladdr;
+}
+
+
+
+#
+# [rB + reladdr8] = rA
+# sw rA, rB, reladdr8
+#
+:sw regE, regF, reladdr is group=7 & ins0012=0x0860 ; regE & regF & addr2431s
+[ reladdr = (addr2431s << 2); ]
+{
+	local addr:4 = regF + reladdr;
+	*:4 addr = regE;
+}
+
+#
+# [++rB = reladdr8] = rA
+# addsw rA, rB, reladdr8
+#
+:addsw regE, regF, reladdr is group=7 & ins0012=0x0864 ; regE & regF & addr2431s
+[ reladdr = (addr2431s << 2); ]
+{
+	regF = regF + reladdr;
+	*:4 regF = regE;
+}
+
+#
+# [rB ++= reladdr8] = rA
+# swadd rA, rB, reladdr8
+#
+:swadd regE, regF, reladdr is group=7 & ins0012=0x0868 ; regE & regF & addr2431s
+[ reladdr = (addr2431s << 2); ]
+{
+	*:4 regF = regE;
+	regF = regF + reladdr;
+}
+
+
+
+#
+# rA = b[rB + reladdr8] (s)
+# lbs rA, rB, reladdr8
+#
+:lbs regE, regF, reladdr is group=7 & ins0012=0x0880 ; regE & regF & addr2429s & addr3031
+[ reladdr = (addr2429s << 2) | addr3031; ]
+{
+	local addr:4 = regF + reladdr;
+	regE = sext(*:1 addr);
+}
+
+#
+# rA = b[++rB = reladdr8] (s)
+# addlbs rA, rB, reladdr8
+#
+:addlbs regE, regF, reladdr is group=7 & ins0012=0x0884 ; regE & regF & addr2429s & addr3031
+[ reladdr = (addr2429s << 2) | addr3031; ]
+{
+	regF = regF + reladdr;
+	regE = sext(*:1 regF);
+}
+
+#
+# rA = b[rB ++= reladdr8] (s)
+# lbsadd rA, rB, reladdr8
+#
+:lbsadd regE, regF, reladdr is group=7 & ins0012=0x0888 ; regE & regF & addr2429s & addr3031
+[ reladdr = (addr2429s << 2) | addr3031; ]
+{
+	regE = sext(*:1 regF);
+	regF = regF + reladdr;
+}
+
+
+
+#
+# rA = h[rB + reladdr8] (s)
+# lhs rA, rB, reladdr8
+#
+:lhs regE, regF, reladdr is group=7 & ins0012=0x0890 ; regE & regF & addr2430s & addr3131
+[ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
+{
+	local addr:4 = regF + reladdr;
+	regE = sext(*:2 addr);
+}
+
+#
+# rA = h[rB ++= reladdr8] (s)
+# addlhs rA, rB, reladdr8
+#
+:addlhs regE, regF, reladdr is group=7 & ins0012=0x0894 ; regE & regF & addr2430s & addr3131
+[ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
+{
+	regF = regF + reladdr;
+	regE = sext(*:2 regF);
+}
+
+#
+# rA = h[rB ++= reladdr8] (s)
+# lhsadd rA, rB, reladdr8
+#
+:lhsadd regE, regF, reladdr is group=7 & ins0012=0x0898 ; regE & regF & addr2430s & addr3131
+[ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
+{
+	regE = sext(*:2 regF);
+	regF = regF + reladdr;
+}
+
+##########################################################################################
+
+#
+# rA = b[sp + reladdr12]
+# lbz rA, reladd1r2
+#
+:lbz regE, sp, reladdr is group=7 & ins0012=0x0900 & sp ; addr2231 & addr2021s & regE
+[ reladdr = (addr2021s << 10) | addr2231; ]
+{
+	local addr:4 = sp + reladdr;
+	regE = zext(*:1 addr);
+}
+
+#
+# rA = h[sp + reladdr12]
+# lhz rA, sp, reladdr12
+#
+:lhz regE, sp, reladdr is group=7 & ins0012=0x0910 & sp ; addr2331 & addr2022s & regE
+[ reladdr = (addr2022s << 10) | (addr2331 << 1); ]
+{
+	local addr:4 = sp + reladdr;
+	regE = zext(*:2 addr);
+}
+
+#
+# rA = [sp + reladdr12]
+# lw rA, sp, reladdr12
+#
+:lw regE, sp, reladdr is group=7 & ins0012=0x0920 & sp ; addr2431 & addr2023s & regE
+[ reladdr = (addr2023s << 10) | (addr2431 << 2); ]
+{
+	local addr:4 = sp + reladdr;
+	regE = *:4 addr;
+}
+
+#
+# b[sp + reladdr12] = rA
+# sb rA, reladd1r2
+#
+:sb regE, sp, reladdr is group=7 & ins0012=0x0940 & sp ; addr2231 & addr2021s & regE
+[ reladdr = (addr2021s << 10) | addr2231; ]
+{
+	local addr:4 = sp + reladdr;
+	*:1 addr = regE;
+}
+
+#
+# h[sp + reladdr12] = rA
+# sh rA, sp, reladdr12
+#
+:sh regE, sp, reladdr is group=7 & ins0012=0x0950 & sp ; addr2331 & addr2022s & regE
+[ reladdr = (addr2022s << 10) | (addr2331 << 1); ]
+{
+	local addr:4 = sp + reladdr;
+	*:2 addr = regE;
+}
+
+#
+# [sp + reladdr12] = rA
+# sw rA, sp, reladdr12
+#
+:sw regE, sp, reladdr is group=7 & ins0012=0x0960 & sp ; addr2431 & addr2023s & regE
+[ reladdr = (addr2023s << 10) | (addr2431 << 2); ]
+{
+	local addr:4 = sp + reladdr;
+	*:4 addr = regE;
+}
+
+#
+# rA = b[sp + reladdr12] (s)
+# lbs rA, sp, reladdr12
+#
+:lbs regE, sp, reladdr is group=7 & ins0012=0x0980 & sp ; addr2231 & addr2021s & regE
+[ reladdr = (addr2021s << 10) | addr2231; ]
+{
+	local addr:4 = sp + reladdr;
+	regE = sext(*:1 addr);
+}
+
+#
+# rA = h[sp + reladdr12] (s)
+# lhs rA, sp, reladdr12
+#
+:lhs regE, sp, reladdr is group=7 & ins0012=0x0990 & sp ; addr2331 & addr2022s & regE
+[ reladdr = (addr2022s << 10) | (addr2331 << 1); ]
+{
+	local addr:4 = sp + reladdr;
+	regE = sext(*:2 addr);
+}
+
+##########################################################################################
 
 #
 # rA.l = imm16
@@ -38,6 +769,15 @@
 }
 
 #
+# rA = xval
+# movz rA, xval
+#
+:movz regE, spimm2431 is (group=7 & ins0412=0x0A2 ; regE) & spimm2431
+{
+	regE = spimm2431;
+}
+
+#
 # rA.h = imm16
 # movh rA, imm16
 #
@@ -56,10 +796,321 @@
 }
 
 #
+# rA = simm16
+# movs rA, simm16
+#
+:movs regAf, imm1631s is group=7 & ins0712=0x15 & ins0305=2 & regAf ; imm1631s
+{
+	regAf = imm1631s;
+}
+
+##########################################################################################
+
+#
+# rA = rB.b
+# uxtb rA, rB
+#
+:uxtb regE, regF is group=7 & ins0012=0x0C00 ; regE & regF
+{
+	regE = zext(regF:1);
+}
+
+#
+# rA = rB.l
+# uxth rA, rB
+#
+:uxth regE, regF is group=7 & ins0012=0x0C40 ; regE & regF
+{
+	regE = zext(regF:2);
+}
+
+
+#
+# rA = rB.b
+# sxtb rA, rB
+#
+:sxtb regE, regF is group=7 & ins0012=0x0C80 ; regE & regF
+{
+	regE = sext(regF:1);
+}
+
+
+#
+# rA = rB.l (s)
+# sxth rA, rB
+#
+:sxth regE, regF is group=7 & ins0012=0x0CC0 ; regE & regF
+{
+	regE = sext(regF:2);
+}
+
+##########################################################################################
+
+#
+# rA = rB + imm13s
+# add rA, rB, imm13s
+#
+:add regE, regF, imm is group=7 & ins0512=0x68 & imm0004s ; regE & regF & imm2431
+[ imm = (imm0004s << 8) | imm2431; ]
+{
+	regE = regF + imm;
+}
+
+##########################################################################################
+
+#
+# rA = rB + rC
+# add rA, rB, rC
+#
+:add regE, regF, regG is group=7 & ins0012=0x0E00 ; regE & regF & regG
+{
+	regE = regF + regG;
+}
+
+#
+# rA = rB + xval
+# add rA, rB, xval
+#
+:add regE, regF, spimm2431 is (group=7 & ins0412=0x0E1 ; regE & regF) & spimm2431
+{
+	regE = regF + spimm2431;
+}
+
+#
+# rA = xval - rB
+# sub rA, xval, rB
+#
+:sub regE, spimm2431, regF is (group=7 & ins0412=0x0E2 ; regE & regF) & spimm2431
+{
+	regE = spimm2431 - regF;
+}
+
+#
+# rA = rB - rC
+# sub rA, rB, rC
+#
+:sub regE, regF, regG is group=7 & ins0012=0x0E40 ; regE & regF & regG
+{
+	regE = regF - regG;
+}
+
+#
+# rA = rB + rC + c
+# addc rA, rB, rC
+#
+:addc regE, regF, regG is group=7 & ins0012=0x0E80 ; regE & regF & regG
+{
+	regE = regF + regG + zext($(C));
+}
+
+#
+# rA = rB - xval
+# sub rA, rB, xval
+#
+:sub regE, regF, spimm2431 is (group=7 & ins0412=0x0E9 ; regE & regF) & spimm2431
+{
+	regE = regF - spimm2431;
+}
+
+#
+# rA = rB - rC - !c
+# subc rA, rB, rC
+#
+:subc regE, regF, regG is group=7 & ins0012=0x0EC0 ; regE & regF & regG
+{
+	regE = regF - regG - zext(!$(C));
+}
+
+##########################################################################################
+
+#
+# cmp rA, xval
+#
+:cmp regF, spimm2431 is (group=7 & ins0412=0x0F0 ; regF) & spimm2431
+{
+	$(N) = regF s< spimm2431;
+	$(Z) = regF == spimm2431;
+	$(C) = regF < spimm2431;
+	# TODO $(V)
+}
+
+#
+# cmp rA, imm12
+#
+:cmp regF, imm is group=7 & ins0412=0x0F8 & imm0003s ; regF & imm2431
+[ imm = (imm0003s << 8) | imm2431; ]
+{
+	$(N) = regF s< imm;
+	$(Z) = regF == imm;
+	$(C) = regF < imm;
+	# TODO $(V)
+}
+
+##########################################################################################
+
+#
+# rA = rB | rC
+# or rA, rB, rC
+#
+:or regE, regF, regG is group=7 & ins0012=0x1000 ; regE & regF & regG
+{
+	regE = regF | regG;
+}
+
+#
+# rA = rB ^ rC
+# xor rA, rB, rC
+#
+:xor regE, regF, regG is group=7 & ins0012=0x1040 ; regE & regF & regG
+{
+	regE = regF ^ regG;
+}
+
+#
+# rA = rB & rC
+# and rA, rB, rC
+#
+:and regE, regF, regG is group=7 & ins0012=0x1080 ; regE & regF & regG
+{
+	regE = regF & regG;
+}
+
+#
+# rA = rB & ~rC
+# andnot rA, rB, rC
+#
+:andnot regE, regF, regG is group=7 & ins0012=0x10C0 ; regE & regF & regG
+{
+	regE = regF & ~regG;
+}
+
+##########################################################################################
+
+#
+# rA = rB | setbit(rC)
+# bitset rA, rB, rC
+#
+:bitset regE, regF, regG is group=7 & ins0012=0x1100 ; regE & regF & regG
+{
+	regE = regF | (1 << regG);
+}
+
+#
+# rA = rB ^ setbit(rC)
+# bittgl rA, rB, rC
+#
+:bittgl regE, regF, regG is group=7 & ins0012=0x1140 ; regE & regF & regG
+{
+	regE = regF ^ (1 << regG);
+}
+
+#
+# rA = rB & setbit(rC)
+# and1 rA, rB, rC
+#
+:and1 regE, regF, regG is group=7 & ins0012=0x1180 ; regE & regF & regG
+{
+	regE = regF & (1 << regG);
+}
+
+#
+# rA = rB & ~setbit(rC)
+# bitclr rA, rB, rC
+#
+:bitclr regE, regF, regG is group=7 & ins0012=0x11C0 ; regE & regF & regG
+{
+	regE = regF & ~(1 << regG);
+}
+
+##########################################################################################
+
+#
+# tst rA, rB
+#
+:tst regE, regF is group=7 & ins0012=0x1200 ; regE & regF
+{
+	## probably
+	$(Z) = ((regE & regF) == 0);
+}
+
+#
+# not rA, rB
+#
+:not regE, regF is group=7 & ins0012=0x1240 ; regE & regF
+{
+	regE = ~regF;
+}
+
+##########################################################################################
+
+#
+# rA = rB | xval
+# or rA, rB, xval
+#
+:or regE, regF, spimm2431 is (group=7 & ins0412=0x130 ; regE & regF) & spimm2431
+{
+	regE = regF | spimm2431;
+}
+
+#
+# rA = rB ^ xval
+# xor rA, rB, xval
+#
+:xor regE, regF, spimm2431 is (group=7 & ins0412=0x134 ; regE & regF) & spimm2431
+{
+	regE = regF ^ spimm2431;
+}
+
+#
+# rA = rB & xval
+# and rA, rB, xval
+#
+:or regE, regF, spimm2431 is (group=7 & ins0412=0x138 ; regE & regF) & spimm2431
+{
+	regE = regF & spimm2431;
+}
+
+#
+# rA = rB & ~xval
+# andnot rA, rB, xval
+#
+:andnot regE, regF, spimm2431 is (group=7 & ins0412=0x13C ; regE & regF) & spimm2431
+{
+	regE = regF & ~spimm2431;
+}
+
+
+##########################################################################################
+
+#
+# tst rA, xval
+#
+:tst regF, spimm2431 is (group=7 & ins0412=0x140 ; regF) & spimm2431
+{
+	## probably
+	$(Z) = ((spimm2431 & regF) == 0);
+}
+
+
+##########################################################################################
+
+#
 # goto reladdr24
 # j reladdr24
 #
-:j jaddr24 is (group=7 & ins0812=0x1a) ... & jaddr24
+:j jaddr24 is (group=7 & ins0812=0x1A) ... & jaddr24
 {
 	goto jaddr24;
+}
+
+##########################################################################################
+
+# 
+# if (<cond>) goto rA
+# j<cond> rA
+#
+:j^cond1619 jaddr20 is (group=7 & ins0812=0x1B ; cond1619) & jaddr20
+{
+	if (cond1619)
+		goto jaddr20;
 }

@@ -36,6 +36,7 @@ define token instr(16)
 	#
 	ins0012 = (0,12)
 	ins0412 = (4,12)
+	ins0512 = (5,12)
 	ins0612 = (6,12)
 	ins0712 = (7,12)
 	ins0812 = (8,12)
@@ -45,23 +46,34 @@ define token instr(16)
 	ins1212 = (12,12)
 
 	ins0811 = (8,11)
+
 	ins0407 = (4,7)
 	ins0607 = (6,7)
+
 	ins0305 = (3,5)
+
+	ins0003 = (0,3)
 	ins0303 = (3,3)
 
 	#
 	# immediate fields
 	#
+	imm0003s = (0,3) signed
+
 	imm0004  = (0,4)
+	imm0004s = (0,4) signed
+
 	imm0005  = (0,5)
-	imm0007s = (0,7) signed
-	imm0307  = (3,7)
-	imm0310s = (3,10) signed
-	imm0609s = (6,9) signed
-	imm0812  = (8,12)
 
 	imm0007  = (0,7)
+	imm0007s = (0,7) signed
+	imm0307  = (3,7)
+
+	imm0609s = (6,9) signed
+
+	imm0310s = (3,10) signed
+
+	imm0812  = (8,12)
 
 	#
 	# register fields
@@ -87,18 +99,20 @@ define token instr(16)
 	#
 	addr0007  = (0,7)
 	addr0007s = (0,7) signed
+	addr0407s = (4,7) signed
+
 	addr0010s = (0,10) signed
 	addr0410s = (4,10) signed
 
 	addr0305s = (3,5) signed
-	addr0610  = (6,10)
-
-	addr0610s = (6,10) signed
 
 	addr0608s = (6,8) signed
-	addr0910  = (9,10)
 
 	addr0609s = (6,9) signed
+
+	addr0610  = (6,10)
+	addr0610s = (6,10) signed
+	addr0910  = (9,10)
 	addr1010  = (10,10)
 
 	#
@@ -112,10 +126,52 @@ define token instr(16)
 
 # Used by the group=7 instructions
 define token instr2(16)
-	imm1631 = (0,15)
+	#
+	# instruction fields
+	#
+	ins1619 = (0,3)
+	ins2431 = (8,15)
+	ins3131 = (15,15)
+
+	#
+	# immediate fields
+	#
+	imm1631  = (0,15)
+	imm1631s = (0,15) signed
+	imm2431  = (8,15)
+	imm2430  = (8,14)
+
+	#
+	# address fields
+	#
+	addr1619  = (0,3)
 
 	addr1619s = (0,3) signed
 	addr2031  = (4,15)
+
+	addr2429s = (8,13) signed
+	addr3031  = (14,15)
+
+	addr2430s = (8,14) signed
+	addr3131  = (15,15)
+
+	addr2431s = (8,15) signed
+
+	addr2023s = (4,7) signed
+	addr2431  = (8,15)
+
+	addr2022s = (4,6) signed
+	addr2331  = (7,15)
+
+	addr2021s = (4,5) signed
+	addr2231  = (6,15)
+
+	#
+	# register fields
+	#
+	regE = (0,3)
+	regF = (4,7)
+	regG = (8,11)
 ;
 
 #############################################################################
@@ -123,7 +179,7 @@ define token instr2(16)
 # Variables
 #
 
-attach variables [ regA ]
+attach variables [ regA regE regF regG ]
 	[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 sp ];
 
 attach variables [ regAl regBl regCl regDl ]
@@ -171,6 +227,14 @@ jaddr11: res is addr0010s
 	{ export *:4 res; }
 
 #
+# 20-bit address immediate (pc-relative)
+#
+jaddr20: res is addr0007s ; addr2031
+	[ res = ((addr0007s << 13) | (addr2031 << 1)) + inst_next; ]
+	{ export *:4 res; }
+
+
+#
 # 24-bit address immediate (pc-relative)
 #
 jaddr24: res is addr0007 ; addr1619s & addr2031
@@ -194,20 +258,23 @@ sregBf: sregBh is regBs=1 & sregBh { export sregBh; }
 # Conditions
 #
 
-#eq       s (nzcv == 0)
-#ne       s (nzcv != 0)
-#cs         (nzcv >= 0)
-#cc         (nzcv <  0)
-#mi
-#pl
-#vs
-#vc
-#hi         (nzcv >  0)
-#ls         (nzcv <= 0)
-#ge       s (nzcv >= 0)
-#lt       s (nzcv <  0)
-#gt       s (nzcv >  0)
-#le       s (nzcv <= 0)
+#0: eq       s (nzcv == 0)
+#1: ne       s (nzcv != 0)
+#2: cs         (nzcv >= 0)
+#3: cc         (nzcv <  0)
+#4: mi       s (nzcv ?? 0)
+#5: pl       s (nzcv ?? 0)
+#6: vs       s (nzcv ?? 0)
+#7: vc       s (nzcv ?? 0)
+#8: hi         (nzcv >  0)
+#9: ls         (nzcv <= 0)
+#A: ge       s (nzcv >= 0)
+#B: lt       s (nzcv <  0)
+#C: gt       s (nzcv >  0)
+#D: le       s (nzcv <= 0)
+#E:          s (nzcv ?? 0)
+
+### duplicates ?? needs to be resolved!
 
 # if (<cond>) { <true> } else { <false> }
 cond0407: "eq" is ins0407=0x0 { tmp:1 = ($(Z)) == 1;                 export tmp; }
@@ -243,6 +310,56 @@ cond0811: "gt" is ins0811=0xC { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 0; export tmp;
 cond0811: "le" is ins0811=0xD { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 1; export tmp; }
 cond0811: ""   is ins0811=0xE { tmp:1 = 1;                           export tmp; }
 
+# else 300
+cond1619: "eq" is ins1619=0x0 { tmp:1 = ($(Z)) == 1;                 export tmp; }
+cond1619: "ne" is ins1619=0x1 { tmp:1 = ($(Z)) == 0;                 export tmp; }
+cond1619: "cs" is ins1619=0x2 { tmp:1 = ($(C)) == 1;                 export tmp; }
+cond1619: "cc" is ins1619=0x3 { tmp:1 = ($(C)) == 0;                 export tmp; }
+cond1619: "mi" is ins1619=0x4 { tmp:1 = ($(N)) == 1;                 export tmp; }
+cond1619: "pl" is ins1619=0x5 { tmp:1 = ($(N)) == 0;                 export tmp; }
+cond1619: "vs" is ins1619=0x6 { tmp:1 = ($(V)) == 1;                 export tmp; }
+cond1619: "vc" is ins1619=0x7 { tmp:1 = ($(V)) == 0;                 export tmp; }
+cond1619: "hi" is ins1619=0x8 { tmp:1 = ($(C) || $(Z)) == 0;         export tmp; }	# NOT SURE
+cond1619: "ls" is ins1619=0x9 { tmp:1 = ($(C) || $(Z)) == 1;         export tmp; }	# NOT SURE
+cond1619: "ge" is ins1619=0xA { tmp:1 = ($(N) ^^ $(V)) == 0;         export tmp; }
+cond1619: "lt" is ins1619=0xB { tmp:1 = ($(N) ^^ $(V)) == 1;         export tmp; }
+cond1619: "gt" is ins1619=0xC { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 0; export tmp; }
+cond1619: "le" is ins1619=0xD { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 1; export tmp; }
+cond1619: ""   is ins1619=0xE { tmp:1 = 1;                           export tmp; }
+
+#
+# special immediate in bits 24-31, selected by bits 0-3
+#
+spimm2431: res is ins0003=0x0 ; imm2431 [ res = imm2431 * 0x00000001; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x1 ; imm2431 [ res = imm2431 * 0x00010001; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x2 ; imm2431 [ res = imm2431 * 0x01000100; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x3 ; imm2431 [ res = imm2431 * 0x01010101; ] { local tmp:4 = res; export tmp; }
+
+spimm2431: res is ins0003=0x4 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 24; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x4 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 23; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x5 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 22; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x5 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 21; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x6 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 20; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x6 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 19; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x7 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 18; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x7 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 17; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x8 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 16; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x8 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 15; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x9 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 14; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0x9 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 13; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xA ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 12; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xA ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 11; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xB ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 10; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xB ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  9; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xC ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  8; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xC ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  7; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xD ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  6; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xD ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  5; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xE ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  4; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xE ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  3; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xF ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  2; ] { local tmp:4 = res; export tmp; }
+spimm2431: res is ins0003=0xF ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  1; ] { local tmp:4 = res; export tmp; }
+
 #############################################################################
 #
 # Instructions
@@ -265,6 +382,7 @@ define pcodeop CacheFlush;
 define pcodeop CacheFlushInvalidate;
 define pcodeop ICacheFlush;
 define pcodeop CachePrefetch;
+define pcodeop Trigger;
 
 define pcodeop TODO;
 
