@@ -10,7 +10,7 @@
 [ raddr8 = (addr0305s << 7) | (addr0610 << 2); ]
 {
 	local addr:4 = sp + raddr8;
-	*:4 addr = regAl;
+	*:4 addr = regAl:4;
 }
 
 #
@@ -21,7 +21,7 @@
 [ raddr5 = addr0610s << 2; ]
 {
 	local addr:4 = regBl + raddr5;
-	*:4 addr = regAl;
+	*:4 addr = regAl:4;
 }
 
 #
@@ -32,7 +32,7 @@
 [ raddr5 = (addr0609s << 2) | (addr1010 << 1); ]
 {
 	local addr:4 = regBl + raddr5;
-	*:2 addr = regAl;
+	*:2 addr = regAl:2;
 }
 
 #
@@ -43,5 +43,5 @@
 [ raddr5 = (addr0608s << 2) | addr0910; ]
 {
 	local addr:4 = regBl + raddr5;
-	*:1 addr = regAl;
+	*:1 addr = regAl:1;
 }

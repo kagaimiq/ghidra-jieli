@@ -35,6 +35,7 @@ define token instr(16)
 	# instruction type fields
 	#
 	ins0012 = (0,12)
+	ins0212 = (2,12)
 	ins0412 = (4,12)
 	ins0512 = (5,12)
 	ins0612 = (6,12)
@@ -58,6 +59,8 @@ define token instr(16)
 	#
 	# immediate fields
 	#
+	imm0001  = (0,1)
+
 	imm0003s = (0,3) signed
 
 	imm0004  = (0,4)
@@ -139,7 +142,11 @@ define token instr2(16)
 	imm1631  = (0,15)
 	imm1631s = (0,15) signed
 	imm2431  = (8,15)
+	imm2931  = (13,15)
+
 	imm2430  = (8,14)
+
+	imm2428  = (8,12)
 
 	#
 	# address fields

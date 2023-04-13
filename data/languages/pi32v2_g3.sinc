@@ -21,7 +21,7 @@
 [ rel7 = (imm0812s << 2); ]
 {
 	local addr:4 = regBl + rel7;
-	*:4 addr = regAl;
+	*:4 addr = regAl:4;
 }
 
 #
@@ -43,5 +43,5 @@
 [ rel6 = (imm0812s << 1); ]
 {
 	local addr:4 = regBl + rel6;
-	*:2 addr = regAl;
+	*:2 addr = regAl:2;
 }

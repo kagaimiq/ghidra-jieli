@@ -218,7 +218,7 @@
 :sb regE, regF, regG is group=7 & ins0012=0x0740 ; regE & regF & regG
 {
 	local addr:4 = regF + regG;
-	*:1 addr = regE;
+	*:1 addr = regE:1;
 }
 
 #
@@ -228,7 +228,7 @@
 :addsb regE, regF, regG is group=7 & ins0012=0x0744 ; regE & regF & regG
 {
 	regF = regF + regG;
-	*:1 regF = regE;
+	*:1 regF = regE:1;
 }
 
 #
@@ -237,7 +237,7 @@
 #
 :sbadd regE, regF, regG is group=7 & ins0012=0x0748 ; regE & regF & regG
 {
-	*:1 regF = regE;
+	*:1 regF = regE:1;
 	regF = regF + regG;
 }
 
@@ -250,7 +250,7 @@
 :sh regE, regF, regG is group=7 & ins0012=0x0750 ; regE & regF & regG
 {
 	local addr:4 = regF + regG;
-	*:2 addr = regE;
+	*:2 addr = regE:2;
 }
 
 #
@@ -260,7 +260,7 @@
 :addsh regE, regF, regG is group=7 & ins0012=0x0754 ; regE & regF & regG
 {
 	regF = regF + regG;
-	*:2 regF = regE;
+	*:2 regF = regE:2;
 }
 
 #
@@ -269,7 +269,7 @@
 #
 :shadd regE, regF, regG is group=7 & ins0012=0x0758 ; regE & regF & regG
 {
-	*:2 regF = regE;
+	*:2 regF = regE:2;
 	regF = regF + regG;
 }
 
@@ -282,7 +282,7 @@
 :sw regE, regF, regG is group=7 & ins0012=0x0760 ; regE & regF & regG
 {
 	local addr:4 = regF + regG;
-	*:4 addr = regE;
+	*:4 addr = regE:4;
 }
 
 #
@@ -292,7 +292,7 @@
 :addsw regE, regF, regG is group=7 & ins0012=0x0764 ; regE & regF & regG
 {
 	regF = regF + regG;
-	*:4 regF = regE;
+	*:4 regF = regE:4;
 }
 
 #
@@ -301,7 +301,7 @@
 #
 :swadd regE, regF, regG is group=7 & ins0012=0x0768 ; regE & regF & regG
 {
-	*:4 regF = regE;
+	*:4 regF = regE:4;
 	regF = regF + regG;
 }
 
@@ -484,7 +484,7 @@
 [ reladdr = (addr2429s << 2) | addr3031; ]
 {
 	local addr:4 = regF + reladdr;
-	*:1 addr = regE;
+	*:1 addr = regE:1;
 }
 
 #
@@ -495,7 +495,7 @@
 [ reladdr = (addr2429s << 2) | addr3031; ]
 {
 	regF = regF + reladdr;
-	*:1 regF = regE;
+	*:1 regF = regE:1;
 }
 
 #
@@ -505,7 +505,7 @@
 :sbadd regE, regF, reladdr is group=7 & ins0012=0x0848 ; regE & regF & addr2429s & addr3031
 [ reladdr = (addr2429s << 2) | addr3031; ]
 {
-	*:1 regF = regE;
+	*:1 regF = regE:1;
 	regF = regF + reladdr;
 }
 
@@ -519,7 +519,7 @@
 [ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
 {
 	local addr:4 = regF + reladdr;
-	*:2 addr = regE;
+	*:2 addr = regE:2;
 }
 
 #
@@ -530,7 +530,7 @@
 [ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
 {
 	regF = regF + reladdr;
-	*:2 regF = regE;
+	*:2 regF = regE:2;
 }
 
 #
@@ -540,7 +540,7 @@
 :shadd regE, regF, reladdr is group=7 & ins0012=0x0858 ; regE & regF & addr2430s & addr3131
 [ reladdr = (addr2430s << 2) | (addr3131 << 1); ]
 {
-	*:2 regF = regE;
+	*:2 regF = regE:2;
 	regF = regF + reladdr;
 }
 
@@ -554,7 +554,7 @@
 [ reladdr = (addr2431s << 2); ]
 {
 	local addr:4 = regF + reladdr;
-	*:4 addr = regE;
+	*:4 addr = regE:4;
 }
 
 #
@@ -565,7 +565,7 @@
 [ reladdr = (addr2431s << 2); ]
 {
 	regF = regF + reladdr;
-	*:4 regF = regE;
+	*:4 regF = regE:4;
 }
 
 #
@@ -575,7 +575,7 @@
 :swadd regE, regF, reladdr is group=7 & ins0012=0x0868 ; regE & regF & addr2431s
 [ reladdr = (addr2431s << 2); ]
 {
-	*:4 regF = regE;
+	*:4 regF = regE:4;
 	regF = regF + reladdr;
 }
 
@@ -692,7 +692,7 @@
 [ reladdr = (addr2021s << 10) | addr2231; ]
 {
 	local addr:4 = sp + reladdr;
-	*:1 addr = regE;
+	*:1 addr = regE:1;
 }
 
 #
@@ -703,7 +703,7 @@
 [ reladdr = (addr2022s << 10) | (addr2331 << 1); ]
 {
 	local addr:4 = sp + reladdr;
-	*:2 addr = regE;
+	*:2 addr = regE:2;
 }
 
 #
@@ -714,7 +714,7 @@
 [ reladdr = (addr2023s << 10) | (addr2431 << 2); ]
 {
 	local addr:4 = sp + reladdr;
-	*:4 addr = regE;
+	*:4 addr = regE:4;
 }
 
 #
@@ -769,6 +769,15 @@
 }
 
 #
+# sfrA = imm16
+# movz sfrA, imm16
+#
+:movz sregAf, imm1631 is group=7 & ins0712=0x14 & ins0305=3 & sregAf ; imm1631
+{
+	sregAf = imm1631;
+}
+
+#
 # rA = xval
 # movz rA, xval
 #
@@ -802,6 +811,15 @@
 :movs regAf, imm1631s is group=7 & ins0712=0x15 & ins0305=2 & regAf ; imm1631s
 {
 	regAf = imm1631s;
+}
+
+#
+# sfrA = simm16
+# movs sfrA, simm16
+#
+:movs sregAf, imm1631s is group=7 & ins0712=0x15 & ins0305=3 & sregAf ; imm1631s
+{
+	sregAf = imm1631s;
 }
 
 ##########################################################################################
@@ -1091,6 +1109,116 @@
 	$(Z) = ((spimm2431 & regF) == 0);
 }
 
+##########################################################################################
+
+#
+# rA = uextra(rB, p:pos5, l:len5)
+# uextra rA, rB, pos5, len5
+#
+:uextra regE, regF, pos5, imm2428 is group=7 & ins0212=0x580 & imm0001 ; regE & regF & imm2428 & imm2931
+[ pos5 = (imm0001 << 3) | imm2931; ]
+{
+	local mask:4 = (1 << imm2428) - 1;
+	regE = (regF >> pos5) & mask;
+}
+
+#
+# rA <= insert(rB, p:pos5, l:len5)
+# insert rA, rB, pos5, len5
+#
+:insert regE, regF, pos5, imm2428 is group=7 & ins0212=0x590 & imm0001 ; regE & regF & imm2428 & imm2931
+[ pos5 = (imm0001 << 3) | imm2931; ]
+{
+	local mask:4 = (1 << imm2428) - 1;
+	regE = (regE & ~(mask << pos5)) | ((regF & mask) << pos5);
+}
+
+#
+# rA = sextra(rB, p:pos5, l:len5)
+# sextra rA, rB, pos5, len5
+#
+#:sextra regE, regF, pos5, imm2428 is group=7 & ins0212=0x5A0 & imm0001 ; regE & regF & imm2428 & imm2931
+#[ pos5 = (imm0001 << 3) | imm2931; ]
+#{
+#}
+
+##########################################################################################
+
+## TODO, 0 is 32! ##
+
+#
+# rA = rB << rC
+# lsl rA, rB, rC
+#
+:lsl regE, regF, regG is group=7 & ins0012=0x1700 ; regE & regF & regG
+{
+	regE = regF << regG;
+}
+
+#
+# rA = rB << shamt
+# lsl rA, rB, shamt
+#
+:lsl regE, regF, imm2428 is group=7 & ins0012=0x1720 ; regE & regF & imm2428
+{
+	regE = regF << imm2428;
+}
+
+#
+# rA = rB >> rC
+# lsr rA, rB, rC
+#
+:lsr regE, regF, regG is group=7 & ins0012=0x1740 ; regE & regF & regG
+{
+	regE = regF >> regG;
+}
+
+#
+# rA = rB >> shamt
+# lsr rA, rB, shamt
+#
+:lsr regE, regF, imm2428 is group=7 & ins0012=0x1760 ; regE & regF & imm2428
+{
+	regE = regF >> imm2428;
+}
+
+#
+# rA = rB <<< rC
+# qasl rA, rB, rC
+#
+:qasl regE, regF, regG is group=7 & ins0012=0x1780 ; regE & regF & regG
+{
+	## TODO: extend the LSB?
+	regE = regF << regG;
+}
+
+#
+# rA = rB <<< shamt
+# qasl rA, rB, shamt
+#
+:qasl regE, regF, imm2428 is group=7 & ins0012=0x17A0 ; regE & regF & imm2428
+{
+	## TODO: extend the LSB?
+	regE = regF << imm2428;
+}
+
+#
+# rA = rB >>> rC
+# qasr rA, rB, rC
+#
+:qasr regE, regF, regG is group=7 & ins0012=0x17C0 ; regE & regF & regG
+{
+	regE = regF s>> regG;
+}
+
+#
+# rA = rB >>> shamt
+# qasr rA, rB, shamt
+#
+:qasr regE, regF, imm2428 is group=7 & ins0012=0x17E0 ; regE & regF & imm2428
+{
+	regE = regF s>> imm2428;
+}
 
 ##########################################################################################
 
@@ -1113,4 +1241,42 @@
 {
 	if (cond1619)
 		goto jaddr20;
+}
+
+##########################################################################################
+
+#
+# rA = rB * xval
+# mul rA, rB, xval
+#
+:mul regE, regF, spimm2431 is (group=7 & ins0412=0x1C0 ; regE & regF) & spimm2431
+{
+	regE = regF * spimm2431;
+}
+
+#
+# rA = rB / rC
+# udiv rA, rB, rC
+#
+:udiv regE, regF, regG is group=7 & ins0012=0x1C40 ; regE & regF & regG
+{
+	regE = regF / regG;
+}
+
+#
+# rA = rB * rC
+# mul rA, rB, rC
+#
+:mul regE, regF, regG is group=7 & ins0012=0x1C80 ; regE & regF & regG
+{
+	regE = regF * regG;
+}
+
+#
+# rA = rB / rC (s)
+# sdiv rA, rB, rC
+#
+:sdiv regE, regF, regG is group=7 & ins0012=0x1CC0 ; regE & regF & regG
+{
+	regE = regF s/ regG;
 }

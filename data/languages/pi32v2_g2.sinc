@@ -39,5 +39,5 @@
 :sb regAl, regBl, imm0812s is group=2 & ins0707=1 & ins0303=1 & regAl & regBl & imm0812s
 {
 	local addr:4 = regBl + imm0812s;
-	*:1 addr = regAl;
+	*:1 addr = regAl:1;
 }
