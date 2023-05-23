@@ -158,8 +158,6 @@
 	SoftwareException(imm0005:1);
 }
 
-
-
 #
 # rep rA { <N instrunction words> }
 # rep <N instruction words>, rA
@@ -170,10 +168,46 @@
 }
 
 #
+# flush [rA]
+# flush rA
+#
+:flush regAf is group=0 & ins0712=0x03 & ins0305=0 & regAf
+{
+	TODO(regAf:4);
+}
+
+#
+# flushinv [rA]
+# flushinv rA
+#
+:flushinv regAf is group=0 & ins0712=0x03 & ins0305=1 & regAf
+{
+	TODO(regAf:4);
+}
+
+#
+# iflush [rA]
+# iflush rA
+#
+:iflush regAf is group=0 & ins0712=0x03 & ins0305=2 & regAf
+{
+	TODO(regAf:4);
+}
+
+#
+# pfetch [rA]
+# pfetch rA
+#
+:pfetch regAf is group=0 & ins0712=0x03 & ins0305=3 & regAf
+{
+	TODO(regAf:4);
+}
+
+#
 # goto rA
 # j rA
 #
-:j regAf is group=0 & ins0712=0x03 & ins0305=0x4 & regAf
+:j regAf is group=0 & ins0712=0x03 & ins0305=4 & regAf
 {
 	goto [regAf];
 }
@@ -181,9 +215,31 @@
 #
 # call rA
 #
-:call regAf is group=0 & ins0712=0x03 & ins0305=0x5 & regAf
+:call regAf is group=0 & ins0712=0x03 & ins0305=5 & regAf
 {
 	call [regAf];
+}
+
+#
+# tbb [rA]
+# tbb rA
+#
+:tbb regAf is group=0 & ins0712=0x03 & ins0305=6 & regAf
+{
+	local addr:4 = inst_next + regAf;
+	pc = inst_next + (zext(*:1 addr) << 1);
+	goto [pc];
+}
+
+#
+# tbh [rA]
+# tbh rA
+#
+:tbh regAf is group=0 & ins0712=0x03 & ins0305=7 & regAf
+{
+	local addr:4 = inst_next + regAf;
+	pc = inst_next + (zext(*:2 addr) << 1);
+	goto [pc];
 }
 
 #
@@ -210,6 +266,15 @@
 :call jaddr8 is group=0 & ins0812=0x4 & jaddr8
 {
 	call jaddr8;
+}
+
+#
+# rA = rB
+# <*> mov rA, rB
+#
+:mov regAl, regBl is group=0 & ins0612=0x18 & regAl & regBl
+{
+	regAl = regBl;
 }
 
 #
