@@ -21,6 +21,8 @@ This is the Ghidra processor module for some JieLi's custom CPU architectures.
 - pi32v2
   - Do the rest
 - q32s
-  - Implement it! (at least it's used on BD19 and BD29 - AC632N and AC630N resp.)
+  - Implement it!
+  - (at least it's used on BD19 and BD29 - AC632N and AC630N resp.)
+  - It also seems to be simpler than pi32 or pi32v2!
 - dv10/dv12 (blackfin)
   - Maybe implement it too? Or leave it as a separate project?
