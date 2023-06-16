@@ -17,7 +17,7 @@ This is the Ghidra processor module for some JieLi's custom CPU architectures.
   - Remaining missing instructions
   - rep loops and if-else blocks?
   - Maybe refactor the mnemonics?
-  - Flags changes on the instructions that change them (e.g. add, sub, rotc, etc.)
+  - Change flags on instructions that change them (e.g. add, sub, rotc, etc.)
 - pi32v2
   - Do the rest
 - q32s
