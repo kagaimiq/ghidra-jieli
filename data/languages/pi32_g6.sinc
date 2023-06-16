@@ -78,6 +78,7 @@
 :uxtb regAl, regBl is group=6 & ins0612=0x24 & regAl & regBl
 {
 	regAl = zext(regBl:1);
+	$(Z) = regAl == 0;
 }
 
 #
@@ -87,6 +88,7 @@
 :uxth regAl, regBl is group=6 & ins0612=0x25 & regAl & regBl
 {
 	regAl = zext(regBl:2);
+	$(Z) = regAl == 0;
 }
 
 #
@@ -96,6 +98,7 @@
 :sxtb regAl, regBl is group=6 & ins0612=0x26 & regAl & regBl
 {
 	regAl = sext(regBl:1);
+	$(Z) = regAl == 0;
 }
 
 #
@@ -105,6 +108,7 @@
 :sxth regAl, regBl is group=6 & ins0612=0x27 & regAl & regBl
 {
 	regAl = sext(regBl:2);
+	$(Z) = regAl == 0;
 }
 
 #
@@ -198,6 +202,7 @@
 :add regAl, regBl, imm0609s is group=6 & ins1012=4 & regAl & regBl & imm0609s
 {
 	regAl = regBl + imm0609s;
+	$(Z) = regAl == 0;
 }
 
 #
@@ -207,6 +212,7 @@
 :add regAl, regBl, regCl is group=6 & ins0912=0xA & regAl & regBl & regCl
 {
 	regAl = regBl + regCl;
+	$(Z) = regAl == 0;
 }
 
 #
