@@ -187,7 +187,7 @@
 #
 :tbb regA is group=0 & ins0412=0x010 & regA
 {
-	local addr:4 = inst_next + regAf;
+	local addr:4 = inst_next + regA;
 	pc = inst_next + (zext(*:1 addr) << 1);
 	goto [pc];
 }
@@ -197,7 +197,7 @@
 #
 :tbh regA is group=0 & ins0412=0x011 & regA
 {
-	local addr:4 = inst_next + regAf;
+	local addr:4 = inst_next + regA;
 	pc = inst_next + (zext(*:2 addr) << 1);
 	goto [pc];
 }
