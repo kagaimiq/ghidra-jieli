@@ -375,8 +375,8 @@ spimm2431: res is ins0003=0xF ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 
 define pcodeop nop;
 define pcodeop Breakpoint;
 define pcodeop HBreakpoint;
-define pcodeop ContextSync;
-define pcodeop SSync;
+define pcodeop CoreSynchronize;
+define pcodeop SystemSynchronize;
 define pcodeop Illegal;
 define pcodeop SetLock;
 define pcodeop ClearLock;
@@ -385,19 +385,30 @@ define pcodeop DisableInterrupts;
 define pcodeop EnableInterrupts;
 define pcodeop SoftwareInterrupt;
 define pcodeop SoftwareException;
-define pcodeop CacheFlush;
-define pcodeop CacheFlushInvalidate;
-define pcodeop ICacheFlush;
-define pcodeop CachePrefetch;
+define pcodeop DataCacheFlush;
+define pcodeop DataCacheLineInvalidate;
+define pcodeop InstructionCacheFlush;
+define pcodeop DataCachePrefetch;
 define pcodeop Trigger;
+
+define pcodeop IfElseBlock;
+define pcodeop RepeatBlock;
 
 define pcodeop TODO;
 
+# Uncategorized yet
 @include "pi32_g0.sinc"
-@include "pi32_g1.sinc"
-@include "pi32_g2.sinc"
-@include "pi32_g3.sinc"
-@include "pi32_g4.sinc"
-@include "pi32_g5.sinc"
 @include "pi32_g6.sinc"
 @include "pi32_g7.sinc"
+
+# Categorized
+@include "pi32_ins_loadstore.sinc"
+@include "pi32_ins_stack.sinc"
+@include "pi32_ins_shiftrot.sinc"
+@include "pi32_ins_move.sinc"
+@include "pi32_ins_loadimm.sinc"
+@include "pi32_ins_logicops.sinc"
+@include "pi32_ins_arithops.sinc"
+@include "pi32_ins_bitops.sinc"
+@include "pi32_ins_progflow.sinc"
+@include "pi32_ins_compare.sinc"

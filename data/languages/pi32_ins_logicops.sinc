@@ -1,0 +1,142 @@
+##################
+#
+# Logic Operations
+#
+##################
+
+###########################################################################################
+# OR
+###########################################################################################
+
+#
+# rA |= rB
+# or rA, rB
+#
+:or regAl, regBl is group=6 & ins0612=0x68 & regAl & regBl
+{
+	regAl = regAl | regBl;
+}
+
+#
+# rA = rB | rC
+# or rA, rB, rC
+#
+:or regE, regF, regG is group=7 & ins0012=0x1000 ; regE & regF & regG
+{
+	regE = regF | regG;
+}
+
+#
+# rA = rB | xval
+# or rA, rB, xval
+#
+:or regE, regF, spimm2431 is (group=7 & ins0412=0x130 ; regE & regF) & spimm2431
+{
+	regE = regF | spimm2431;
+}
+
+###########################################################################################
+# XOR
+###########################################################################################
+
+#
+# rA ^= rB
+# xor rA, rB
+#
+:xor regAl, regBl is group=6 & ins0612=0x69 & regAl & regBl
+{
+	regAl = regAl ^ regBl;
+}
+
+#
+# rA = rB ^ rC
+# xor rA, rB, rC
+#
+:xor regE, regF, regG is group=7 & ins0012=0x1040 ; regE & regF & regG
+{
+	regE = regF ^ regG;
+}
+
+#
+# rA = rB ^ xval
+# xor rA, rB, xval
+#
+:xor regE, regF, spimm2431 is (group=7 & ins0412=0x134 ; regE & regF) & spimm2431
+{
+	regE = regF ^ spimm2431;
+}
+
+###########################################################################################
+# AND
+###########################################################################################
+
+#
+# rA &= rB
+# and rA, rB
+#
+:and regAl, regBl is group=6 & ins0612=0x6A & regAl & regBl
+{
+	regAl = regAl & regBl;
+}
+
+#
+# rA = rB & rC
+# and rA, rB, rC
+#
+:and regE, regF, regG is group=7 & ins0012=0x1080 ; regE & regF & regG
+{
+	regE = regF & regG;
+}
+
+#
+# rA = rB & xval
+# and rA, rB, xval
+#
+:and regE, regF, spimm2431 is (group=7 & ins0412=0x138 ; regE & regF) & spimm2431
+{
+	regE = regF & spimm2431;
+}
+
+###########################################################################################
+# AND-NOT (clear masked bits)
+###########################################################################################
+
+#
+# rA = rB & ~rC
+# andnot rA, rB, rC
+#
+:andnot regE, regF, regG is group=7 & ins0012=0x10C0 ; regE & regF & regG
+{
+	regE = regF & ~regG;
+}
+
+#
+# rA = rB & ~xval
+# andnot rA, rB, xval
+#
+:andnot regE, regF, spimm2431 is (group=7 & ins0412=0x13C ; regE & regF) & spimm2431
+{
+	regE = regF & ~spimm2431;
+}
+
+###########################################################################################
+# NOT (one's complement)
+###########################################################################################
+
+#
+# rA = ~rB
+# not rA, rB
+#
+:not regAl, regBl is group=6 & ins0612=0x6B & regAl & regBl
+{
+	regAl = ~regBl;
+}
+
+#
+# rA = ~rB
+# not rA, rB
+#
+:not regE, regF is group=7 & ins0012=0x1240 ; regE & regF
+{
+	regE = ~regF;
+}

@@ -40,7 +40,7 @@
 #
 :csync is group=0 & ins0012=0x0008
 {
-	ContextSync();
+	CoreSynchronize();
 }
 
 #
@@ -48,7 +48,7 @@
 #
 :ssync is group=0 & ins0012=0x0009
 {
-	SSync();
+	SystemSynchronize();
 }
 
 #
@@ -81,30 +81,6 @@
 :idle is group=0 & ins0012=0x0010
 {
 	Idle();
-}
-
-#
-# rts
-#
-:rts is group=0 & ins0012=0x0020
-{
-	return [rets];
-}
-
-#
-# rti
-#
-:rti is group=0 & ins0012=0x0030
-{
-	return [reti];
-}
-
-#
-# rte
-#
-:rte is group=0 & ins0012=0x0038
-{
-	return [rete];
 }
 
 #
@@ -156,21 +132,12 @@
 }
 
 #
-# rep rA { <N instrunction words> }
-# rep <N instruction words>, rA
-#
-:rep bra0305, regAf is group=0 & ins0712=0x02 & bra0305 & regAf
-{
-	TODO(bra0305:1, regAf:4);
-}
-
-#
 # flush [rA]
 # flush rA
 #
 :flush regAf is group=0 & ins0712=0x03 & ins0305=0 & regAf
 {
-	TODO(regAf:4);
+	DataCacheFlush(regAf:4);
 }
 
 #
@@ -179,7 +146,7 @@
 #
 :flushinv regAf is group=0 & ins0712=0x03 & ins0305=1 & regAf
 {
-	TODO(regAf:4);
+	DataCacheLineInvalidate(regAf:4);
 }
 
 #
@@ -188,7 +155,7 @@
 #
 :iflush regAf is group=0 & ins0712=0x03 & ins0305=2 & regAf
 {
-	TODO(regAf:4);
+	InstructionCacheFlush(regAf:4);
 }
 
 #
@@ -197,98 +164,5 @@
 #
 :pfetch regAf is group=0 & ins0712=0x03 & ins0305=3 & regAf
 {
-	TODO(regAf:4);
-}
-
-#
-# goto rA
-# j rA
-#
-:j regAf is group=0 & ins0712=0x03 & ins0305=4 & regAf
-{
-	goto [regAf];
-}
-
-#
-# call rA
-#
-:call regAf is group=0 & ins0712=0x03 & ins0305=5 & regAf
-{
-	call [regAf];
-}
-
-#
-# tbb [rA]
-# tbb rA
-#
-:tbb regAf is group=0 & ins0712=0x03 & ins0305=6 & regAf
-{
-	local addr:4 = inst_next + regAf;
-	pc = inst_next + (zext(*:1 addr) << 1);
-	goto [pc];
-}
-
-#
-# tbh [rA]
-# tbh rA
-#
-:tbh regAf is group=0 & ins0712=0x03 & ins0305=7 & regAf
-{
-	local addr:4 = inst_next + regAf;
-	pc = inst_next + (zext(*:2 addr) << 1);
-	goto [pc];
-}
-
-#
-# rep rA { <N instrunction words> }
-# rep <N instruction words>, rA
-#
-:rep bra0507, imm0004 is group=0 & ins0812=0x12 & bra0507 & imm0004
-{
-	TODO(bra0507:1, imm0004:1);
-}
-
-#
-# if (<cond>) { <true block> } else { <else block> }
-# if<cond> <else block> <true block>
-#
-:if^cond0407 bra0203, bra0001 is group=0 & ins0812=0x03 & cond0407 & bra0203 & bra0001
-{
-	TODO(cond0407:1, bra0203:1, bra0001:1);
-}
-
-#
-# call reladdr8
-#
-:call jaddr8 is group=0 & ins0812=0x4 & jaddr8
-{
-	call jaddr8;
-}
-
-#
-# rA = rB
-# <*> mov rA, rB
-#
-:mov regAl, regBl is group=0 & ins0612=0x18 & regAl & regBl
-{
-	regAl = regBl;
-}
-
-#
-# goto reladdr11
-# j reladdr11
-#
-:j jaddr11 is group=0 & ins1112=1 & jaddr11
-{
-	goto jaddr11;
-}
-
-#
-# if (<cond>) goto reladdr8
-# j<cond> reladdr8
-#
-:j^cond0811 jaddr8 is group=0 & ins1212=1 & cond0811 & jaddr8
-{
-	if (cond0811)
-		goto jaddr8;
+	DataCachePrefetch(regAf:4);
 }

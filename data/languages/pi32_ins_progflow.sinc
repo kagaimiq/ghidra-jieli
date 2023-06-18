@@ -1,0 +1,211 @@
+##################
+#
+# Program Flow Control
+#
+##################
+
+###########################################################################################
+# Return from Subroutine/Interrupt/Exception(emulation?)
+###########################################################################################
+
+#
+# rts
+#
+:rts is group=0 & ins0012=0x0020
+{
+	return [rets];
+}
+
+#
+# rti
+#
+:rti is group=0 & ins0012=0x0030
+{
+	return [reti];
+}
+
+#
+# rte
+#
+:rte is group=0 & ins0012=0x0038
+{
+	return [rete];
+}
+
+###########################################################################################
+# Goto (Jump)
+###########################################################################################
+
+#
+# goto rA
+# j rA
+#
+:j regAf is group=0 & ins0712=0x03 & ins0305=4 & regAf
+{
+	goto [regAf];
+}
+
+#
+# goto reladdr11
+# j reladdr11
+#
+:j jaddr11 is group=0 & ins1112=1 & jaddr11
+{
+	goto jaddr11;
+}
+
+#
+# goto reladdr24
+# j reladdr24
+#
+:j jaddr24 is (group=7 & ins0812=0x1A) ... & jaddr24
+{
+	goto jaddr24;
+}
+
+###########################################################################################
+# Call
+###########################################################################################
+
+#
+# call rA
+#
+:call regAf is group=0 & ins0712=0x03 & ins0305=5 & regAf
+{
+	call [regAf];
+}
+
+#
+# call reladdr8
+#
+:call jaddr8 is group=0 & ins0812=0x4 & jaddr8
+{
+	call jaddr8;
+}
+
+#
+# call reladdr24
+#
+:call jaddr24 is (group=7 & ins0812=0x01) ... & jaddr24
+{
+	call jaddr24;
+}
+
+###########################################################################################
+# Table Branch
+###########################################################################################
+
+#
+# tbb [rA]
+# tbb rA
+#
+:tbb regAf is group=0 & ins0712=0x03 & ins0305=6 & regAf
+{
+	local addr:4 = inst_next + regAf;
+	pc = inst_next + (zext(*:1 addr) << 1);
+	goto [pc];
+}
+
+#
+# tbh [rA]
+# tbh rA
+#
+:tbh regAf is group=0 & ins0712=0x03 & ins0305=7 & regAf
+{
+	local addr:4 = inst_next + regAf;
+	pc = inst_next + (zext(*:2 addr) << 1);
+	goto [pc];
+}
+
+###########################################################################################
+# Condititonal branch
+###########################################################################################
+
+#
+# if (<cond>) goto reladdr8
+# j<cond> reladdr8
+#
+:j^cond0811 jaddr8 is group=0 & ins1212=1 & cond0811 & jaddr8
+{
+	if (cond0811)
+		goto jaddr8;
+}
+
+# 
+# if (<cond>) goto rA
+# j<cond> rA
+#
+:j^cond1619 regF is group=7 & ins0012=0x0000 ; cond1619 & regF
+{
+	if (cond1619)
+		goto regF;
+}
+
+# 
+# if (<cond>) goto rA
+# j<cond> rA
+#
+:j^cond1619 jaddr20 is (group=7 & ins0812=0x1B ; cond1619) & jaddr20
+{
+	if (cond1619)
+		goto jaddr20;
+}
+
+###########################################################################################
+# Jump if zero/nonzero
+###########################################################################################
+
+#
+# if (rA == 0) goto reladdr7
+# jz rA, reladdr7
+#
+:jz regAl, jaddr7 is group=1 & ins1112=0 & ins0303=0 & jaddr7 & regAl
+{
+	if (regAl == 0)
+		goto jaddr7;
+}
+
+#
+# if (rA != 0) goto reladdr7
+# jnz rA, reladdr7
+#
+:jnz regAl, jaddr7 is group=1 & ins1112=0 & ins0303=1 & jaddr7 & regAl
+{
+	if (regAl != 0)
+		goto jaddr7;
+}
+
+###########################################################################################
+# Code repeat     ( Impossible to implement? )
+###########################################################################################
+
+#
+# rep rA { <N instrunction words> }
+# rep <N instruction words>, rA
+#
+:rep bra0305, regAf is group=0 & ins0712=0x02 & bra0305 & regAf
+{
+	RepeatBlock(bra0305:1, regAf:4);
+}
+
+#
+# rep rA { <N instrunction words> }
+# rep <N instruction words>, rA
+#
+:rep bra0507, imm0004 is group=0 & ins0812=0x12 & bra0507 & imm0004
+{
+	RepeatBlock(bra0507:1, imm0004:1);
+}
+
+###########################################################################################
+# If/else     ( Impossible to implement? )
+###########################################################################################
+
+#
+# if (<cond>) { <true block> } else { <else block> }
+# if<cond> <else block> <true block>
+#
+:if^cond0407 bra0203, bra0001 is group=0 & ins0812=0x03 & cond0407 & bra0203 & bra0001
+{
+	IfElseBlock(cond0407:1, bra0203:1, bra0001:1);
+}

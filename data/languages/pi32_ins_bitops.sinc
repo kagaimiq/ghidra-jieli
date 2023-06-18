@@ -1,0 +1,85 @@
+##################
+#
+# Bit Operations
+#
+##################
+
+###########################################################################################
+# Set bit
+###########################################################################################
+
+#
+# rA |= (1 << shamt)
+# bitset rA, shamt
+#
+:bitset regAl, imm0307 is group=6 & ins0812=0x18 & regAl & imm0307
+{
+	regAl = regAl | (1 << imm0307);
+}
+
+#
+# rA = rB | setbit(rC)
+# bitset rA, rB, rC
+#
+:bitset regE, regF, regG is group=7 & ins0012=0x1100 ; regE & regF & regG
+{
+	regE = regF | (1 << regG);
+}
+
+
+###########################################################################################
+# Toggle bit
+###########################################################################################
+
+#
+# rA ^= (1 << shamt)
+# bittgl rA, shamt
+#
+:bittgl regAl, imm0307 is group=6 & ins0812=0x19 & regAl & imm0307
+{
+	regAl = regAl ^ (1 << imm0307);
+}
+
+#
+# rA = rB ^ setbit(rC)
+# bittgl rA, rB, rC
+#
+:bittgl regE, regF, regG is group=7 & ins0012=0x1140 ; regE & regF & regG
+{
+	regE = regF ^ (1 << regG);
+}
+
+###########################################################################################
+# Clear bit
+###########################################################################################
+
+#
+# rA &= ~(1 << shamt)
+# bitclr rA, shamt
+#
+:bitclr regAl, imm0307 is group=6 & ins0812=0x1B & regAl & imm0307
+{
+	regAl = regAl & ~(1 << imm0307);
+}
+
+#
+# rA = rB & ~setbit(rC)
+# bitclr rA, rB, rC
+#
+:bitclr regE, regF, regG is group=7 & ins0012=0x11C0 ; regE & regF & regG
+{
+	regE = regF & ~(1 << regG);
+}
+
+###########################################################################################
+# Keep bit (AND)
+###########################################################################################
+
+#
+# rA = rB & setbit(rC)
+# and1 rA, rB, rC
+#
+:and1 regE, regF, regG is group=7 & ins0012=0x1180 ; regE & regF & regG
+{
+	regE = regF & (1 << regG);
+}

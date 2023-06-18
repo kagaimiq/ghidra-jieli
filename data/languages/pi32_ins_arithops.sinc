@@ -1,0 +1,244 @@
+##################
+#
+# Arithmetic Operations
+#
+##################
+
+###########################################################################################
+# Add
+###########################################################################################
+
+#
+# rA += imm8s
+# add rA, imm8s
+#
+:add regAl, imm0310s is group=4 & ins1112=1 & imm0310s & regAl
+{
+	regAl = regAl + imm0310s;
+}
+
+#
+# rA = sp + imm8s
+# add rA, sp, imm8s
+#
+:add regAl, sp, imm0310s is group=4 & ins1112=2 & imm0310s & regAl & sp
+{
+	regAl = sp + imm0310s;
+}
+
+#
+# rA += rB (brev)
+# addrev rA, rB
+#
+:addrev regAf, regBf is group=6 & ins0812=0x0A & regAf & regBf
+{
+	## TODO --- reverse the regBf !!
+	regAf = regAf + regBf;
+}
+
+#
+# rA += rB
+# add rA, rB
+#
+:add regAf, regBf is group=6 & ins0812=0x0B & regAf & regBf
+{
+	regAf = regAf + regBf;
+}
+
+#
+# sp += imm8s
+# add sp, imm8s
+#
+:add sp, imm0007s is group=6 & ins0812=0x0D & sp & imm0007s
+{
+	sp = sp + imm0007s;
+}
+
+#
+# rA = rB + imm4s
+# add rA, rB, imm4s
+#
+:add regAl, regBl, imm0609s is group=6 & ins1012=4 & regAl & regBl & imm0609s
+{
+	regAl = regBl + imm0609s;
+	$(Z) = regAl == 0;
+}
+
+#
+# rA = rB + rC
+# add rA, rB, rC
+#
+:add regAl, regBl, regCl is group=6 & ins0912=0xA & regAl & regBl & regCl
+{
+	regAl = regBl + regCl;
+	$(Z) = regAl == 0;
+}
+
+#
+# rA = rB + imm13s
+# add rA, rB, imm13s
+#
+:add regE, regF, imm is group=7 & ins0512=0x68 & imm0004s ; regE & regF & imm2431
+[ imm = (imm0004s << 8) | imm2431; ]
+{
+	regE = regF + imm;
+}
+
+#
+# rA = rB + rC
+# add rA, rB, rC
+#
+:add regE, regF, regG is group=7 & ins0012=0x0E00 ; regE & regF & regG
+{
+	regE = regF + regG;
+}
+
+#
+# rA = rB + xval
+# add rA, rB, xval
+#
+:add regE, regF, spimm2431 is (group=7 & ins0412=0x0E1 ; regE & regF) & spimm2431
+{
+	regE = regF + spimm2431;
+}
+
+###########################################################################################
+# Add with carry
+###########################################################################################
+
+#
+# rA += rB + c
+# addc rA, rB
+#
+:addc regAl, regBl is group=6 & ins0612=0x70 & regAl & regBl
+{
+	regAl = regAl + regBl + zext($(C));
+}
+
+#
+# rA = rB + rC + c
+# addc rA, rB, rC
+#
+:addc regE, regF, regG is group=7 & ins0012=0x0E80 ; regE & regF & regG
+{
+	regE = regF + regG + zext($(C));
+}
+
+###########################################################################################
+# Substract
+###########################################################################################
+
+#
+# rA = rB - rC
+# sub rA, rB, rC
+#
+:sub regAl, regBl, regCl is group=6 & ins0912=0xB & regAl & regBl & regCl
+{
+	regAl = regBl - regCl;
+}
+
+#
+# rA = xval - rB
+# sub rA, xval, rB
+#
+:sub regE, spimm2431, regF is (group=7 & ins0412=0x0E2 ; regE & regF) & spimm2431
+{
+	regE = spimm2431 - regF;
+}
+
+#
+# rA = rB - rC
+# sub rA, rB, rC
+#
+:sub regE, regF, regG is group=7 & ins0012=0x0E40 ; regE & regF & regG
+{
+	regE = regF - regG;
+}
+
+#
+# rA = rB - xval
+# sub rA, rB, xval
+#
+:sub regE, regF, spimm2431 is (group=7 & ins0412=0x0E9 ; regE & regF) & spimm2431
+{
+	regE = regF - spimm2431;
+}
+
+###########################################################################################
+# Substract with carry
+###########################################################################################
+
+#
+# rA -= rB + !c
+# subc rA, rB
+#
+:subc regAl, regBl is group=6 & ins0612=0x71 & regAl & regBl
+{
+	regAl = regAl - regBl + zext(!$(C));
+}
+
+#
+# rA = rB - rC - !c
+# subc rA, rB, rC
+#
+:subc regE, regF, regG is group=7 & ins0012=0x0EC0 ; regE & regF & regG
+{
+	regE = regF - regG - zext(!$(C));
+}
+
+###########################################################################################
+# Negate (two's complement)
+###########################################################################################
+
+#
+# rA = -rB
+# neg rA, rB
+#
+:neg regAl, regBl is group=6 & ins0612=0x72 & regAl & regBl
+{
+	regAl = -regBl;
+}
+
+###########################################################################################
+# Multiply
+###########################################################################################
+
+#
+# rA = rB * xval
+# mul rA, rB, xval
+#
+:mul regE, regF, spimm2431 is (group=7 & ins0412=0x1C0 ; regE & regF) & spimm2431
+{
+	regE = regF * spimm2431;
+}
+
+#
+# rA = rB * rC
+# mul rA, rB, rC
+#
+:mul regE, regF, regG is group=7 & ins0012=0x1C80 ; regE & regF & regG
+{
+	regE = regF * regG;
+}
+
+###########################################################################################
+# Divide
+###########################################################################################
+
+#
+# rA = rB / rC
+# udiv rA, rB, rC
+#
+:udiv regE, regF, regG is group=7 & ins0012=0x1C40 ; regE & regF & regG
+{
+	regE = regF / regG;
+}
+
+#
+# rA = rB / rC (s)
+# sdiv rA, rB, rC
+#
+:sdiv regE, regF, regG is group=7 & ins0012=0x1CC0 ; regE & regF & regG
+{
+	regE = regF s/ regG;
+}

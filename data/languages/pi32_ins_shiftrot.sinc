@@ -1,0 +1,256 @@
+##################
+#
+# Shift/Rotate
+#
+##################
+
+# TODO: if immediate shamt is 0 then it's 32 or 64, if we're doing it with macc
+
+###########################################################################################
+# Logical shift left
+###########################################################################################
+
+#
+# rA = rB << shamt
+# lsl rA, rB, shamt
+#
+:lsl regAl, regBl, imm0812 is group=5 & ins0607=0 & regAl & regBl & imm0812
+{
+	regAl = regBl << imm0812;
+}
+
+#
+# rA <<= rB
+# lsl rA, rB
+#
+:lsl regAl, regBl is group=6 & ins0612=0x3C & regAl & regBl
+{
+	regAl = regAl << regBl;
+}
+
+#
+# macc <<= shamt6
+# lslmacc shamt6
+#
+:lslmacc imm0005 is group=6 & ins0612=0x73 & imm0005
+{
+	## TODO, smamt=0 is 64 !!
+	macc = macc << imm0005;
+}
+
+#
+# macc <<= rA
+# lslmacc rA
+#
+:lslmacc regAf is group=6 & ins0712=0x3B & ins0305=0 & regAf
+{
+	macc = macc << regAf;
+}
+
+#
+# rA = rB << rC
+# lsl rA, rB, rC
+#
+:lsl regE, regF, regG is group=7 & ins0012=0x1700 ; regE & regF & regG
+{
+	regE = regF << regG;
+}
+
+#
+# rA = rB << shamt
+# lsl rA, rB, shamt
+#
+:lsl regE, regF, imm2428 is group=7 & ins0012=0x1720 ; regE & regF & imm2428
+{
+	regE = regF << imm2428;
+}
+
+###########################################################################################
+# Logical shift right
+###########################################################################################
+
+#
+# rA = rB >> shamt
+# lsr rA, rB, shamt
+#
+:lsr regAl, regBl, imm0812 is group=5 & ins0607=1 & regAl & regBl & imm0812
+{
+	regAl = regBl >> imm0812;
+}
+
+#
+# rA >>= rB
+# lsr rA, rB
+#
+:lsr regAl, regBl is group=6 & ins0612=0x3D & regAl & regBl
+{
+	regAl = regAl >> regBl;
+}
+
+#
+# macc >>= rA
+# lsrmacc rA
+#
+:lsrmacc regAf is group=6 & ins0712=0x3C & ins0305=0 & regAf
+{
+	macc = macc >> regAf;
+}
+
+#
+# macc >>= shamt6
+# lsrmacc shamt6
+#
+:lsrmacc imm0005 is group=6 & ins0612=0x7C & imm0005
+{
+	## TODO, smamt=0 is 64 !!
+	macc = macc >> imm0005;
+}
+
+#
+# rA = rB >> rC
+# lsr rA, rB, rC
+#
+:lsr regE, regF, regG is group=7 & ins0012=0x1740 ; regE & regF & regG
+{
+	regE = regF >> regG;
+}
+
+#
+# rA = rB >> shamt
+# lsr rA, rB, shamt
+#
+:lsr regE, regF, imm2428 is group=7 & ins0012=0x1760 ; regE & regF & imm2428
+{
+	regE = regF >> imm2428;
+}
+
+###########################################################################################
+# (Q) Arithmetic shift left
+###########################################################################################
+
+#
+# rA = rB <<< shamt
+# qasl rA, rB, shamt
+#
+:qasl regAl, regBl, imm0812 is group=5 & ins0607=2 & regAl & regBl & imm0812
+{
+	# TODO: extend the LSB
+	regAl = regBl << imm0812;
+}
+
+#
+# rA <<<= rB
+# qasl rA, rB
+#
+:qasl regAl, regBl is group=6 & ins0612=0x3E & regAl & regBl
+{
+	# TODO: extend the LSB
+	regAl = regAl << regBl;
+}
+
+#
+# rA = rB <<< rC
+# qasl rA, rB, rC
+#
+:qasl regE, regF, regG is group=7 & ins0012=0x1780 ; regE & regF & regG
+{
+	## TODO: extend the LSB?
+	regE = regF << regG;
+}
+
+#
+# rA = rB <<< shamt
+# qasl rA, rB, shamt
+#
+:qasl regE, regF, imm2428 is group=7 & ins0012=0x17A0 ; regE & regF & imm2428
+{
+	## TODO: extend the LSB?
+	regE = regF << imm2428;
+}
+
+###########################################################################################
+# (Q) Arithmentic shift right
+###########################################################################################
+
+#
+# rA = rB >>> shamt
+# qasr rA, rB, shamt
+#
+:qasr regAl, regBl, imm0812 is group=5 & ins0607=3 & regAl & regBl & imm0812
+{
+	regAl = regBl s>> imm0812;
+}
+
+#
+# rA >>>= rB
+# qasr rA, rB
+#
+:qasr regAl, regBl is group=6 & ins0612=0x3F & regAl & regBl
+{
+	regAl = regAl s>> regBl;
+}
+
+#
+# macc >>>= rA
+# asrmacc rA
+#
+:asrmacc regAf is group=6 & ins0712=0x3D & ins0305=0 & regAf
+{
+	macc = macc s>> regAf;
+}
+
+#
+# macc >>>= shamt6
+# asrmacc shamt6
+#
+:asrmacc imm0005 is group=6 & ins0612=0x7E & imm0005
+{
+	## TODO, smamt=0 is 64 !!
+	macc = macc s>> imm0005;
+}
+
+#
+# rA = rB >>> rC
+# qasr rA, rB, rC
+#
+:qasr regE, regF, regG is group=7 & ins0012=0x17C0 ; regE & regF & regG
+{
+	regE = regF s>> regG;
+}
+
+#
+# rA = rB >>> shamt
+# qasr rA, rB, shamt
+#
+:qasr regE, regF, imm2428 is group=7 & ins0012=0x17E0 ; regE & regF & imm2428
+{
+	regE = regF s>> imm2428;
+}
+
+###########################################################################################
+# Rotate right
+###########################################################################################
+
+#
+# rA <>= rB
+# rotr rA, rB
+#
+:rotr regAl, regBl is group=6 & ins0612=0x74 & regAl & regBl
+{
+	## im too dumb
+	regAl = regBl;
+}
+
+###########################################################################################
+# Rotate right through carry
+###########################################################################################
+
+#
+# rA <c>= rB
+# rotrc rA, rB
+#
+:rotrc regAl, regBl is group=6 & ins0612=0x75 & regAl & regBl
+{
+	## im too dumb
+	regAl = regBl;
+}

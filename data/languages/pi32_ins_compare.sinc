@@ -1,0 +1,76 @@
+##################
+#
+# Compare & Test
+#
+##################
+
+###########################################################################################
+# Compare
+###########################################################################################
+
+#
+# cmp rA, imm8s
+#
+:cmp regAl, imm0310s is group=4 & ins1112=3 & imm0310s & regAl
+{
+	$(N) = regAl s< imm0310s;
+	$(Z) = regAl == imm0310s;
+	$(C) = regAl < imm0310s;
+	# TODO $(V)
+}
+
+#
+# cmp rB, rA
+#
+:cmp regBf, regAf is group=6 & ins0812=0x0E & regAf & regBf
+{
+	$(N) = regBf s< regAf;
+	$(Z) = regBf == regAf;
+	$(C) = regBf < regAf;
+	# TODO $(V)
+}
+
+#
+# cmp rA, xval
+#
+:cmp regF, spimm2431 is (group=7 & ins0412=0x0F0 ; regF) & spimm2431
+{
+	$(N) = regF s< spimm2431;
+	$(Z) = regF == spimm2431;
+	$(C) = regF < spimm2431;
+	# TODO $(V)
+}
+
+#
+# cmp rA, imm12
+#
+:cmp regF, imm is group=7 & ins0412=0x0F8 & imm0003s ; regF & imm2431
+[ imm = (imm0003s << 8) | imm2431; ]
+{
+	$(N) = regF s< imm;
+	$(Z) = regF == imm;
+	$(C) = regF < imm;
+	# TODO $(V)
+}
+
+###########################################################################################
+# Test
+###########################################################################################
+
+#
+# tst rA, rB
+#
+:tst regE, regF is group=7 & ins0012=0x1200 ; regE & regF
+{
+	## probably
+	$(Z) = ((regE & regF) == 0);
+}
+
+#
+# tst rA, xval
+#
+:tst regF, spimm2431 is (group=7 & ins0412=0x140 ; regF) & spimm2431
+{
+	## probably
+	$(Z) = ((spimm2431 & regF) == 0);
+}

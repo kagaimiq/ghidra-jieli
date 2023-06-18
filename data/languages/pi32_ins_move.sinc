@@ -1,0 +1,137 @@
+##################
+#
+# Move
+#
+##################
+
+###########################################################################################
+# Register move
+###########################################################################################
+
+#
+# rA = rB
+# mov rA, rB
+#
+:mov regAl, regBl is group=0 & ins0612=0x18 & regAl & regBl
+{
+	regAl = regBl;
+}
+
+#
+# rA = rB
+# mov rA, rB
+#
+:mov regAf, regBf is group=6 & ins0812=0x06 & regAf & regBf
+{
+	regAf = regBf;
+}
+
+#
+# sfrA = rB
+# mov sfrA, rB
+#
+:mov sregAf, regBf is group=6 & ins0812=0x07 & sregAf & regBf
+{
+	sregAf = regBf;
+}
+
+#
+# rA = sfrB
+# mov rA, sfrB
+#
+:mov regAf, sregBf is group=6 & ins0812=0x08 & regAf & sregBf
+{
+	regAf = sregBf;
+}
+
+###########################################################################################
+# Zero-extend byte
+###########################################################################################
+
+#
+# rA = rB.b
+# uxtb rA, rB
+#
+:uxtb regAl, regBl is group=6 & ins0612=0x24 & regAl & regBl
+{
+	regAl = zext(regBl:1);
+	$(Z) = regAl == 0;
+}
+
+#
+# rA = rB.b
+# uxtb rA, rB
+#
+:uxtb regE, regF is group=7 & ins0012=0x0C00 ; regE & regF
+{
+	regE = zext(regF:1);
+}
+
+###########################################################################################
+# Zero-extend halfword
+###########################################################################################
+
+#
+# rA = rB.l
+# uxth rA, rB
+#
+:uxth regAl, regBl is group=6 & ins0612=0x25 & regAl & regBl
+{
+	regAl = zext(regBl:2);
+	$(Z) = regAl == 0;
+}
+
+#
+# rA = rB.l
+# uxth rA, rB
+#
+:uxth regE, regF is group=7 & ins0012=0x0C40 ; regE & regF
+{
+	regE = zext(regF:2);
+}
+
+###########################################################################################
+# Sign-extend byte
+###########################################################################################
+
+#
+# rA = rB.b (s)
+# sxtb rA, rB
+#
+:sxtb regAl, regBl is group=6 & ins0612=0x26 & regAl & regBl
+{
+	regAl = sext(regBl:1);
+	$(Z) = regAl == 0;
+}
+
+#
+# rA = rB.b (s)
+# sxtb rA, rB
+#
+:sxtb regE, regF is group=7 & ins0012=0x0C80 ; regE & regF
+{
+	regE = sext(regF:1);
+}
+
+###########################################################################################
+# Sign-extend halfword
+###########################################################################################
+
+#
+# rA = rB.l (s)
+# sxth rA, rB
+#
+:sxth regAl, regBl is group=6 & ins0612=0x27 & regAl & regBl
+{
+	regAl = sext(regBl:2);
+	$(Z) = regAl == 0;
+}
+
+#
+# rA = rB.l (s)
+# sxth rA, rB
+#
+:sxth regE, regF is group=7 & ins0012=0x0CC0 ; regE & regF
+{
+	regE = sext(regF:2);
+}
