@@ -111,8 +111,6 @@
 #
 :rti is group=0 & ins0012=0x0081
 {
-	ssp = sp;
-	sp = usp;
 	return [reti];
 }
 
@@ -121,7 +119,6 @@
 #
 :rtx is group=0 & ins0012=0x0082
 {
-	# probably swaps the stack pointers too..
 	return [retx];
 }
 
@@ -130,7 +127,6 @@
 #
 :rte is group=0 & ins0012=0x0083
 {
-	# probably swaps the stack pointers too..
 	return [rete];
 }
 
