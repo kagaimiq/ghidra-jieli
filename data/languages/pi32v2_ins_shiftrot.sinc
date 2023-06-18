@@ -1,0 +1,97 @@
+##################
+#
+# Shift/Rotate
+#
+##################
+
+# TODO: if immediate shamt is 0 then it's 32 or 64, if we're doing it with doubled registers
+
+###########################################################################################
+# Logical shift left
+###########################################################################################
+
+#
+# rA <<= rB
+# <G> lsl rA, rB
+#
+:lsl regAl, regBl is group=0 & ins0712=0x34 & ins0303=0 & regAl & regBl
+{
+	regAl = regAl << regBl;
+}
+
+#
+# rA = rB << shamt
+# <G> lsl rA, rB, shamt
+#
+:lsl regAl, regBl, imm0812 is group=5 & ins0707=0 & ins0303=0 & regAl & regBl & imm0812
+{
+	regAl = regBl << imm0812;
+}
+
+###########################################################################################
+# Logical shift right
+###########################################################################################
+
+#
+# rA >>= rB
+# <G> lsr rA, rB
+#
+:lsr regAl, regBl is group=0 & ins0712=0x35 & ins0303=0 & regAl & regBl
+{
+	regAl = regAl >> regBl;
+}
+
+#
+# rA = rB >> shamt
+# <G> lsr rA, rB, shamt
+#
+:lsr regAl, regBl, imm0812 is group=5 & ins0707=1 & ins0303=0 & regAl & regBl & imm0812
+{
+	regAl = regBl >> imm0812;
+}
+
+###########################################################################################
+# (Q) Arithmetic shift left
+###########################################################################################
+
+#
+# rA <<<= rB
+# <G> qasl rA, rB
+#
+:qasl regAl, regBl is group=0 & ins0712=0x34 & ins0303=1 & regAl & regBl
+{
+	# TODO... duplicate the LSB (i guess)
+	regAl = regAl << regBl;
+}
+
+#
+# rA = rB <<< shamt
+# <G> qasl rA, rB, shamt
+#
+:qasl regAl, regBl, imm0812 is group=5 & ins0707=0 & ins0303=1 & regAl & regBl & imm0812
+{
+	# TODO extend the LSB
+	regAl = regBl << imm0812;
+}
+
+###########################################################################################
+# (Q) Arithmentic shift right
+###########################################################################################
+
+#
+# rA >>>= rB
+# <G> qasr rA, rB
+#
+:qasr regAl, regBl is group=0 & ins0712=0x35 & ins0303=1 & regAl & regBl
+{
+	regAl = regAl s>> regBl;
+}
+
+#
+# rA = rB >>> shamt
+# <G> qasr rA, rB, shamt
+#
+:qasr regAl, regBl, imm0812 is group=5 & ins0707=1 & ins0303=1 & regAl & regBl & imm0812
+{
+	regAl = regBl s>> imm0812;
+}

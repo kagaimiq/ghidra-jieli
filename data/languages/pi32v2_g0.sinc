@@ -39,7 +39,7 @@
 #
 :csync is group=0 & ins0012=0x0020
 {
-	ContextSync();
+	CoreSynchronize();
 }
 
 #
@@ -55,7 +55,7 @@
 #
 :ssync is group=0 & ins0012=0x0022
 {
-	SSync();
+	SystemSynchronize();
 }
 
 #
@@ -99,38 +99,6 @@
 }
 
 #
-# rts
-#
-:rts is group=0 & ins0012=0x0080
-{
-	return [rets];
-}
-
-#
-# rti
-#
-:rti is group=0 & ins0012=0x0081
-{
-	return [reti];
-}
-
-#
-# rtx
-#
-:rtx is group=0 & ins0012=0x0082
-{
-	return [retx];
-}
-
-#
-# rte
-#
-:rte is group=0 & ins0012=0x0083
-{
-	return [rete];
-}
-
-#
 # swi imm3
 #
 :swi imm0002 is group=0 & ins0412=0x00A & imm0002
@@ -144,22 +112,6 @@
 :testset "b"[regA] is group=0 & ins0412=0x00B & regA
 {
 	TODO(regA:4);
-}
-
-#
-# call rA
-#
-:call regA is group=0 & ins0412=0x00C & regA
-{
-	call regA;
-}
-
-#
-# goto rA
-#
-:goto regA is group=0 & ins0412=0x00D & regA
-{
-	goto regA;
 }
 
 #
@@ -179,31 +131,11 @@
 }
 
 #
-# tbb rA
-#
-:tbb regA is group=0 & ins0412=0x010 & regA
-{
-	local addr:4 = inst_next + regA;
-	pc = inst_next + (zext(*:1 addr) << 1);
-	goto [pc];
-}
-
-#
-# tbh rA
-#
-:tbh regA is group=0 & ins0412=0x011 & regA
-{
-	local addr:4 = inst_next + regA;
-	pc = inst_next + (zext(*:2 addr) << 1);
-	goto [pc];
-}
-
-#
 # pfetch [rA]
 #
 :pfetch [regA] is group=0 & ins0412=0x020 & regA
 {
-	CachePrefetch(regA:4);
+	DataCachePrefetch(regA:4);
 }
 
 #
@@ -211,7 +143,7 @@
 #
 :iflush [regA] is group=0 & ins0412=0x021 & regA
 {
-	ICacheFlush(regA:4);
+	InstructionCacheFlush(regA:4);
 }
 
 #
@@ -219,7 +151,7 @@
 #
 :flush [regA] is group=0 & ins0412=0x022 & regA
 {
-	CacheFlush(regA:4);
+	DataCacheFlush(regA:4);
 }
 
 #
@@ -227,34 +159,8 @@
 #
 :flushinv [regA] is group=0 & ins0412=0x023 & regA
 {
-	CacheFlushInvalidate(regA:4);
+	DataCacheLineInvalidate(regA:4);
 }
-
-#
-# rep nwords, rA { <nwords> instruction words }
-#
-###:rep xxx, regA is group=0 & ins0812=0x03 & regA & xxx
-### TODO
-
-#
-# pc = [sp++]
-# <G> pop pc
-#
-:pop pc is group=0 & ins0012=0x0400 & pc
-{
-	pop(pc);
-}
-
-#
-# [--sp] = rets
-# <G> push rets
-#
-:push rets is group=0 & ins0012=0x0410 & rets
-{
-	push(rets);
-}
-
-### .... ###
 
 #
 # cc = 0
@@ -275,42 +181,6 @@
 }
 
 #
-# sp = usp
-# <G> mov sp, usp
-#
-:mov sp, usp is group=0 & ins0012=0x1440 & sp & usp
-{
-	sp = usp;
-}
-
-#
-# sp = ssp
-# <G> mov sp, ssp
-#
-:mov sp, ssp is group=0 & ins0012=0x1441 & sp & ssp
-{
-	sp = ssp;
-}
-
-#
-# usp = sp
-# <G> mov usp, sp
-#
-:mov usp, sp is group=0 & ins0012=0x1442 & sp & usp
-{
-	usp = sp;
-}
-
-#
-# ssp = sp
-# <G> mov ssp, sp
-#
-:mov ssp, sp is group=0 & ins0012=0x1443 & sp & ssp
-{
-	ssp = sp;
-}
-
-#
 # rA_rA = 0
 # <G> clr rA_rA
 #
@@ -326,167 +196,4 @@
 :clr regAh is group=0 & ins0312=0x298 & regAh
 {
 	regAh = 0;
-}
-
-#
-# rA_rA = rB_rB
-# <G> mov rA_rA, rB_rB
-#
-:mov dregA, dregB is group=0 & ins0812=0x15 & dregA & dregB
-{
-	dregA = dregB;
-}
-
-#
-# rA = rB
-# <G> mov rA, rB
-#
-:mov regA, regB is group=0 & ins0812=0x16 & regA & regB
-{
-	regA = regB;
-}
-
-#
-# rA = rB.b0 (u)
-# <G> uxtb rA, rB
-#
-:uxtb regAl, regBl is group=0 & ins0712=0x2E & ins0303=0 & regAl & regBl
-{
-	regAl = zext(regBl:1);
-}
-
-#
-# rA = rB.b0 (s)
-# <G> sxtb rA, rB
-#
-:sxtb regAl, regBl is group=0 & ins0712=0x2E & ins0303=1 & regAl & regBl
-{
-	regAl = sext(regBl:1);
-}
-
-#
-# rA = rB.l (u)
-# <G> uxth rA, rB
-#
-:uxth regAl, regBl is group=0 & ins0712=0x2F & ins0303=0 & regAl & regBl
-{
-	regAl = zext(regBl:2);
-}
-
-#
-# rA = rB.l (s)
-# <G> sxth rA, rB
-#
-:sxth regAl, regBl is group=0 & ins0712=0x2F & ins0303=1 & regAl & regBl
-{
-	regAl = sext(regBl:2);
-}
-
-#
-# rA += rB
-# <G> add rA, rB
-#
-:add regA, regB is group=0 & ins0812=0x18 & regA & regB
-{
-	regA = regA + regB;
-}
-
-#
-# rA |= rB
-# <G> or rA, rB
-#
-:or regAl, regBl is group=0 & ins0712=0x32 & ins0303=0 & regAl & regBl
-{
-	regAl = regAl | regBl;
-}
-
-#
-# rA ^= rB
-# <G> xor rA, rB
-#
-:xor regAl, regBl is group=0 & ins0712=0x32 & ins0303=1 & regAl & regBl
-{
-	regAl = regAl ^ regBl;
-}
-
-#
-# rA = ~rB
-# <G> not rA, rB
-#
-:not regAl, regBl is group=0 & ins0712=0x33 & ins0303=0 & regAl & regBl
-{
-	regAl = ~regBl;
-}
-
-#
-# rA &= rB
-# <G> and rA, rB
-#
-:and regAl, regBl is group=0 & ins0712=0x33 & ins0303=1 & regAl & regBl
-{
-	regAl = regAl & regBl;
-}
-
-#
-# rA <<= rB
-# <G> lsl rA, rB
-#
-:lsl regAl, regBl is group=0 & ins0712=0x34 & ins0303=0 & regAl & regBl
-{
-	regAl = regAl << regBl;
-}
-
-#
-# rA <<<= rB
-# <G> qasl rA, rB
-#
-:qasl regAl, regBl is group=0 & ins0712=0x34 & ins0303=1 & regAl & regBl
-{
-	# TODO... duplicate the LSB (i guess)
-	regAl = regAl << regBl;
-}
-
-#
-# rA >>= rB
-# <G> lsr rA, rB
-#
-:lsr regAl, regBl is group=0 & ins0712=0x35 & ins0303=0 & regAl & regBl
-{
-	regAl = regAl >> regBl;
-}
-
-#
-# rA >>>= rB
-# <G> qasr rA, rB
-#
-:qasr regAl, regBl is group=0 & ins0712=0x35 & ins0303=1 & regAl & regBl
-{
-	regAl = regAl s>> regBl;
-}
-
-#
-# rA *= rB
-# <G> mul rA, rB
-#
-:mul regA, regB is group=0 & ins0812=0x1B & regA & regB
-{
-	regA = regA * regB;
-}
-
-#
-# rA = rB + rC
-# <G> add rA, rB, rC
-#
-:add regAl, regBl, regCxl is group=0 & ins0912=0xE & regAl & regBl & regCxl
-{
-	regAl = regBl + regCxl;
-}
-
-#
-# rA = rB - rC
-# <G> sub rA, rB, rC
-#
-:sub regAl, regBl, regCxl is group=0 & ins0912=0xF & regAl & regBl & regCxl
-{
-	regAl = regBl - regCxl;
 }

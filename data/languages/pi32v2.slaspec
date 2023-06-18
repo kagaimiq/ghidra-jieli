@@ -193,27 +193,37 @@ define pcodeop nop;
 define pcodeop Idle;
 define pcodeop Breakpoint;
 define pcodeop HBreakpoint;
-define pcodeop ContextSync;
+define pcodeop CoreSynchronize;
 define pcodeop SystemCall;
-define pcodeop SSync;
+define pcodeop SystemSynchronize;
 define pcodeop BTBClear;
 define pcodeop ClearLock;
 define pcodeop SetLock;
 define pcodeop DisableInterrupts;
 define pcodeop EnableInterrupts;
 define pcodeop SoftwareInterrupt;
-define pcodeop CachePrefetch;
-define pcodeop ICacheFlush;
-define pcodeop CacheFlush;
-define pcodeop CacheFlushInvalidate;
+define pcodeop DataCachePrefetch;
+define pcodeop InstructionCacheFlush;
+define pcodeop DataCacheFlush;
+define pcodeop DataCacheLineInvalidate;
+define pcodeop Trigger;
+
+define pcodeop IfElseBlock;
+define pcodeop RepeatBlock;
 
 define pcodeop TODO;
 
+# Uncategorized yet
 @include "pi32v2_g0.sinc"
-@include "pi32v2_g1.sinc"
-@include "pi32v2_g2.sinc"
-@include "pi32v2_g3.sinc"
-@include "pi32v2_g4.sinc"
-@include "pi32v2_g5.sinc"
-# @include "pi32v2_g6.sinc"
 @include "pi32v2_g7.sinc"
+
+# Categorized
+@include "pi32v2_ins_progflow.sinc"
+@include "pi32v2_ins_stack.sinc"
+@include "pi32v2_ins_move.sinc"
+@include "pi32v2_ins_arithops.sinc"
+@include "pi32v2_ins_logicops.sinc"
+@include "pi32v2_ins_shiftrot.sinc"
+@include "pi32v2_ins_bitops.sinc"
+@include "pi32v2_ins_loadimm.sinc"
+@include "pi32v2_ins_loadstore.sinc"

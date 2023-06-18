@@ -1,0 +1,27 @@
+##################
+#
+# Stack Operations
+#
+##################
+
+##### Most Demanded! #####
+
+#
+# pc = [sp++]
+# <G> pop pc
+#
+:pop pc is group=0 & ins0012=0x0400 & pc
+{
+	pop(pc);
+}
+
+#
+# [--sp] = rets
+# <G> push rets
+#
+:push rets is group=0 & ins0012=0x0410 & rets
+{
+	push(rets);
+}
+
+# and more!!

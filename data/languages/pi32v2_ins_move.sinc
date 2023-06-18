@@ -1,0 +1,115 @@
+##################
+#
+# Move
+#
+##################
+
+###########################################################################################
+# Register move
+###########################################################################################
+
+#
+# sp = usp
+# <G> mov sp, usp
+#
+:mov sp, usp is group=0 & ins0012=0x1440 & sp & usp
+{
+	sp = usp;
+}
+
+#
+# sp = ssp
+# <G> mov sp, ssp
+#
+:mov sp, ssp is group=0 & ins0012=0x1441 & sp & ssp
+{
+	sp = ssp;
+}
+
+#
+# usp = sp
+# <G> mov usp, sp
+#
+:mov usp, sp is group=0 & ins0012=0x1442 & sp & usp
+{
+	usp = sp;
+}
+
+#
+# ssp = sp
+# <G> mov ssp, sp
+#
+:mov ssp, sp is group=0 & ins0012=0x1443 & sp & ssp
+{
+	ssp = sp;
+}
+
+#
+# rA_rA = rB_rB
+# <G> mov rA_rA, rB_rB
+#
+:mov dregA, dregB is group=0 & ins0812=0x15 & dregA & dregB
+{
+	dregA = dregB;
+}
+
+#
+# rA = rB
+# <G> mov rA, rB
+#
+:mov regA, regB is group=0 & ins0812=0x16 & regA & regB
+{
+	regA = regB;
+}
+
+###########################################################################################
+# Zero-extend byte
+###########################################################################################
+
+#
+# rA = rB.b0 (u)
+# <G> uxtb rA, rB
+#
+:uxtb regAl, regBl is group=0 & ins0712=0x2E & ins0303=0 & regAl & regBl
+{
+	regAl = zext(regBl:1);
+}
+
+###########################################################################################
+# Zero-extend halfword
+###########################################################################################
+
+#
+# rA = rB.b0 (s)
+# <G> sxtb rA, rB
+#
+:sxtb regAl, regBl is group=0 & ins0712=0x2E & ins0303=1 & regAl & regBl
+{
+	regAl = sext(regBl:1);
+}
+
+###########################################################################################
+# Sign-extend byte
+###########################################################################################
+
+#
+# rA = rB.l (u)
+# <G> uxth rA, rB
+#
+:uxth regAl, regBl is group=0 & ins0712=0x2F & ins0303=0 & regAl & regBl
+{
+	regAl = zext(regBl:2);
+}
+
+###########################################################################################
+# Sign-extend halfword
+###########################################################################################
+
+#
+# rA = rB.l (s)
+# <G> sxth rA, rB
+#
+:sxth regAl, regBl is group=0 & ins0712=0x2F & ins0303=1 & regAl & regBl
+{
+	regAl = sext(regBl:2);
+}

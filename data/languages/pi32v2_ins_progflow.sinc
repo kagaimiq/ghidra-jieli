@@ -1,0 +1,155 @@
+##################
+#
+# Program Flow Control
+#
+##################
+
+###########################################################################################
+# Return from Subroutine/Interrupt/eXception/Emulation
+###########################################################################################
+
+#
+# rts
+#
+:rts is group=0 & ins0012=0x0080
+{
+	return [rets];
+}
+
+#
+# rti
+#
+:rti is group=0 & ins0012=0x0081
+{
+	return [reti];
+}
+
+#
+# rtx
+#
+:rtx is group=0 & ins0012=0x0082
+{
+	return [retx];
+}
+
+#
+# rte
+#
+:rte is group=0 & ins0012=0x0083
+{
+	return [rete];
+}
+
+###########################################################################################
+# Call
+###########################################################################################
+
+#
+# call rA
+#
+:call regA is group=0 & ins0412=0x00C & regA
+{
+	call regA;
+}
+
+#
+# call reladdr9
+#
+:call jaddr9 is group=4 & ins0707=0 & ins0003=0x1 & jaddr9
+{
+	call jaddr9;
+}
+
+#
+# call reladdr22
+#
+:call jaddr23 is (group=7 & ins0612=0x2A) ... & jaddr23
+{
+	call jaddr23;
+}
+
+###########################################################################################
+# Goto (Jump)
+###########################################################################################
+
+#
+# goto rA
+#
+:goto regA is group=0 & ins0412=0x00D & regA
+{
+	goto regA;
+}
+
+#
+# goto reladdr12
+#
+:goto jaddr12 is group=4 & ins0203=1 & jaddr12
+{
+	goto jaddr12;
+}
+
+#
+# goto reladdr22
+#
+:goto jaddr23 is (group=7 & ins0612=0x2B) ... & jaddr23
+{
+	goto jaddr23;
+}
+
+###########################################################################################
+# Table Branch
+###########################################################################################
+
+#
+# tbb rA
+#
+:tbb regA is group=0 & ins0412=0x010 & regA
+{
+	local addr:4 = inst_next + regA;
+	pc = inst_next + (zext(*:1 addr) << 1);
+	goto [pc];
+}
+
+#
+# tbh rA
+#
+:tbh regA is group=0 & ins0412=0x011 & regA
+{
+	local addr:4 = inst_next + regA;
+	pc = inst_next + (zext(*:2 addr) << 1);
+	goto [pc];
+}
+
+###########################################################################################
+# Condititonal branch
+###########################################################################################
+
+#
+# if (rA == 0) goto reladdr9
+# <G> jz rA, reladdr9
+#
+:jz regAl, jaddr9 is group=2 & ins0707=0 & ins0303=0 & regAl & jaddr9
+{
+	if (regAl == 0)
+		goto jaddr9;
+}
+
+#
+# if (rA != 0) goto reladdr9
+# <G> jnz rA, reladdr9
+#
+:jnz regAl, jaddr9 is group=2 & ins0707=1 & ins0303=0 & regAl & jaddr9
+{
+	if (regAl != 0)
+		goto jaddr9;
+}
+
+###########################################################################################
+# Code repeat     ( Impossible to implement? )
+###########################################################################################
+
+#
+# rep nwords, rA { <nwords> instruction words }
+#
+###:rep xxx, regA is group=0 & ins0812=0x03 & regA & xxx
+### TODO
