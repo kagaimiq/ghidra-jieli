@@ -396,11 +396,6 @@ define pcodeop RepeatBlock;
 
 define pcodeop TODO;
 
-# Uncategorized yet
-@include "pi32_g0.sinc"
-@include "pi32_g6.sinc"
-@include "pi32_g7.sinc"
-
 # Categorized
 @include "pi32_ins_loadstore.sinc"
 @include "pi32_ins_stack.sinc"
@@ -412,3 +407,231 @@ define pcodeop TODO;
 @include "pi32_ins_bitops.sinc"
 @include "pi32_ins_progflow.sinc"
 @include "pi32_ins_compare.sinc"
+
+##########################################################################################
+# Uncategorized #
+#################
+
+#
+# nop
+#
+:nop is group=0 & ins0012=0x0000
+{
+	nop();
+}
+
+#
+# bkpt
+#
+:bkpt is group=0 & ins0012=0x0002
+{
+	Breakpoint();
+}
+
+#
+# hbkpt
+#
+:hbkpt is group=0 & ins0012=0x0003
+{
+	HBreakpoint();
+}
+
+#
+# macc = 0
+# clrmacc
+#
+:clrmacc is group=0 & ins0012=0x0004
+{
+	macc = 0;
+}
+
+#
+# csync
+#
+:csync is group=0 & ins0012=0x0008
+{
+	CoreSynchronize();
+}
+
+#
+# ssync
+#
+:ssync is group=0 & ins0012=0x0009
+{
+	SystemSynchronize();
+}
+
+#
+# illeg
+#
+:illeg is group=0 & ins0012=0x000A
+{
+	Illegal();
+}
+
+#
+# lockset
+#
+:lockset is group=0 & ins0012=0x000C
+{
+	SetLock();
+}
+
+#
+# lockclr
+#
+:lockclr is group=0 & ins0012=0x000D
+{
+	ClearLock();
+}
+
+#
+# idle
+#
+:idle is group=0 & ins0012=0x0010
+{
+	Idle();
+}
+
+#
+# cli
+#
+:cli is group=0 & ins0012=0x0040
+{
+	DisableInterrupts();
+}
+
+#
+# cli rA
+#
+:cli regA is group=0 & ins0412=0x005 & regA
+{
+	DisableInterrupts(regA:4);
+}
+
+#
+# sti
+#
+:sti is group=0 & ins0012=0x0060
+{
+	EnableInterrupts();
+}
+
+#
+# sti rA
+#
+:sti regA is group=0 & ins0412=0x007 & regA
+{
+	EnableInterrupts(regA:4);
+}
+
+#
+# swi n
+#
+:swi imm0005 is group=0 & ins0612=0x02 & imm0005
+{
+	SoftwareInterrupt(imm0005:1);
+}
+
+#
+# excpt n
+#
+:excpt imm0005 is group=0 & ins0612=0x03 & imm0005
+{
+	SoftwareException(imm0005:1);
+}
+
+#
+# flush [rA]
+# flush rA
+#
+:flush regAf is group=0 & ins0712=0x03 & ins0305=0 & regAf
+{
+	DataCacheFlush(regAf:4);
+}
+
+#
+# flushinv [rA]
+# flushinv rA
+#
+:flushinv regAf is group=0 & ins0712=0x03 & ins0305=1 & regAf
+{
+	DataCacheLineInvalidate(regAf:4);
+}
+
+#
+# iflush [rA]
+# iflush rA
+#
+:iflush regAf is group=0 & ins0712=0x03 & ins0305=2 & regAf
+{
+	InstructionCacheFlush(regAf:4);
+}
+
+#
+# pfetch [rA]
+# pfetch rA
+#
+:pfetch regAf is group=0 & ins0712=0x03 & ins0305=3 & regAf
+{
+	DataCachePrefetch(regAf:4);
+}
+
+##########################################################################################
+
+#
+# testset b[rA]
+#
+:testset "b"[regA] is group=6 & ins0812=0x03 & regA
+{
+	TODO(regA:4);
+}
+
+#
+# cmn rB, rA
+#
+:cmn regBf, regAf is group=6 & ins0812=0x0C & regAf & regBf
+{
+	TODO(regAf:4, regBf:4);
+}
+
+##########################################################################################
+
+#
+# trigger
+#
+:trigger is group=7 & ins0012=0x0080
+{
+	Trigger();
+}
+
+#
+# rA = uextra(rB, p:pos5, l:len5)
+# uextra rA, rB, pos5, len5
+#
+:uextra regE, regF, pos5, imm2428 is group=7 & ins0212=0x580 & imm0001 ; regE & regF & imm2428 & imm2931
+[ pos5 = (imm0001 << 3) | imm2931; ]
+{
+	local mask:4 = (1 << imm2428) - 1;
+	regE = (regF >> pos5) & mask;
+}
+
+#
+# rA <= insert(rB, p:pos5, l:len5)
+# insert rA, rB, pos5, len5
+#
+:insert regE, regF, pos5, imm2428 is group=7 & ins0212=0x590 & imm0001 ; regE & regF & imm2428 & imm2931
+[ pos5 = (imm0001 << 3) | imm2931; ]
+{
+	local mask:4 = (1 << imm2428) - 1;
+	regE = (regE & ~(mask << pos5)) | ((regF & mask) << pos5);
+}
+
+#
+# rA = sextra(rB, p:pos5, l:len5)
+# sextra rA, rB, pos5, len5
+#
+#:sextra regE, regF, pos5, imm2428 is group=7 & ins0212=0x5A0 & imm0001 ; regE & regF & imm2428 & imm2931
+#[ pos5 = (imm0001 << 3) | imm2931; ]
+#{
+#}
