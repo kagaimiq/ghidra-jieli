@@ -128,13 +128,14 @@
 # (Q) Arithmetic shift left
 ###########################################################################################
 
+### TODO: overflow? ###
+
 #
 # rA = rB <<< shamt
 # qasl rA, rB, shamt
 #
 :qasl regAl, regBl, imm0812 is group=5 & ins0607=2 & regAl & regBl & imm0812
 {
-	# TODO: extend the LSB
 	regAl = regBl << imm0812;
 }
 
@@ -144,7 +145,6 @@
 #
 :qasl regAl, regBl is group=6 & ins0612=0x3E & regAl & regBl
 {
-	# TODO: extend the LSB
 	regAl = regAl << regBl;
 }
 
@@ -154,7 +154,6 @@
 #
 :qasl regE, regF, regG is group=7 & ins0012=0x1780 ; regE & regF & regG
 {
-	## TODO: extend the LSB?
 	regE = regF << regG;
 }
 
@@ -164,7 +163,6 @@
 #
 :qasl regE, regF, imm2428 is group=7 & ins0012=0x17A0 ; regE & regF & imm2428
 {
-	## TODO: extend the LSB?
 	regE = regF << imm2428;
 }
 
