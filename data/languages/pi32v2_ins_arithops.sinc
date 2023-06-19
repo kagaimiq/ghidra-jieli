@@ -10,7 +10,7 @@
 
 #
 # rA += rB
-# <G> add rA, rB
+# => add rA, rB
 #
 :add regA, regB is group=0 & ins0812=0x18 & regA & regB
 {
@@ -19,7 +19,7 @@
 
 #
 # rA = rB + rC
-# <G> add rA, rB, rC
+# => add rA, rB, rC
 #
 :add regAl, regBl, regCxl is group=0 & ins0912=0xE & regAl & regBl & regCxl
 {
@@ -28,7 +28,7 @@
 
 #
 # rA += imm8
-# <G> add rA, #imm8
+# => add rA, #imm8
 #
 :add regAl, #imm8 is group=1 & ins0607=3 & regAl & imm0305s & imm0812
 [ imm8 = (imm0305s << 5) | imm0812; ]
@@ -38,7 +38,7 @@
 
 #
 # sp += imm10
-# <G> add sp, #imm10
+# => add sp, #imm10
 #
 :add sp, #imm10 is group=4 & ins0004=0x02 & imm0812 & imm0507s & sp
 [ imm10 = (imm0507s << 7) | (imm0812 << 2); ]
@@ -48,7 +48,7 @@
 
 #
 # rA = rB + imm5
-# <G> add rA, rB, #imm5
+# => add rA, rB, #imm5
 #
 :add regAl, regBl, #imm0812 is group=4 & ins0707=0 & ins0303=1 & regAl & regBl & imm0812
 {
@@ -57,7 +57,7 @@
 
 #
 # rA = sp + imm7
-# <G> add rA, sp, #imm7
+# => add rA, sp, #imm7
 #
 :add regAl, sp, #imm7 is group=4 & ins0707=1 & ins0304=1 & regAl & sp & imm0812 & imm0506
 [ imm7 = (imm0506 << 5) | imm0812; ]
@@ -71,7 +71,7 @@
 
 #
 # rA = rB - rC
-# <G> sub rA, rB, rC
+# => sub rA, rB, rC
 #
 :sub regAl, regBl, regCxl is group=0 & ins0912=0xF & regAl & regBl & regCxl
 {
@@ -84,7 +84,7 @@
 
 #
 # rA *= rB
-# <G> mul rA, rB
+# => mul rA, rB
 #
 :mul regA, regB is group=0 & ins0812=0x1B & regA & regB
 {

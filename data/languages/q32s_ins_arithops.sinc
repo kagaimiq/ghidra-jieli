@@ -10,7 +10,7 @@
 
 #
 # rA += rB
-# <G> add rA, rB
+# => add rA, rB
 #
 :add regA, regB is group=0 & ins0812=0x9 & regA & regB
 {
@@ -19,7 +19,7 @@
 
 #
 # sp += simm9m4
-# <G> add sp, #simm9m4
+# => add sp, #simm9m4
 #
 :add sp, #simm9m4 is group=0 & ins0812=0xA & imm0107s & sp
 [ simm9m4 = imm0107s << 2; ]
@@ -29,7 +29,7 @@
 
 #
 # rA += simm8
-# <G> add rA, #simm8
+# => add rA, #simm8
 #
 :add regA, #imm0411s is group=4 & ins1212=0 & imm0411s & regA
 {
@@ -38,7 +38,7 @@
 
 #
 # rA = rB + imm5
-# <G> add rA, rB, #imm5
+# => add rA, rB, #imm5
 #
 :add regA, regDl, #imm0408 is group=4 & ins1212=1 & regA & regDl & imm0408
 {
@@ -47,7 +47,7 @@
 
 #
 # rA = sp + imm8
-# <G> add rA, sp, #imm8
+# => add rA, sp, #imm8
 #
 :add regA, sp, #imm0411 is group=5 & ins1212=0 & regA & imm0411 & sp
 {
@@ -56,7 +56,7 @@
 
 #
 # rA = rB + rC
-# <G> add rA, rB, rC
+# => add rA, rB, rC
 #
 :add regA, regCl, regDl is group=5 & ins1212=1 & ins0405=0 & regA & regCl & regDl
 {
@@ -69,7 +69,7 @@
 
 #
 # rA = rC - rB
-# <G> sub rA, rC, rB
+# => sub rA, rC, rB
 #
 :sub regA, regDl, regCl is group=5 & ins1212=1 & ins0405=2 & regA & regCl & regDl
 {
@@ -82,7 +82,7 @@
 
 #
 # rA = rB * rC
-# <G> mul rA, rB, rC
+# => mul rA, rB, rC
 #
 :mul regAl, regBl, regCl is group=0 & ins0912=0x7 & regAl & regBl & regCl
 {

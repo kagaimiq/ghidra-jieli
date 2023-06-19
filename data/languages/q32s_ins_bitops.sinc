@@ -10,7 +10,7 @@
 
 #
 # rA |= (1<<shamt)
-# <G> bitset rA, shamt
+# => bitset rA, shamt
 #
 :bitset regA, imm0711 is group=5 & ins1212=1 & ins0405=1 & ins0606=0 & regA & imm0711
 {
@@ -23,7 +23,7 @@
 
 #
 # rA ^= (1<<shamt)
-# <G> bittgl rA, shamt
+# => bittgl rA, shamt
 #
 :bittgl regA, imm0711 is group=5 & ins1212=1 & ins0405=3 & ins0606=0 & regA & imm0711
 {
@@ -36,7 +36,7 @@
 
 #
 # rA &= ~(1<<shamt)
-# <G> bitclr rA, shamt
+# => bitclr rA, shamt
 #
 :bitclr regA, imm0711 is group=5 & ins1212=1 & ins0405=3 & ins0606=1 & regA & imm0711
 {

@@ -12,7 +12,7 @@
 
 #
 # rA <<= rB
-# <G> lsl rA, rB
+# => lsl rA, rB
 #
 :lsl regA, regCl is group=0 & ins0912=0x6 & ins0405=0 & regA & regCl
 {
@@ -21,7 +21,7 @@
 
 #
 # rA = rB << shamt
-# <G> lsl rA, rB, shamt
+# => lsl rA, rB, shamt
 #
 :lsl regAl, regBl, imm0610 is group=6 & ins1112=0 & regAl & regBl & imm0610
 {
@@ -35,7 +35,7 @@
 
 #
 # rA >>= rB
-# <G> lsr rA, rB
+# => lsr rA, rB
 #
 :lsr regA, regCl is group=0 & ins0912=0x6 & ins0405=2 & regA & regCl
 {
@@ -44,7 +44,7 @@
 
 #
 # rA = rB >> shamt
-# <G> lsr rA, rB, shamt
+# => lsr rA, rB, shamt
 #
 :lsr regAl, regBl, imm0610 is group=6 & ins1112=2 & regAl & regBl & imm0610
 {
@@ -59,7 +59,7 @@
 
 #
 # rA <<<= rB
-# <G> qasl rA, rB
+# => qasl rA, rB
 #
 :qasl regA, regCl is group=0 & ins0912=0x6 & ins0405=1 & regA & regCl
 {
@@ -68,7 +68,7 @@
 
 #
 # rA = rB <<< shamt
-# <G> qasl rA, rB, shamt
+# => qasl rA, rB, shamt
 #
 :qasl regAl, regBl, imm0610 is group=6 & ins1112=1 & regAl & regBl & imm0610
 {
@@ -81,7 +81,7 @@
 
 #
 # rA >>>= rB
-# <G> qasr rA, rB
+# => qasr rA, rB
 #
 :qasr regA, regCl is group=0 & ins0912=0x6 & ins0405=3 & regA & regCl
 {
@@ -90,7 +90,7 @@
 
 #
 # rA = rB >>> shamt
-# <G> qasr rA, rB, shamt
+# => qasr rA, rB, shamt
 #
 :qasr regAl, regBl, imm0610 is group=6 & ins1112=3 & regAl & regBl & imm0610
 {

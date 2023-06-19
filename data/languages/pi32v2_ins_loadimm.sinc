@@ -10,7 +10,7 @@
 
 #
 # rA = imm8
-# <G> mov rA, #imm8
+# => mov rA, #imm8
 #
 :mov regAl, #imm8 is group=1 & ins0607=1 & regAl & imm0812 & imm0305
 [ imm8 = (imm0305 << 5) | imm0812; ]
@@ -20,7 +20,7 @@
 
 #
 # rA = imm16
-# <G> movz rA, #imm16
+# => movz rA, #imm16
 #
 :movz regA, #imm1631 is group=7 & ins0412=0x004 & regA ; imm1631
 {
@@ -31,7 +31,7 @@
 
 #
 # rA = imm32
-# <G> mov rA, #imm32
+# => mov rA, #imm32
 #
 :mov regA, #imm32 is group=7 & ins0412=0x1FC & regA ; imm1631 ; imm3247
 [ imm32 = imm1631 | (imm3247 << 16); ]
@@ -41,7 +41,7 @@
 
 #
 # srA = imm32
-# <G> mov srA, #imm32
+# => mov srA, #imm32
 #
 :mov sregA, #imm32 is group=7 & ins0412=0x1FE & sregA ; imm1631 ; imm3247
 [ imm32 = imm1631 | (imm3247 << 16); ]
@@ -55,7 +55,7 @@
 
 #
 # rA.l = imm16
-# <G> movl rA, #imm16
+# => movl rA, #imm16
 #
 :movl regA, #imm1631 is group=7 & ins0412=0x000 & regA ; imm1631
 {
@@ -68,7 +68,7 @@
 
 #
 # rA.h = imm16
-# <G> movh rA, #imm16
+# => movh rA, #imm16
 #
 :movh regA, #imm1631 is group=7 & ins0412=0x001 & regA ; imm1631
 {

@@ -10,7 +10,7 @@
 
 #
 # rA = imm5        <- in range -32 .. -1
-# <G> mov rA, #imm5
+# => mov rA, #imm5
 #
 :mov regA, #imm5 is group=0 & ins0912=0x3 & regA & imm0408
 [ imm5 = (-32) + imm0408; ]
@@ -24,7 +24,7 @@
 
 #
 # rA = imm8
-# <G> mov rA, #imm8
+# => mov rA, #imm8
 #
 :mov regA, #imm0411 is group=3 & ins1212=1 & regA & imm0411
 {
@@ -33,7 +33,7 @@
 
 #
 # rA = imm32
-# <G> mov rA, #imm32
+# => mov rA, #imm32
 #
 :mov regA, #imm32 is group=7 & ins0412=0x1FC & regA ; imm1631 ; imm3247
 [ imm32 = imm1631 | (imm3247 << 16); ]
@@ -43,7 +43,7 @@
 
 #
 # srA = imm32
-# <G> mov srA, #imm32
+# => mov srA, #imm32
 #
 :mov sregA, #imm32 is group=7 & ins0412=0x1FE & sregA ; imm1631 ; imm3247
 [ imm32 = imm1631 | (imm3247 << 16); ]

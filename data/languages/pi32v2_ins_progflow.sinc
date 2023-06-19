@@ -126,7 +126,7 @@
 
 #
 # if (rA == 0) goto reladdr9
-# <G> jz rA, reladdr9
+# => jz rA, reladdr9
 #
 :jz regAl, jaddr9 is group=2 & ins0707=0 & ins0303=0 & regAl & jaddr9
 {
@@ -136,7 +136,7 @@
 
 #
 # if (rA != 0) goto reladdr9
-# <G> jnz rA, reladdr9
+# => jnz rA, reladdr9
 #
 :jnz regAl, jaddr9 is group=2 & ins0707=1 & ins0303=0 & regAl & jaddr9
 {

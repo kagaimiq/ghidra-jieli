@@ -299,7 +299,7 @@ define pcodeop TODO;
 
 #
 # cc = 0
-# <G> clc
+# => clc
 #
 :clc is group=0 & ins0012=0x0038
 {
@@ -308,7 +308,7 @@ define pcodeop TODO;
 
 #
 # cc = 1
-# <G> stc
+# => stc
 #
 :stc is group=0 & ins0012=0x003A
 {

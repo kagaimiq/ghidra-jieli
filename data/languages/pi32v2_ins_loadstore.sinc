@@ -11,7 +11,7 @@
 
 #
 # rA = [rB+simm7m4]
-# <G> lw rA, [rB + simm7m4]
+# => lw rA, [rB + simm7m4]
 #
 :lw regAl, [regBl + simm7m4] is group=3 & ins0707=0 & ins0303=0 & regAl & regBl & imm0812s
 [ simm7m4 = (imm0812s << 2); ]
@@ -26,7 +26,7 @@
 
 #
 # rA = h[rB+simm6m2] (u)
-# <G> lh.z rA, [rB + simm6m2]
+# => lh.z rA, [rB + simm6m2]
 #
 :lh.z regAl, [regBl + simm6m2] is group=3 & ins0707=0 & ins0303=1 & regAl & regBl & imm0812s
 [ simm6m2 = (imm0812s << 1); ]
@@ -41,7 +41,7 @@
 
 #
 # rA = b[rB+simm5] (u)
-# <G> lb.z rA, [rB + simm5]
+# => lb.z rA, [rB + simm5]
 #
 :lb.z regAl, [regBl + imm0812s] is group=2 & ins0707=0 & ins0303=1 & regAl & regBl & imm0812s
 {
@@ -55,7 +55,7 @@
 
 #
 # [rB+simm7m4] = rA
-# <G> sw rA, [rB + simm7m4]
+# => sw rA, [rB + simm7m4]
 #
 :sw regAl, [regBl + simm7m4] is group=3 & ins0707=1 & ins0303=0 & regAl & regBl & imm0812s
 [ simm7m4 = (imm0812s << 2); ]
@@ -70,7 +70,7 @@
 
 #
 # h[rB+simm6m2] = rA
-# <G> sh rA, [rB + simm6m2]
+# => sh rA, [rB + simm6m2]
 #
 :sh regAl, [regBl + simm6m2] is group=3 & ins0707=1 & ins0303=1 & regAl & regBl & imm0812s
 [ simm6m2 = (imm0812s << 1); ]
@@ -85,7 +85,7 @@
 
 #
 # b[rB+simm5] = rA
-# <G> sb rA, [rB + simm5]
+# => sb rA, [rB + simm5]
 #
 :sb regAl, [regBl + imm0812s] is group=2 & ins0707=1 & ins0303=1 & regAl & regBl & imm0812s
 {

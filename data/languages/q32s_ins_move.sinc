@@ -10,7 +10,7 @@
 
 #
 # sp = usp
-# <G> mov sp, usp
+# => mov sp, usp
 #
 :mov sp, usp is group=0 & ins0012=0x003C & sp & usp
 {
@@ -19,7 +19,7 @@
 
 #
 # sp = ssp
-# <G> mov sp, ssp
+# => mov sp, ssp
 #
 :mov sp, ssp is group=0 & ins0012=0x003D & sp & ssp
 {
@@ -28,7 +28,7 @@
 
 #
 # usp = sp
-# <G> mov usp, sp
+# => mov usp, sp
 #
 :mov usp, sp is group=0 & ins0012=0x003E & sp & usp
 {
@@ -37,7 +37,7 @@
 
 #
 # ssp = sp
-# <G> mov ssp, sp
+# => mov ssp, sp
 #
 :mov ssp, sp is group=0 & ins0012=0x003F & sp & ssp
 {
@@ -46,7 +46,7 @@
 
 #
 # rA = rB
-# <G> mov rA, rB
+# => mov rA, rB
 #
 :mov regA, regB is group=0 & ins0812=0x8 & regA & regB
 {
@@ -59,7 +59,7 @@
 
 #
 # rA = rB.b0 (u)
-# <G> uxtb rA, rB
+# => uxtb rA, rB
 #
 :uxtb regA, regCl is group=0 & ins0912=0x2 & ins0405=0 & regA & regCl
 {
@@ -72,7 +72,7 @@
 
 #
 # rA = rB.l (u)
-# <G> uxth rA, rB
+# => uxth rA, rB
 #
 :uxth regA, regCl is group=0 & ins0912=0x2 & ins0405=2 & regA & regCl
 {
@@ -85,7 +85,7 @@
 
 #
 # rA = rB.b0 (s)
-# <G> sxtb rA, rB
+# => sxtb rA, rB
 #
 :sxtb regA, regCl is group=0 & ins0912=0x2 & ins0405=1 & regA & regCl
 {
@@ -98,7 +98,7 @@
 
 #
 # rA = rB.l (s)
-# <G> sxth rA, rB
+# => sxth rA, rB
 #
 :sxth regA, regCl is group=0 & ins0912=0x2 & ins0405=3 & regA & regCl
 {

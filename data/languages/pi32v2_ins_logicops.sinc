@@ -10,7 +10,7 @@
 
 #
 # rA |= rB
-# <G> or rA, rB
+# => or rA, rB
 #
 :or regAl, regBl is group=0 & ins0712=0x32 & ins0303=0 & regAl & regBl
 {
@@ -23,7 +23,7 @@
 
 #
 # rA ^= rB
-# <G> xor rA, rB
+# => xor rA, rB
 #
 :xor regAl, regBl is group=0 & ins0712=0x32 & ins0303=1 & regAl & regBl
 {
@@ -36,7 +36,7 @@
 
 #
 # rA = ~rB
-# <G> not rA, rB
+# => not rA, rB
 #
 :not regAl, regBl is group=0 & ins0712=0x33 & ins0303=0 & regAl & regBl
 {
@@ -49,7 +49,7 @@
 
 #
 # rA &= rB
-# <G> and rA, rB
+# => and rA, rB
 #
 :and regAl, regBl is group=0 & ins0712=0x33 & ins0303=1 & regAl & regBl
 {

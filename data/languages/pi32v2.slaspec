@@ -390,7 +390,7 @@ define pcodeop TODO;
 
 #
 # cc = 0
-# <G> clc
+# => clc
 #
 :clc is group=0 & ins0012=0x1400
 {
@@ -399,7 +399,7 @@ define pcodeop TODO;
 
 #
 # cc = 1
-# <G> stc
+# => stc
 #
 :stc is group=0 & ins0012=0x1401
 {
@@ -408,7 +408,7 @@ define pcodeop TODO;
 
 #
 # rA_rA = 0
-# <G> clr rA_rA
+# => clr rA_rA
 #
 :clr dregA is group=0 & ins0412=0x148 & dregA
 {
@@ -417,7 +417,7 @@ define pcodeop TODO;
 
 #
 # rA<8-15> = 0
-# <G> clr rA<8-15>
+# => clr rA<8-15>
 #
 :clr regAh is group=0 & ins0312=0x298 & regAh
 {
