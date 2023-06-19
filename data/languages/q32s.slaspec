@@ -1,0 +1,203 @@
+define endian    = little;
+define alignment = 2;
+
+define space ram      type=ram_space      size=4 default;
+define space register type=register_space size=4;
+
+#############################################################################
+#
+# General purpose registers
+#
+define register offset=0x0 size=4
+	[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 ];
+
+#
+# Special function registers
+#
+define register offset=0x100 size=4
+	[ reti rete retx rets sr4 psr cnum sr7
+	  sr8  sr9  sr10 icfg usp ssp sp   pc ];
+
+#############################################################################
+#
+# Instruction tokens
+#
+
+# Base word
+define token instr(16)
+	group = (13,15)
+
+	#
+	# instruction type fields
+	#
+	ins0012 = (0,12)
+	ins0312 = (3,12)
+	ins0412 = (4,12)
+	ins0612 = (6,12)
+	ins0812 = (8,12)
+	ins0912 = (9,12)
+	ins1112 = (11,12)
+	ins1212 = (12,12)
+
+	ins0303 = (3,3)
+
+	ins0405 = (4,5)
+
+	ins0606 = (6,6)
+
+	ins0708 = (7,8)
+
+	#
+	# immediate fields
+	#
+	imm0002  = (0,2)
+
+	imm0107s = (1,7) signed
+
+	imm0408  = (4,8)
+	imm0411  = (4,11)
+	imm0411s = (4,11) signed
+
+	imm0610  = (6,10)
+
+	imm0711  = (7,11)
+
+	#
+	# address fields
+	#
+	addr0010s = (0,10) signed
+
+	addr0005s = (0,5) signed
+
+	addr0008s = (0,8) signed
+	addr0408  = (4,8)
+	addr0408s = (4,8) signed
+
+	#
+	# register fields
+	#
+	regA = (0,3)
+	regB = (4,7)
+
+	regAl = (0,2)
+	regBl = (3,5)
+	regCl = (6,8)
+	regDl = (9,11)
+
+	sregA = (0,3)
+;
+
+# Used by the group=7 instructions
+define token instr2(16)
+	imm1631 = (0,15)
+
+	addr1631 = (0,15)
+;
+
+# Even more bits for some group=7 instructions (ins0812=0x1f)
+define token instr3(16)
+	imm3247 = (0,15)
+;
+
+#############################################################################
+#
+# Variables
+#
+
+attach variables [ regAl regBl regCl regDl ]
+	[ r0 r1 r2 r3 r4 r5 r6 r7 ];
+
+attach variables [ regA regB ]
+	[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 ];
+
+attach variables [ sregA ]
+	[ reti rete retx rets sr4 psr cnum sr7
+	  sr8  sr9  sr10 icfg usp ssp sp   pc ];
+
+# PSR bits
+@define V	"psr[0,1]"	# overflow
+@define C	"psr[1,1]"	# carry
+@define Z	"psr[2,1]"	# zero
+@define N	"psr[3,1]"	# negative
+
+#############################################################################
+#
+# Macros
+#
+
+macro push(reg)
+{
+	sp = sp - 4;
+	*:4 sp = reg;
+}
+
+macro pop(reg)
+{
+	reg = *:4 sp;
+	sp = sp + 4;
+}
+
+#############################################################################
+#
+# Stuff
+#
+
+#
+# 10-bit jump immediate (pc-relative)
+#
+pcrel10m2: res is addr0008s
+	[ res = (addr0008s << 1) + inst_next; ]
+	{ export *:4 res; }
+
+#
+# 12-bit jump immediate (pc-relative)
+#
+pcrel12m2: res is addr0010s
+	[ res = (addr0010s << 1) + inst_next; ]
+	{ export *:4 res; }
+
+#
+# 24-bit jump immediate (pc-relative)
+#
+pcrel24m2: res is addr0005s ; addr1631
+	[ res = ((addr0005s << 17) | (addr1631 << 1)) + inst_next; ]
+	{ export *:4 res; }
+
+#############################################################################
+#
+# Instructions
+#
+
+define pcodeop nop;
+define pcodeop Idle;
+define pcodeop Breakpoint;
+define pcodeop HBreakpoint;
+define pcodeop CoreSynchronize;
+define pcodeop SystemSynchronize;
+define pcodeop SystemCall;
+define pcodeop ClearLock;
+define pcodeop SetLock;
+define pcodeop DisableInterrupts;
+define pcodeop EnableInterrupts;
+define pcodeop SoftwareInterrupt;
+define pcodeop DataCachePrefetch;
+define pcodeop InstructionCacheFlush;
+define pcodeop DataCacheFlush;
+define pcodeop DataCacheLineInvalidate;
+
+define pcodeop TODO;
+
+# Uncategorized yet
+@include "q32s_g0.sinc"
+@include "q32s_g7.sinc"
+
+# Categorized
+@include "q32s_ins_progflow.sinc"
+@include "q32s_ins_stack.sinc"
+@include "q32s_ins_move.sinc"
+@include "q32s_ins_loadstore.sinc"
+@include "q32s_ins_loadimm.sinc"
+@include "q32s_ins_arithops.sinc"
+@include "q32s_ins_shiftrot.sinc"
+@include "q32s_ins_bitops.sinc"
+@include "q32s_ins_logicops.sinc"

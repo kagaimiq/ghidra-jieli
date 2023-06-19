@@ -24,17 +24,15 @@
 		<compiler name="default" spec="pi32.cspec" id="default" />
 	</language>
 
-	<!-- Not sure
 	<language processor="JieLi q32s"
 		  endian="little"
 		  size="32"
 		  variant="default"
 		  version="1.0"
 		  slafile="q32s.sla"
-		  processorspec="q32s.pspec"
+		  processorspec="pi32.pspec"
 		  id="q32s:LE:32:default">
 		<description>JieLi's q32s architecture</description>
-		<compiler name="default" spec="q32s.cspec" id="default" />
+		<compiler name="default" spec="pi32.cspec" id="default" />
 	</language>
-	!-->
 </language_definitions>

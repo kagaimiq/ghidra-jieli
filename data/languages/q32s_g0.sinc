@@ -1,0 +1,173 @@
+############################################################################################
+# Group 0 #
+###########
+
+#
+# nop
+#
+:nop is group=0 & ins0012=0x0000
+{
+	nop();
+}
+
+#
+# idle
+#
+:idle is group=0 & ins0012=0x0002
+{
+	Idle();
+}
+
+#
+# bkpt
+#
+:bkpt is group=0 & ins0012=0x0004
+{
+	Breakpoint();
+}
+
+#
+# hbkpt
+#
+:hbkpt is group=0 & ins0012=0x0006
+{
+	HBreakpoint();
+}
+
+#
+# csync
+#
+:csync is group=0 & ins0012=0x0008
+{
+	CoreSynchronize();
+}
+
+#
+# ssync
+#
+:ssync is group=0 & ins0012=0x000A
+{
+	SystemSynchronize();
+}
+
+#
+# syscall
+#
+:syscall is group=0 & ins0012=0x000C
+{
+	SystemCall();
+}
+
+#
+# lockclr
+#
+:lockclr is group=0 & ins0012=0x0010
+{
+	ClearLock();
+}
+
+#
+# lockset
+#
+:lockset is group=0 & ins0012=0x0014
+{
+	SetLock();
+}
+
+#
+# cli
+#
+:cli is group=0 & ins0012=0x0018
+{
+	DisableInterrupts();
+}
+
+#
+# sti
+#
+:sti is group=0 & ins0012=0x001C
+{
+	EnableInterrupts();
+}
+
+#
+# swi imm3
+#
+:swi imm0002 is group=0 & ins0312=0x005 & imm0002
+{
+	SoftwareInterrupt(imm0002:1);
+}
+
+#
+# cc = 0
+# <G> clc
+#
+:clc is group=0 & ins0012=0x0038
+{
+	$(C) = 0;
+}
+
+#
+# cc = 1
+# <G> stc
+#
+:stc is group=0 & ins0012=0x003A
+{
+	$(C) = 1;
+}
+
+#
+# testset b[rA]
+#
+:testset "b"[regA] is group=0 & ins0412=0x004 & regA
+{
+	TODO(regA:4);
+}
+
+#
+# cli rA
+#
+:cli regA is group=0 & ins0412=0x006 & regA
+{
+	DisableInterrupts(regA:4);
+}
+
+#
+# sti rA
+#
+:sti regA is group=0 & ins0412=0x007 & regA
+{
+	EnableInterrupts(regA:4);
+}
+
+#
+# pfetch [rA]
+#
+:pfetch [regA] is group=0 & ins0412=0x00C & regA
+{
+	DataCachePrefetch(regA:4);
+}
+
+#
+# iflush [rA]
+#
+:iflush [regA] is group=0 & ins0412=0x00D & regA
+{
+	InstructionCacheFlush(regA:4);
+}
+
+#
+# flush [rA]
+#
+:flush [regA] is group=0 & ins0412=0x00E & regA
+{
+	DataCacheFlush(regA:4);
+}
+
+#
+# flushinv [rA]
+#
+:flushinv [regA] is group=0 & ins0412=0x00F & regA
+{
+	DataCacheLineInvalidate(regA:4);
+}

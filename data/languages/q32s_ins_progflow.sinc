@@ -1,0 +1,145 @@
+##################
+#
+# Program Flow Control
+#
+##################
+
+###########################################################################################
+# Return from Subroutine/Interrupt/eXception/Emulation
+###########################################################################################
+
+#
+# rts
+#
+:rts is group=0 & ins0012=0x0020
+{
+	return [rets];
+}
+
+#
+# rti
+#
+:rti is group=0 & ins0012=0x0022
+{
+	return [reti];
+}
+
+#
+# rtx
+#
+:rtx is group=0 & ins0012=0x0024
+{
+	return [retx];
+}
+
+#
+# rte
+#
+:rte is group=0 & ins0012=0x0026
+{
+	return [rete];
+}
+
+###########################################################################################
+# Call
+###########################################################################################
+
+#
+# call rA
+#
+:call regA is group=0 & ins0412=0x008 & regA
+{
+	call [regA];
+}
+
+#
+# call pcrel12m2
+#
+:call pcrel12m2 is group=0 & ins1112=2 & pcrel12m2
+{
+	call pcrel12m2;
+}
+
+#
+# call pcrel24m2
+#
+:call pcrel24m2 is (group=7 & ins0612=0x4E) ... & pcrel24m2
+{
+	call pcrel24m2;
+}
+
+###########################################################################################
+# Goto (Jump)
+###########################################################################################
+
+#
+# goto rA
+#
+:goto regA is group=0 & ins0412=0x009 & regA
+{
+	goto [regA];
+}
+
+#
+# goto pcrel12m2
+#
+:goto pcrel12m2 is group=0 & ins1112=3 & pcrel12m2
+{
+	goto pcrel12m2;
+}
+
+#
+# goto pcrel24m2
+#
+:goto pcrel24m2 is (group=7 & ins0612=0x4F) ... & pcrel24m2
+{
+	goto pcrel24m2;
+}
+
+###########################################################################################
+# Table Branch
+###########################################################################################
+
+#
+# tbb [rA]
+#
+:tbb [regA] is group=0 & ins0412=0x00A & regA
+{
+	local addr:4 = inst_next + regA;
+	pc = inst_next + (zext(*:1 addr) << 1);
+	goto [pc];
+}
+
+#
+# tbh [rA]
+#
+:tbh [regA] is group=0 & ins0412=0x00B & regA
+{
+	local addr:4 = inst_next + regA;
+	pc = inst_next + (zext(*:2 addr) << 1);
+	goto [pc];
+}
+
+###########################################################################################
+# Condititonal branch
+###########################################################################################
+
+#
+# if (rA == 0) goto pcrel10m2
+# jz rA, pcrel10m2
+#
+:jz regDl, pcrel10m2 is group=1 & ins1212=0 & regDl & pcrel10m2
+{
+	if (regDl == 0)
+		goto pcrel10m2;
+}
+
+#
+# if (rA != 0) goto pcrel10m2
+# jnz rA, pcrel10m2
+#
+:jnz regDl, pcrel10m2 is group=1 & ins1212=1 & regDl & pcrel10m2
+{
+	if (regDl != 0)
+		goto pcrel10m2;
+}

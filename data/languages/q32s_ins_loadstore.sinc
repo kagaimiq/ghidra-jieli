@@ -1,0 +1,116 @@
+##################
+#
+# Load/Store
+#
+##################
+
+
+###########################################################################################
+# Load Word
+###########################################################################################
+
+#
+# rA = [sp + imm7m4]
+# <G> lw rA, [sp + imm7m4]
+#
+:lw regAl, [sp + imm7m4] is group=0 & ins0912=0x1 & ins0303=0 & addr0408 & regAl & sp
+[ imm7m4 = addr0408 << 2; ]
+{
+	local addr:4 = sp + imm7m4;
+	regAl = *:4 addr;
+}
+
+#
+# rA = [rB + imm7m4]
+# <G> lw rA, [rB + imm7m4]
+#
+:lw regAl, [regDl + imm7m4] is group=2 & ins1212=0 & ins0303=0 & regAl & regDl & addr0408
+[ imm7m4 = addr0408 << 2; ]
+{
+	local addr:4 = regDl + imm7m4;
+	regAl = *:4 addr;
+}
+
+###########################################################################################
+# Load Halfword (zero extend)
+###########################################################################################
+
+#
+# rA = h[rB + imm6m2] (u)
+# lh.u rA, [rB + imm6m2]
+#
+:lh.u regAl, [regDl + imm6m2] is group=2 & ins1212=1 & ins0303=0 & regAl & regDl & addr0408
+[ imm6m2 = addr0408 << 1; ]
+{
+	local addr:4 = regDl + imm6m2;
+	regAl = zext(*:2 addr);
+}
+
+###########################################################################################
+# Load Byte (zero extend)
+###########################################################################################
+
+#
+# rA = b[rB + imm5] (u)
+# lb.u rA, [rB + imm5]
+#
+:lb.u regAl, [regDl + addr0408] is group=3 & ins1212=0 & ins0303=0 & regAl & regDl & addr0408
+{
+	local addr:4 = regDl + addr0408;
+	regAl = zext(*:1 addr);
+}
+
+###########################################################################################
+# Store Word
+###########################################################################################
+
+#
+# [sp + imm7m4] = rA
+# <G> sw rA, [sp + imm7m4]
+#
+:sw regAl, [sp + imm7m4] is group=0 & ins0912=0x1 & ins0303=1 & addr0408 & regAl & sp
+[ imm7m4 = addr0408 << 2; ]
+{
+	local addr:4 = sp + imm7m4;
+	*:4 addr = regAl;
+}
+
+#
+# [rB = imm7m4] = rA
+# <G> sw rA, [rB + imm7m4]
+#
+:sw regAl, [regDl + imm7m4] is group=2 & ins1212=0 & ins0303=1 & regAl & regDl & addr0408
+[ imm7m4 = addr0408 << 2; ]
+{
+	local addr:4 = regDl + imm7m4;
+	*:4 addr = regAl;
+}
+
+###########################################################################################
+# Store halfword
+###########################################################################################
+
+#
+# h[rB + imm6m2] = rA
+# <G> sh rA, [rB + imm6m2]
+#
+:sh regAl, [regDl + imm6m2] is group=2 & ins1212=1 & ins0303=1 & regAl & regDl & addr0408
+[ imm6m2 = addr0408 << 1; ]
+{
+	local addr:4 = regDl + imm6m2;
+	*:2 addr = regAl;
+}
+
+###########################################################################################
+# Store Byte
+###########################################################################################
+
+#
+# b[rB + imm5] = rA
+# <G> sb rA, [rB + imm5]
+#
+:sb regAl, [regDl + addr0408] is group=3 & ins1212=0 & ins0303=1 & regAl & regDl & addr0408
+{
+	local addr:4 = regDl + addr0408;
+	*:1 addr = regAl;
+}
