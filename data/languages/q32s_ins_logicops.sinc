@@ -17,6 +17,15 @@
 	regA = regA | regDl;
 }
 
+#
+# rA = rB | rC
+# => or rA, rB, rC
+#
+:or regE, regF, regG is group=7 & ins0012=0x1DE0 ; regE & regF & regG
+{
+	regE = regF | regG;
+}
+
 ###########################################################################################
 # XOR
 ###########################################################################################
@@ -29,6 +38,16 @@
 {
 	regA = regA ^ regDl;
 }
+
+#
+# rA = rB ^ rC
+# => xor rA, rB, rC
+#
+:xor regE, regF, regG is group=7 & ins0012=0x1DE1 ; regE & regF & regG
+{
+	regE = regF ^ regG;
+}
+
 
 ###########################################################################################
 # AND
@@ -43,6 +62,27 @@
 	regA = regA & regDl;
 }
 
+#
+# rA = rB & rC
+# => and rA, rB, rC
+#
+:and regE, regF, regG is group=7 & ins0012=0x1DE2 ; regE & regF & regG
+{
+	regE = regF & regG;
+}
+
+###########################################################################################
+# AND-NOT
+###########################################################################################
+
+#
+# rA = rB & ~rC
+# => andnot rA, rB, rC
+#
+:andnot regE, regF, regG is group=7 & ins0012=0x1DE3 ; regE & regF & regG
+{
+	regE = regF & ~regG;
+}
 
 ###########################################################################################
 # NOT (one's complement)

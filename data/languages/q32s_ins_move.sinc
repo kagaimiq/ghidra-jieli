@@ -53,6 +53,24 @@
 	regA = regB;
 }
 
+#
+# rA = srB
+# => mov rA, srB
+#
+:mov regE, sregF is group=7 & ins0012=0x1B28 ; regE & sregF
+{
+	regE = sregF;
+}
+
+#
+# srA = rB
+# => mov srA, rB
+#
+:mov sregE, regF is group=7 & ins0012=0x1B29 ; sregE & regF
+{
+	sregE = regF;
+}
+
 ###########################################################################################
 # Zero-extend byte
 ###########################################################################################
@@ -64,6 +82,15 @@
 :uxtb regA, regCl is group=0 & ins0912=0x2 & ins0405=0 & regA & regCl
 {
 	regA = zext(regCl:1);
+}
+
+#
+# rA = rB.b0 (u)
+# => uxtb rA, rB
+#
+:uxtb regE, regF is group=7 & ins0012=0x1DE4 ; regE & regF & regG
+{
+	regE = zext(regF:1);
 }
 
 ###########################################################################################
@@ -79,6 +106,15 @@
 	regA = zext(regCl:2);
 }
 
+#
+# rA = rB.l (u)
+# => uxth rA, rB
+#
+:uxth regE, regF is group=7 & ins0012=0x1DE6 ; regE & regF & regG
+{
+	regE = zext(regF:2);
+}
+
 ###########################################################################################
 # Sign-extend byte
 ###########################################################################################
@@ -92,6 +128,15 @@
 	regA = sext(regCl:1);
 }
 
+#
+# rA = rB.b0 (s)
+# => sxtb rA, rB
+#
+:uxtb regE, regF is group=7 & ins0012=0x1DE5 ; regE & regF & regG
+{
+	regE = sext(regF:1);
+}
+
 ###########################################################################################
 # Sign-extend halfword
 ###########################################################################################
@@ -103,4 +148,13 @@
 :sxth regA, regCl is group=0 & ins0912=0x2 & ins0405=3 & regA & regCl
 {
 	regA = sext(regCl:2);
+}
+
+#
+# rA = rB.l (u)
+# => uxth rA, rB
+#
+:sxth regE, regF is group=7 & ins0012=0x1DE7 ; regE & regF & regG
+{
+	regE = sext(regF:2);
 }

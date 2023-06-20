@@ -98,7 +98,7 @@
 [ imm6m2 = addr0408 << 1; ]
 {
 	local addr:4 = regDl + imm6m2;
-	*:2 addr = regAl;
+	*:2 addr = regAl:2;
 }
 
 ###########################################################################################
@@ -112,5 +112,5 @@
 :sb regAl, [regDl + addr0408] is group=3 & ins1212=0 & ins0303=1 & regAl & regDl & addr0408
 {
 	local addr:4 = regDl + addr0408;
-	*:1 addr = regAl;
+	*:1 addr = regAl:1;
 }

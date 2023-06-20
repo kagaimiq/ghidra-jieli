@@ -52,7 +52,7 @@ define token instr(16)
 	#
 	imm0002  = (0,2)
 
-	imm0107s = (1,7) signed
+	imm0108s = (1,8) signed
 
 	imm0408  = (4,8)
 	imm0411  = (4,11)
@@ -89,9 +89,17 @@ define token instr(16)
 
 # Used by the group=7 instructions
 define token instr2(16)
-	imm1631 = (0,15)
+	imm1631  = (0,15)
+	imm1631s = (0,15) signed
 
 	addr1631 = (0,15)
+
+	regE = (12,15)
+	regF = (8,11)
+	regG = (4,7)
+
+	sregE = (12,15)
+	sregF = (8,11)
 ;
 
 # Even more bits for some group=7 instructions (ins0812=0x1f)
@@ -107,10 +115,10 @@ define token instr3(16)
 attach variables [ regAl regBl regCl regDl ]
 	[ r0 r1 r2 r3 r4 r5 r6 r7 ];
 
-attach variables [ regA regB ]
+attach variables [ regA regB regE regF regG ]
 	[ r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 ];
 
-attach variables [ sregA ]
+attach variables [ sregA sregE sregF ]
 	[ reti rete retx rets sr4 psr cnum sr7
 	  sr8  sr9  sr10 icfg usp ssp sp   pc ];
 
@@ -163,6 +171,11 @@ pcrel24m2: res is addr0005s ; addr1631
 	[ res = ((addr0005s << 17) | (addr1631 << 1)) + inst_next; ]
 	{ export *:4 res; }
 
+#
+# weird immediate
+#
+#weirdimm: res is 
+
 #############################################################################
 #
 # Instructions
@@ -184,6 +197,7 @@ define pcodeop DataCachePrefetch;
 define pcodeop InstructionCacheFlush;
 define pcodeop DataCacheFlush;
 define pcodeop DataCacheLineInvalidate;
+define pcodeop Trigger;
 
 define pcodeop TODO;
 
@@ -371,3 +385,10 @@ define pcodeop TODO;
 	DataCacheLineInvalidate(regA:4);
 }
 
+#
+# trigger
+#
+:trigger is group=7 & ins0412=0x136
+{
+	Trigger();
+}

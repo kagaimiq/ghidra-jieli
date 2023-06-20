@@ -18,13 +18,13 @@
 }
 
 #
-# sp += simm9m4
-# => add sp, #simm9m4
+# sp += simm10m4
+# => add sp, #simm10m4
 #
-:add sp, #simm9m4 is group=0 & ins0812=0xA & imm0107s & sp
-[ simm9m4 = imm0107s << 2; ]
+:add sp, #simm10m4 is group=0 & ins0912=0x5 & imm0108s & sp
+[ simm10m4 = imm0108s << 2; ]
 {
-	sp = sp + simm9m4;
+	sp = sp + simm10m4;
 }
 
 #
@@ -63,6 +63,55 @@
 	regA = regCl + regDl;
 }
 
+#
+# rA = rB + rC
+# => add rA, rB, rC
+#
+:add regE, regF, regG is group=7 & ins0012=0x1B80 ; regE & regF & regG
+{
+	regE = regF + regG;
+}
+
+#
+# sp += simm16
+# => add sp, #simm16
+#
+:add sp, #imm1631s is group=7 & ins0012=0x1BC0 ; imm1631s & sp
+{
+	sp = sp + imm1631s;
+}
+
+#
+# rA = sp + imm16
+# => add rA, sp, #imm16
+#
+:add regA, sp, #imm1631 is group=7 & ins0412=0x1BE & regA ; imm1631 & sp
+{
+	regA = sp + imm1631;
+}
+
+#
+# rA = rB + simm16
+# => add rA, rB, #simm16
+#
+:add regA, regB, #imm1631s is group=7 & ins0812=0x1C & regA & regB ; imm1631s
+{
+	regA = regB + imm1631s;
+}
+
+###########################################################################################
+# Add with carry
+###########################################################################################
+
+#
+# rA = rB + rC + c
+# => add.c rA, rB, rC
+#
+:add.c regE, regF, regG is group=7 & ins0012=0x1BA0 ; regE & regF & regG
+{
+	regE = regF + regG + zext($(C));
+}
+
 ###########################################################################################
 # Substract
 ###########################################################################################
@@ -74,6 +123,28 @@
 :sub regA, regDl, regCl is group=5 & ins1212=1 & ins0405=2 & regA & regCl & regDl
 {
 	regA = regDl - regCl;
+}
+
+#
+# rA = rB - rC
+# => add rA, rB, rC
+#
+:add regE, regF, regG is group=7 & ins0012=0x1B90 ; regE & regF & regG
+{
+	regE = regF - regG;
+}
+
+###########################################################################################
+# Substract with borrow
+###########################################################################################
+
+#
+# rA = rB - rC - !c
+# => sub.c rA, rB, rC
+#
+:sub.c regE, regF, regG is group=7 & ins0012=0x1BB0 ; regE & regF & regG
+{
+	regE = regF - regG - zext(!$(C));
 }
 
 ###########################################################################################
