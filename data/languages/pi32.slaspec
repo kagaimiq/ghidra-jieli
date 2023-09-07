@@ -635,3 +635,18 @@ define pcodeop TODO;
 #[ pos5 = (imm0001 << 3) | imm2931; ]
 #{
 #}
+
+##########################################################################################
+
+#
+# rA = rev8(rB)
+# rev8 rA, rB
+#
+:rev8 regE, regF is group=7 & ins0012=0x0B00 ; ins2431=0x00 & regE & regF
+{
+	# reverse the byte order
+	regE = (regF << 24)
+		| (regF >> 24)
+		| ((regF >> 8) & 0xff00)
+		| ((regF & 0xff00) << 8);
+}
