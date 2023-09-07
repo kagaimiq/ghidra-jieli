@@ -64,6 +64,15 @@
 }
 
 #
+# rA = rB + weirdimm
+# => add rA, rB, #weirdimm
+#
+:add regA, regE, #weirdimm is group=7 & ins0412=0x1B4 & regA ; regE & weirdimm
+{
+	regA = regE + weirdimm;
+}
+
+#
 # rA = rB + rC
 # => add rA, rB, rC
 #
@@ -113,7 +122,7 @@
 }
 
 ###########################################################################################
-# Substract
+# Subtract
 ###########################################################################################
 
 #
@@ -126,16 +135,34 @@
 }
 
 #
-# rA = rB - rC
-# => add rA, rB, rC
+# rA = rB - weirdimm
+# => sub rA, rB, #weirdimm
 #
-:add regE, regF, regG is group=7 & ins0012=0x1B90 ; regE & regF & regG
+:sub regA, regE, #weirdimm is group=7 & ins0412=0x1B5 & regA ; regE & weirdimm
+{
+	regA = regE - weirdimm;
+}
+
+#
+# rA = weirdimm - rB
+# => sub rA, #weirdimm, rB
+#
+:sub regA, #weirdimm, regE is group=7 & ins0412=0x1B6 & regA ; regE & weirdimm
+{
+	regA = weirdimm - regE;
+}
+
+#
+# rA = rB - rC
+# => sub rA, rB, rC
+#
+:sub regE, regF, regG is group=7 & ins0012=0x1B90 ; regE & regF & regG
 {
 	regE = regF - regG;
 }
 
 ###########################################################################################
-# Substract with borrow
+# Subtract with borrow
 ###########################################################################################
 
 #
@@ -159,3 +186,13 @@
 {
 	regAl = regBl * regCl;
 }
+
+#
+# rA = rB * weirdimm
+# => mul rA, rB, #weirdimm
+#
+:mul regA, regE, #weirdimm is group=7 & ins0412=0x1E0 & regA ; regE & weirdimm
+{
+	regA = regE * weirdimm;
+}
+

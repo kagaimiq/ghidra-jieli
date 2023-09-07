@@ -89,6 +89,12 @@ define token instr(16)
 
 # Used by the group=7 instructions
 define token instr2(16)
+	ins2327  = (7,11)
+	ins2427  = (8,11)
+
+	imm1622  = (0,6)
+	imm1623  = (0,7)
+
 	imm1631  = (0,15)
 	imm1631s = (0,15) signed
 
@@ -174,7 +180,32 @@ pcrel24m2: res is addr0005s ; addr1631
 #
 # weird immediate
 #
-#weirdimm: res is 
+weirdimm: res is ins2327=0x00 & imm1622 [ res = (0x80 | imm1622) <<  4; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x01 & imm1622 [ res = (0x80 | imm1622) <<  5; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x02 & imm1622 [ res = (0x80 | imm1622) <<  6; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x03 & imm1622 [ res = (0x80 | imm1622) <<  7; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x04 & imm1622 [ res = (0x80 | imm1622) <<  9; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x05 & imm1622 [ res = (0x80 | imm1622) << 10; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x06 & imm1622 [ res = (0x80 | imm1622) << 11; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x07 & imm1622 [ res = (0x80 | imm1622) << 12; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x08 & imm1622 [ res = (0x80 | imm1622) << 13; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x09 & imm1622 [ res = (0x80 | imm1622) << 14; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x0A & imm1622 [ res = (0x80 | imm1622) << 15; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x0B & imm1622 [ res = (0x80 | imm1622) << 17; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x0C & imm1622 [ res = (0x80 | imm1622) << 18; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x0D & imm1622 [ res = (0x80 | imm1622) << 19; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x0E & imm1622 [ res = (0x80 | imm1622) << 20; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x0F & imm1622 [ res = (0x80 | imm1622) << 21; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x10 & imm1622 [ res = (0x80 | imm1622) << 22; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2327=0x11 & imm1622 [ res = (0x80 | imm1622) << 23; ] { local tmp:4 = res; export tmp; }
+
+weirdimm: res is ins2427=0x9 & imm1623 [ res = imm1623 * 0x00000001; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2427=0xA & imm1623 [ res = imm1623 * 0x00000100; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2427=0xB & imm1623 [ res = imm1623 * 0x00010000; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2427=0xC & imm1623 [ res = imm1623 * 0x01000000; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2427=0xD & imm1623 [ res = imm1623 * 0x00010001; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2427=0xE & imm1623 [ res = imm1623 * 0x01000100; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins2427=0xF & imm1623 [ res = imm1623 * 0x01010101; ] { local tmp:4 = res; export tmp; }
 
 #############################################################################
 #

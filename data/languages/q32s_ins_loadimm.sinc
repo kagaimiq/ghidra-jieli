@@ -41,6 +41,15 @@
 }
 
 #
+# rA = weirdimm
+# => mov rA, #weirdimm
+#
+:mov regE, #weirdimm is group=7 & ins0012=0x1B20 ; regE & weirdimm
+{
+	regE = weirdimm;
+}
+
+#
 # rA = imm32
 # => mov rA, #imm32
 #

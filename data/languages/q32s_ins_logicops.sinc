@@ -18,6 +18,15 @@
 }
 
 #
+# rA = rB | weirdimm
+# => or rA, rB, #weirdimm
+#
+:or regA, regE, #weirdimm is group=7 & ins0412=0x1D0 & regA ; regE & weirdimm
+{
+	regA = regE | weirdimm;
+}
+
+#
 # rA = rB | rC
 # => or rA, rB, rC
 #
@@ -40,6 +49,15 @@
 }
 
 #
+# rA = rB ^ weirdimm
+# => xor rA, rB, #weirdimm
+#
+:xor regA, regE, #weirdimm is group=7 & ins0412=0x1D1 & regA ; regE & weirdimm
+{
+	regA = regE ^ weirdimm;
+}
+
+#
 # rA = rB ^ rC
 # => xor rA, rB, rC
 #
@@ -47,7 +65,6 @@
 {
 	regE = regF ^ regG;
 }
-
 
 ###########################################################################################
 # AND
@@ -63,6 +80,15 @@
 }
 
 #
+# rA = rB & weirdimm
+# => and rA, rB, #weirdimm
+#
+:and regA, regE, #weirdimm is group=7 & ins0412=0x1D2 & regA ; regE & weirdimm
+{
+	regA = regE & weirdimm;
+}
+
+#
 # rA = rB & rC
 # => and rA, rB, rC
 #
@@ -74,6 +100,15 @@
 ###########################################################################################
 # AND-NOT
 ###########################################################################################
+
+#
+# rA = rB & ~weirdimm
+# => andnot rA, rB, #weirdimm
+#
+:andnot regA, regE, #weirdimm is group=7 & ins0412=0x1D3 & regA ; regE & weirdimm
+{
+	regA = regE & ~weirdimm;
+}
 
 #
 # rA = rB & ~rC
