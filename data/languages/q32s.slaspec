@@ -98,7 +98,10 @@ define token instr2(16)
 	imm1631  = (0,15)
 	imm1631s = (0,15) signed
 
-	addr1631 = (0,15)
+	addr1631  = (0,15)
+	addr1631s = (0,15) signed
+
+	addr1627s = (0,11) signed
 
 	regE = (12,15)
 	regF = (8,11)
@@ -171,9 +174,16 @@ pcrel12m2: res is addr0010s
 	{ export *:4 res; }
 
 #
-# 24-bit jump immediate (pc-relative)
+# 17-bit jump immediate (pc-relative)
 #
-pcrel24m2: res is addr0005s ; addr1631
+pcrel17m2: res is addr1631
+	[ res = (addr1631 << 1) + inst_next; ]
+	{ export *:4 res; }
+
+#
+# 23-bit jump immediate (pc-relative)
+#
+pcrel23m2: res is addr0005s ; addr1631
 	[ res = ((addr0005s << 17) | (addr1631 << 1)) + inst_next; ]
 	{ export *:4 res; }
 

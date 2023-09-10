@@ -13,6 +13,7 @@
 #
 :rts is group=0 & ins0012=0x0020
 {
+	pc = rets;
 	return [rets];
 }
 
@@ -21,6 +22,7 @@
 #
 :rti is group=0 & ins0012=0x0022
 {
+	pc = reti;
 	return [reti];
 }
 
@@ -29,6 +31,7 @@
 #
 :rtx is group=0 & ins0012=0x0024
 {
+	pc = retx;
 	return [retx];
 }
 
@@ -37,6 +40,7 @@
 #
 :rte is group=0 & ins0012=0x0026
 {
+	pc = rete;
 	return [rete];
 }
 
@@ -61,11 +65,11 @@
 }
 
 #
-# call pcrel24m2
+# call pcrel23m2
 #
-:call pcrel24m2 is (group=7 & ins0612=0x4E) ... & pcrel24m2
+:call pcrel23m2 is (group=7 & ins0612=0x4E) ... & pcrel23m2
 {
-	call pcrel24m2;
+	call pcrel23m2;
 }
 
 #
@@ -94,11 +98,11 @@
 }
 
 #
-# goto pcrel24m2
+# goto pcrel23m2
 #
-:goto pcrel24m2 is (group=7 & ins0612=0x4F) ... & pcrel24m2
+:goto pcrel23m2 is (group=7 & ins0612=0x4F) ... & pcrel23m2
 {
-	goto pcrel24m2;
+	goto pcrel23m2;
 }
 
 ###########################################################################################
@@ -131,7 +135,7 @@
 
 #
 # if (rA == 0) goto pcrel10m2
-# jz rA, pcrel10m2
+# => jz rA, pcrel10m2
 #
 :jz regDl, pcrel10m2 is group=1 & ins1212=0 & regDl & pcrel10m2
 {
@@ -141,10 +145,21 @@
 
 #
 # if (rA != 0) goto pcrel10m2
-# jnz rA, pcrel10m2
+# => jnz rA, pcrel10m2
 #
 :jnz regDl, pcrel10m2 is group=1 & ins1212=1 & regDl & pcrel10m2
 {
 	if (regDl != 0)
 		goto pcrel10m2;
+}
+
+#
+# if (--rA != 0) goto pcrel17m2
+# => djnz rA, pcrel17m2
+#
+:djnz regA, pcrel17m2 is group=7 & ins0412=0x135 & regA ; pcrel17m2
+{
+	regA = regA - 1;
+	if (regA != 0)
+		goto pcrel17m2;
 }
