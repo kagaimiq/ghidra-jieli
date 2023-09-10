@@ -4,6 +4,53 @@
 #
 ##################
 
+###########################################################################################
+# Word atomic manipulation
+###########################################################################################
+
+#
+# [rA + imm8m4] |= weirdimm
+# => mem.or [rA + imm8m4], weirdimm
+#
+:mem.or [regE + imm8m4], weirdimm is group=7 & ins0612=0x50 & addr0005s ; regE & weirdimm
+[ imm8m4 = addr0005s << 2; ]
+{
+	local addr:4 = regE + imm8m4;
+	*:4 addr = (*:4 addr) | weirdimm;
+}
+
+#
+# [rA + imm8m4] ^= weirdimm
+# => mem.xor [rA + imm8m4], weirdimm
+#
+:mem.xor [regE + imm8m4], weirdimm is group=7 & ins0612=0x51 & addr0005s ; regE & weirdimm
+[ imm8m4 = addr0005s << 2; ]
+{
+	local addr:4 = regE + imm8m4;
+	*:4 addr = (*:4 addr) ^ weirdimm;
+}
+
+#
+# [rA + imm8m4] &= ~weirdimm
+# => mem.andnot [rA + imm8m4], weirdimm
+#
+:mem.andnot [regE + imm8m4], weirdimm is group=7 & ins0612=0x52 & addr0005s ; regE & weirdimm
+[ imm8m4 = addr0005s << 2; ]
+{
+	local addr:4 = regE + imm8m4;
+	*:4 addr = (*:4 addr) & ~weirdimm;
+}
+
+#
+# [rA + imm8m4] = weirdimm
+# => mem.set [rA + imm8m4], weirdimm
+#
+:mem.set [regE + imm8m4], weirdimm is group=7 & ins0612=0x53 & addr0005s ; regE & weirdimm
+[ imm8m4 = addr0005s << 2; ]
+{
+	local addr:4 = regE + imm8m4;
+	*:4 addr = weirdimm;
+}
 
 ###########################################################################################
 # Load Word
@@ -31,8 +78,68 @@
 	regAl = *:4 addr;
 }
 
+#
+# rA = [sp + imm16]
+# => lw rA, [sp + imm16]
+#
+:lw regA, [sp + addr1631s] is group=7 & ins0412=0x150 & regA ; addr1631s & sp
+{
+	local addr:4 = sp + addr1631s;
+	regA = *:4 addr;
+}
+
+#
+# rA = [rB + imm12]
+# => lw rA, [rB + imm12]
+#
+:lw regA, [regE + addr1627s] is group=7 & ins0412=0x160 & regA ; regE & addr1627s
+{
+	local addr:4 = regE + addr1627s;
+	regA = *:4 addr;
+}
+
+#
+# rA = [rB ++= imm12]
+# => lw rA, [rB ++= imm12]
+#
+:lw regA, [regE ++= addr1627s] is group=7 & ins0412=0x164 & regA ; regE & addr1627s
+{
+	regA = *:4 regE;
+	regE = regE + addr1627s;
+}
+
+#
+# rA = [rB + rC]
+# => lw rA, [rB + rC]
+#
+:lw regA, [regE + regF] is group=7 & ins0412=0x168 & regA ; regE & regF
+{
+	local addr:4 = regE + regF;
+	regA = *:4 addr;
+}
+
+#
+# rA = [rB + rC << 2]
+# => lw rA, [rB + rC << 2]
+#
+:lw regA, [regE + regF << 2] is group=7 & ins0412=0x16A & regA ; regE & regF
+{
+	local addr:4 = regE + (regF << 2);
+	regA = *:4 addr;
+}
+
+#
+# rA = [rB ++= rC]
+# => lw rA, [rB ++= rC]
+#
+:lw regA, [regE ++= regF] is group=7 & ins0412=0x16C & regA ; regE & regF
+{
+	regA = *:4 regE;
+	regE = regE + regF;
+}
+
 ###########################################################################################
-# Load Halfword (zero extend)
+# Load Halfword (zero extended)
 ###########################################################################################
 
 #
@@ -46,8 +153,132 @@
 	regAl = zext(*:2 addr);
 }
 
+#
+# rA = h[sp + imm16] (u)
+# => lh.u rA, [sp + imm16]
+#
+:lh.u regA, [sp + addr1631s] is group=7 & ins0412=0x158 & regA ; addr1631s & sp
+{
+	local addr:4 = sp + addr1631s;
+	regA = zext(*:2 addr);
+}
+
+#
+# rA = h[rB + imm12] (u)
+# => lh.u rA, [rB + imm12]
+#
+:lh.u regA, [regE + addr1627s] is group=7 & ins0412=0x170 & regA ; regE & addr1627s
+{
+	local addr:4 = regE + addr1627s;
+	regA = zext(*:2 addr);
+}
+
+#
+# rA = h[rB ++= imm12] (u)
+# => lh.u rA, [rB ++= imm12]
+#
+:lh.u regA, [regE ++= addr1627s] is group=7 & ins0412=0x178 & regA ; regE & addr1627s
+{
+	regA = zext(*:2 regE);
+	regE = regE + addr1627s;
+}
+
+#
+# rA = h[rB + rC] (u)
+# => lh.u rA, [rB + rC]
+#
+:lh.u regA, [regE + regF] is group=7 & ins0412=0x180 & regA ; regE & regF
+{
+	local addr:4 = regE + regF;
+	regA = zext(*:2 addr);
+}
+
+#
+# rA = h[rB + rC << 1] (u)
+# => lh.u rA, [rB + rC << 1]
+#
+:lh.u regA, [regE + regF << 1] is group=7 & ins0412=0x184 & regA ; regE & regF
+{
+	local addr:4 = regE + (regF << 1);
+	regA = zext(*:2 addr);
+}
+
+#
+# rA = h[rB ++= rC] (u)
+# => lh.u rA, [rB ++= rC]
+#
+:lh.u regA, [regE ++= regF] is group=7 & ins0412=0x188 & regA ; regE & regF
+{
+	regA = zext(*:2 regE);
+	regE = regE + regF;
+}
+
 ###########################################################################################
-# Load Byte (zero extend)
+# Load Halfword (sign extended)
+###########################################################################################
+
+#
+# rA = h[sp + imm16] (s)
+# => lh.s rA, [sp + imm16]
+#
+:lh.s regA, [sp + addr1631s] is group=7 & ins0412=0x15A & regA ; addr1631s & sp
+{
+	local addr:4 = sp + addr1631s;
+	regA = sext(*:2 addr);
+}
+
+#
+# rA = h[rB + imm12] (s)
+# => lh.s rA, [rB + imm12]
+#
+:lh.s regA, [regE + addr1627s] is group=7 & ins0412=0x172 & regA ; regE & addr1627s
+{
+	local addr:4 = regE + addr1627s;
+	regA = sext(*:2 addr);
+}
+
+#
+# rA = h[rB ++= imm12] (s)
+# => lh.s rA, [rB ++= imm12]
+#
+:lh.s regA, [regE ++= addr1627s] is group=7 & ins0412=0x17A & regA ; regE & addr1627s
+{
+	regA = sext(*:2 regE);
+	regE = regE + addr1627s;
+}
+
+#
+# rA = h[rB + rC] (s)
+# => lh.s rA, [rB + rC]
+#
+:lh.s regA, [regE + regF] is group=7 & ins0412=0x182 & regA ; regE & regF
+{
+	local addr:4 = regE + regF;
+	regA = sext(*:2 addr);
+}
+
+#
+# rA = h[rB + rC << 1] (s)
+# => lh.s rA, [rB + rC << 1]
+#
+:lh.s regA, [regE + regF << 1] is group=7 & ins0412=0x186 & regA ; regE & regF
+{
+	local addr:4 = regE + (regF << 1);
+	regA = sext(*:2 addr);
+}
+
+#
+# rA = h[rB ++= rC] (s)
+# => lh.s rA, [rB ++= rC]
+#
+:lh.s regA, [regE ++= regF] is group=7 & ins0412=0x18A & regA ; regE & regF
+{
+	regA = sext(*:2 regE);
+	regE = regE + regF;
+}
+
+###########################################################################################
+# Load Byte (zero extended)
 ###########################################################################################
 
 #
@@ -58,6 +289,110 @@
 {
 	local addr:4 = regDl + addr0408;
 	regAl = zext(*:1 addr);
+}
+
+#
+# rA = b[sp + imm16] (u)
+# => lb.u rA, [sp + imm16]
+#
+:lb.u regA, [sp + addr1631s] is group=7 & ins0412=0x15C & regA ; addr1631s & sp
+{
+	local addr:4 = sp + addr1631s;
+	regA = zext(*:1 addr);
+}
+
+#
+# rA = b[rB + imm12] (u)
+# => lb.u rA, [rB + imm12]
+#
+:lb.u regA, [regE + addr1627s] is group=7 & ins0412=0x190 & regA ; regE & addr1627s
+{
+	local addr:4 = regE + addr1627s;
+	regA = zext(*:1 addr);
+}
+
+#
+# rA = b[rB ++= imm12] (u)
+# => lb.u rA, [rB ++= imm12]
+#
+:lb.u regA, [regE ++= addr1627s] is group=7 & ins0412=0x198 & regA ; regE & addr1627s
+{
+	regA = zext(*:1 regE);
+	regE = regE + addr1627s;
+}
+
+#
+# rA = b[rB + rC] (u)
+# => lb.u rA, [rB + rC]
+#
+:lb.u regA, [regE + regF] is group=7 & ins0412=0x1A0 & regA ; regE & regF
+{
+	local addr:4 = regE + regF;
+	regA = zext(*:1 addr);
+}
+
+#
+# rA = b[rB ++= rC] (u)
+# => lb.u rA, [rB ++= rC]
+#
+:lb.u regA, [regE ++= regF] is group=7 & ins0412=0x1A8 & regA ; regE & regF
+{
+	regA = zext(*:1 regE);
+	regE = regE + regF;
+}
+
+###########################################################################################
+# Load Byte (sign extended)
+###########################################################################################
+
+#
+# rA = b[sp + imm16] (s)
+# => lb.s rA, [sp + imm16]
+#
+:lb.s regA, [sp + addr1631s] is group=7 & ins0412=0x15E & regA ; addr1631s & sp
+{
+	local addr:4 = sp + addr1631s;
+	regA = sext(*:1 addr);
+}
+
+#
+# rA = b[rB + imm12] (s)
+# => lb.s rA, [rB + imm12]
+#
+:lb.s regA, [regE + addr1627s] is group=7 & ins0412=0x192 & regA ; regE & addr1627s
+{
+	local addr:4 = regE + addr1627s;
+	regA = sext(*:1 addr);
+}
+
+#
+# rA = b[rB ++= imm12] (s)
+# => lb.s rA, [rB ++= imm12]
+#
+:lb.s regA, [regE ++= addr1627s] is group=7 & ins0412=0x19A & regA ; regE & addr1627s
+{
+	regA = sext(*:1 regE);
+	regE = regE + addr1627s;
+}
+
+#
+# rA = b[rB + rC] (s)
+# => lb.s rA, [rB + rC]
+#
+:lb.s regA, [regE + regF] is group=7 & ins0412=0x1A2 & regA ; regE & regF
+{
+	local addr:4 = regE + regF;
+	regA = sext(*:1 addr);
+}
+
+#
+# rA = b[rB ++= rC] (s)
+# => lb.s rA, [rB ++= rC]
+#
+:lb.s regA, [regE ++= regF] is group=7 & ins0412=0x1AA & regA ; regE & regF
+{
+	regA = sext(*:1 regE);
+	regE = regE + regF;
 }
 
 ###########################################################################################
@@ -86,6 +421,66 @@
 	*:4 addr = regAl;
 }
 
+#
+# [sp + imm16] = rA
+# => sw rA, [sp + imm16]
+#
+:sw regA, [sp + addr1631s] is group=7 & ins0412=0x151 & regA ; addr1631s & sp
+{
+	local addr:4 = sp + addr1631s;
+	*:4 addr = regA;
+}
+
+#
+# [rB + imm12] = rA
+# => sw rA, [rB + imm12]
+#
+:sw regA, [regE + addr1627s] is group=7 & ins0412=0x161 & regA ; regE & addr1627s
+{
+	local addr:4 = regE + addr1627s;
+	*:4 addr = regA;
+}
+
+#
+# [rB ++= imm12] = rA
+# => sw rA, [rB ++= imm12]
+#
+:sw regA, [regE ++= addr1627s] is group=7 & ins0412=0x165 & regA ; regE & addr1627s
+{
+	*:4 regE = regA;
+	regE = regE + addr1627s;
+}
+
+#
+# [rB + rC] = rA
+# => sw rA, [rB + rC]
+#
+:sw regA, [regE + regF] is group=7 & ins0412=0x169 & regA ; regE & regF
+{
+	local addr:4 = regE + regF;
+	*:4 addr = regA;
+}
+
+#
+# [rB + rC << 2] = rA
+# => sw rA, [rB + rC << 2]
+#
+:sw regA, [regE + regF << 2] is group=7 & ins0412=0x16B & regA ; regE & regF
+{
+	local addr:4 = regE + (regF << 2);
+	*:4 addr = regA;
+}
+
+#
+# [rB ++= rC] = rA
+# => sw rA, [rB ++= rC]
+#
+:sw regA, [regE ++= regF] is group=7 & ins0412=0x16D & regA ; regE & regF
+{
+	*:4 regE = regA;
+	regE = regE + regF;
+}
+
 ###########################################################################################
 # Store halfword
 ###########################################################################################
@@ -101,6 +496,66 @@
 	*:2 addr = regAl:2;
 }
 
+#
+# h[sp + imm16] = rA
+# => sh rA, [sp + imm16]
+#
+:sh regA, [sp + addr1631s] is group=7 & ins0412=0x159 & regA ; addr1631s & sp
+{
+	local addr:4 = sp + addr1631s;
+	*:2 addr = regA:2;
+}
+
+#
+# h[rB + imm12] = rA
+# => sh rA, [rB + imm12]
+#
+:sh regA, [regE + addr1627s] is group=7 & ins0412=0x171 & regA ; regE & addr1627s
+{
+	local addr:4 = regE + addr1627s;
+	*:2 addr = regA:2;
+}
+
+#
+# h[rB ++= imm12] = rA
+# => sh rA, [rB ++= imm12]
+#
+:sh regA, [regE ++= addr1627s] is group=7 & ins0412=0x179 & regA ; regE & addr1627s
+{
+	*:2 regE = regA:2;
+	regE = regE + addr1627s;
+}
+
+#
+# h[rB + rC] = rA
+# => sh rA, [rB + rC]
+#
+:sh regA, [regE + regF] is group=7 & ins0412=0x181 & regA ; regE & regF
+{
+	local addr:4 = regE + regF;
+	*:2 addr = regA:2;
+}
+
+#
+# h[rB + rC << 1] = rA
+# => sh rA, [rB + rC << 1]
+#
+:sh regA, [regE + regF << 1] is group=7 & ins0412=0x185 & regA ; regE & regF
+{
+	local addr:4 = regE + (regF << 1);
+	*:2 addr = regA:2;
+}
+
+#
+# h[rB ++= rC] = rA
+# => sh rA, [rB ++= rC]
+#
+:sh regA, [regE ++= regF] is group=7 & ins0412=0x189 & regA ; regE & regF
+{
+	*:2 regE = regA:2;
+	regE = regE + regF;
+}
+
 ###########################################################################################
 # Store Byte
 ###########################################################################################
@@ -113,4 +568,54 @@
 {
 	local addr:4 = regDl + addr0408;
 	*:1 addr = regAl:1;
+}
+
+#
+# b[sp + imm16] = rA
+# => sb rA, [sp + imm16]
+#
+:sb regA, [sp + addr1631s] is group=7 & ins0412=0x15D & regA ; addr1631s & sp
+{
+	local addr:4 = sp + addr1631s;
+	*:1 addr = regA:1;
+}
+
+#
+# b[rB + imm12] = rA
+# => sb rA, [rB + imm12]
+#
+:sb regA, [regE + addr1627s] is group=7 & ins0412=0x191 & regA ; regE & addr1627s
+{
+	local addr:4 = regE + addr1627s;
+	*:1 addr = regA:1;
+}
+
+#
+# b[rB ++= imm12] = rA
+# => sb rA, [rB ++= imm12]
+#
+:sb regA, [regE ++= addr1627s] is group=7 & ins0412=0x199 & regA ; regE & addr1627s
+{
+	*:1 regE = regA:1;
+	regE = regE + addr1627s;
+}
+
+#
+# b[rB + rC] = rA
+# => sb rA, [rB + rC]
+#
+:sb regA, [regE + regF] is group=7 & ins0412=0x1A1 & regA ; regE & regF
+{
+	local addr:4 = regE + regF;
+	*:1 addr = regA:1;
+}
+
+#
+# b[rB ++= rC] = rA
+# => sb rA, [rB ++= rC]
+#
+:sb regA, [regE ++= regF] is group=7 & ins0412=0x1A9 & regA ; regE & regF
+{
+	*:1 regE = regA:1;
+	regE = regE + regF;
 }
