@@ -1,0 +1,48 @@
+##################
+#
+# Register field operations
+#
+##################
+
+###########################################################################################
+# Insert
+###########################################################################################
+
+#
+# rA <= insert(rB, p:pos5, l:len5)
+# => insert rA, rB, pos5:len5
+#
+:insert regE, regF, imm1923:imm0004 is group=7 & ins0512=0xEE & imm0004 ; regE & regF & imm1923
+{
+	local mask:4 = (1 << imm0004) - 1;
+	regE = (regE & ~(mask << imm1923)) | ((regF & mask) << imm1923);
+}
+
+###########################################################################################
+# Extract (zero-extended)
+###########################################################################################
+
+#
+# rA = uextra(rB, p:pos5, l:len5)
+# => uextra rA, rB, pos5:len5
+#
+:uextra regE, regF, imm1923:imm0004 is group=7 & ins0512=0xEC & imm0004 ; regE & regF & imm1923
+{
+	local mask:4 = (1 << imm0004) - 1;
+	regE = (regF >> imm1923) & mask;
+}
+
+###########################################################################################
+# Extract (sign-extended)
+###########################################################################################
+
+#
+# rA = sextra(rB, p:pos5, l:len5)
+# => sextra rA, rB, pos5:len5
+#
+:sextra regE, regF, imm1923:imm0004 is group=7 & ins0512=0xED & imm0004 ; regE & regF & imm1923
+{
+	# something like that
+	local lastbit:1 = 31 - imm1923 - imm0004;
+	regE = (regF << lastbit) s>> lastbit;
+}

@@ -26,3 +26,35 @@
 }
 
 # even more!
+
+#
+# {rets, regs...} = [sp++]
+# => pop {rets, regs...}
+#
+:pop {rets, ins0003} is group=0 & ins0412=0x011 & ins0003 & rets
+{
+	# ... pop registers
+	pop(rets);
+}
+
+#
+# {pc, regs...} = [sp++]
+# => pop {pc, regs...}
+#
+:pop {pc, ins0003} is group=0 & ins0412=0x015 & ins0003 & pc
+{
+	# ... pop registers
+	pop(pc);
+	return [pc];
+}
+
+#
+# [--sp] = {rets, regs...}
+# => push {rets, regs...}
+#
+:push {rets, ins0003} is group=0 & ins0412=0x017 & ins0003 & rets
+{
+	push(rets);
+	# ... push registers
+}
+

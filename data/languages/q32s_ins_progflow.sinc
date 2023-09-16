@@ -147,11 +147,183 @@
 # if (rA != 0) goto pcrel10m2
 # => jnz rA, pcrel10m2
 #
-:jnz regDl, pcrel10m2 is group=1 & ins1212=1 & regDl & pcrel10m2
+:jnz regDl , pcrel10m2 is group=1 & ins1212=1 & regDl & pcrel10m2
 {
 	if (regDl != 0)
 		goto pcrel10m2;
 }
+
+
+
+#
+# if (rA ** imm8) goto pcrel13m2
+# => j** rA, #imm8, pcrel13m2
+#
+:jeq regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0x0 & pcrel13m2
+{ if (regA == imm0411s) goto pcrel13m2; }
+
+:jne regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0x1 & pcrel13m2
+{ if (regA != imm0411s) goto pcrel13m2; }
+
+:jcs regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0x2 & pcrel13m2
+{ if (regA >= imm0411s) goto pcrel13m2; }
+
+:jcc regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0x3 & pcrel13m2
+{ if (regA < imm0411s) goto pcrel13m2; }
+
+:jhi regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0x8 & pcrel13m2
+{ if (regA > imm0411s) goto pcrel13m2; }
+
+:jls regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0x9 & pcrel13m2
+{ if (regA > imm0411s) goto pcrel13m2; }
+
+:jge regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0xA & pcrel13m2
+{ if (regA s<= imm0411s) goto pcrel13m2; }
+
+:jlt regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0xB & pcrel13m2
+{ if (regA s< imm0411s) goto pcrel13m2; }
+
+:jgt regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0xC & pcrel13m2
+{ if (regA s> imm0411s) goto pcrel13m2; }
+
+:jle regA, "#"imm0411s, pcrel13m2 is group=7 & ins1212=0 & imm0411s & regA ; ins2831=0xD & pcrel13m2
+{ if (regA s<= imm0411s) goto pcrel13m2; }
+
+#
+# if (rA ** rB) goto pcrel13m2
+# => j** rA, rB, pcrel13m2
+#
+:jeq regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0x0 & pcrel13m2
+{ if (regA == regB) goto pcrel13m2; }
+
+:jne regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0x1 & pcrel13m2
+{ if (regA != regB) goto pcrel13m2; }
+
+:jcs regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0x2 & pcrel13m2
+{ if (regA >= regB) goto pcrel13m2; }
+
+:jcc regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0x3 & pcrel13m2
+{ if (regA < regB) goto pcrel13m2; }
+
+:jhi regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0x8 & pcrel13m2
+{ if (regA > regB) goto pcrel13m2; }
+
+:jls regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0x9 & pcrel13m2
+{ if (regA > regB) goto pcrel13m2; }
+
+:jge regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0xA & pcrel13m2
+{ if (regA s<= regB) goto pcrel13m2; }
+
+:jlt regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0xB & pcrel13m2
+{ if (regA s< regB) goto pcrel13m2; }
+
+:jgt regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0xC & pcrel13m2
+{ if (regA s> regB) goto pcrel13m2; }
+
+:jle regA, regB, pcrel13m2 is group=7 & ins0812=0x12 & regB & regA ; ins2831=0xD & pcrel13m2
+{ if (regA s<= regB) goto pcrel13m2; }
+
+#
+# if (rA ** imm12) goto pcrel17m2
+# => j** rA, #imm12, pcrel17m2
+#
+:jeq regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F00 ; regE & imm1627s ; pcrel17m2
+{ if (regE == imm1627s) goto pcrel17m2; }
+
+:jne regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F01 ; regE & imm1627s ; pcrel17m2
+{ if (regE != imm1627s) goto pcrel17m2; }
+
+:jcs regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F02 ; regE & imm1627s ; pcrel17m2
+{ if (regE >= imm1627s) goto pcrel17m2; }
+
+:jcc regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F03 ; regE & imm1627s ; pcrel17m2
+{ if (regE < imm1627s) goto pcrel17m2; }
+
+:jhi regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F08 ; regE & imm1627s ; pcrel17m2
+{ if (regE > imm1627s) goto pcrel17m2; }
+
+:jls regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F09 ; regE & imm1627s ; pcrel17m2
+{ if (regE > imm1627s) goto pcrel17m2; }
+
+:jge regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F0A ; regE & imm1627s ; pcrel17m2
+{ if (regE s<= imm1627s) goto pcrel17m2; }
+
+:jlt regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F0B ; regE & imm1627s ; pcrel17m2
+{ if (regE s< imm1627s) goto pcrel17m2; }
+
+:jgt regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F0C ; regE & imm1627s ; pcrel17m2
+{ if (regE s> imm1627s) goto pcrel17m2; }
+
+:jle regE, imm1627s, pcrel17m2 is group=7 & ins0012=0x1F0D ; regE & imm1627s ; pcrel17m2
+{ if (regE s<= imm1627s) goto pcrel17m2; }
+
+###########################################################################################
+# Bit tests
+###########################################################################################
+
+#
+# if ((rA & (1<<shamt)) == 0) goto pcrel13m2
+# => jbc rA:shamt, pcrel13m2
+#
+:jbc regE:imm0004, pcrel13m2 is group=7 & ins0512=0x98 & imm0004 ; regE & pcrel13m2
+{
+	if ((regE & (1 << imm0004)) == 0)
+		goto pcrel13m2;
+}
+
+#
+# if ((rA & (1<<shamt)) != 0) goto pcrel13m2
+# => jbs rA:shamt, pcrel13m2
+#
+:jbs regE:imm0004, pcrel13m2 is group=7 & ins0512=0x99 & imm0004 ; regE & pcrel13m2
+{
+	if ((regE & (1 << imm0004)) != 0)
+		goto pcrel13m2;
+}
+
+###########################################################################################
+# Mask tests
+###########################################################################################
+
+#
+# if ((rA & rB) == 0) goto pcrel17m2
+# => jmz rA, rB, pcrel17m2
+#
+:jmz regA, regB, pcrel17m2 is group=7 & ins0812=0x10 & regB & regA ; pcrel17m2
+{
+	if ((regA & regB) == 0) goto pcrel17m2;
+}
+
+#
+# if ((rA & rB) != 0) goto pcrel17m2
+# => jmnz rA, rB, pcrel17m2
+#
+:jmnz regA, regB, pcrel17m2 is group=7 & ins0812=0x11 & regB & regA ; pcrel17m2
+{
+	if ((regA & regB) != 0) goto pcrel17m2;
+}
+
+#
+# if ((rA & weirdimm) == 0) goto pcrel17m2
+# => jmz rA, #weirdimm, pcrel17m2
+#
+:jmz regE, "#"weirdimm, pcrel17m2 is group=7 & ins0012=0x1F60 ; regE & weirdimm ; pcrel17m2
+{
+	if ((regE & weirdimm) == 0) goto pcrel17m2;
+}
+
+#
+# if ((rA & weirdimm) != 0) goto pcrel17m2
+# => jmnz rA, #weirdimm, pcrel17m2
+#
+:jmnz regE, "#"weirdimm, pcrel17m2 is group=7 & ins0012=0x1F61 ; regE & weirdimm ; pcrel17m2
+{
+	if ((regE & weirdimm) != 0) goto pcrel17m2;
+}
+
+###########################################################################################
+# Register modification branches
+###########################################################################################
 
 #
 # if (--rA != 0) goto pcrel17m2

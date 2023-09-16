@@ -33,12 +33,14 @@ define token instr(16)
 	ins0012 = (0,12)
 	ins0312 = (3,12)
 	ins0412 = (4,12)
+	ins0512 = (5,12)
 	ins0612 = (6,12)
 	ins0812 = (8,12)
 	ins0912 = (9,12)
 	ins1112 = (11,12)
 	ins1212 = (12,12)
 
+	ins0003 = (0,3)
 	ins0303 = (3,3)
 
 	ins0405 = (4,5)
@@ -51,6 +53,7 @@ define token instr(16)
 	# immediate fields
 	#
 	imm0002  = (0,2)
+	imm0004  = (0,4)
 
 	imm0108s = (1,8) signed
 
@@ -89,20 +92,38 @@ define token instr(16)
 
 # Used by the group=7 instructions
 define token instr2(16)
+	#
+	# instruction type fields
+	#
 	ins2327  = (7,11)
 	ins2427  = (8,11)
 
+	#
+	# immediate fields
+	#
 	imm1622  = (0,6)
 	imm1623  = (0,7)
+
+	imm1627s = (0,11) signed
 
 	imm1631  = (0,15)
 	imm1631s = (0,15) signed
 
+	imm1923  = (3,7)
+
+	ins2831  = (12,15)
+
+	#
+	# address fields
+	#
 	addr1631  = (0,15)
 	addr1631s = (0,15) signed
 
 	addr1627s = (0,11) signed
 
+	#
+	# register fields
+	#
 	regE = (12,15)
 	regF = (8,11)
 	regG = (4,7)
@@ -174,10 +195,17 @@ pcrel12m2: res is addr0010s
 	{ export *:4 res; }
 
 #
+# 13-bit jump immediate (pc-relative)
+#
+pcrel13m2: res is addr1627s
+	[ res = (addr1627s << 1) + inst_next; ]
+	{ export *:4 res; }
+
+#
 # 17-bit jump immediate (pc-relative)
 #
-pcrel17m2: res is addr1631
-	[ res = (addr1631 << 1) + inst_next; ]
+pcrel17m2: res is addr1631s
+	[ res = (addr1631s << 1) + inst_next; ]
 	{ export *:4 res; }
 
 #
@@ -251,6 +279,7 @@ define pcodeop TODO;
 @include "q32s_ins_shiftrot.sinc"
 @include "q32s_ins_bitops.sinc"
 @include "q32s_ins_logicops.sinc"
+@include "q32s_ins_regfield.sinc"
 
 ##########################################################################################
 # Uncategorized #
