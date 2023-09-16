@@ -10,9 +10,9 @@
 
 #
 # [rA + imm8m4] |= weirdimm
-# => mem.or [rA + imm8m4], weirdimm
+# => mem.or [rA + imm8m4], #weirdimm
 #
-:mem.or [regE + imm8m4], weirdimm is group=7 & ins0612=0x50 & addr0005s ; regE & weirdimm
+:mem.bset weirdimm, [regE + imm8m4] is group=7 & ins0612=0x50 & addr0005s ; regE & weirdimm
 [ imm8m4 = addr0005s << 2; ]
 {
 	local addr:4 = regE + imm8m4;
@@ -21,9 +21,9 @@
 
 #
 # [rA + imm8m4] ^= weirdimm
-# => mem.xor [rA + imm8m4], weirdimm
+# => mem.xor [rA + imm8m4], #weirdimm
 #
-:mem.xor [regE + imm8m4], weirdimm is group=7 & ins0612=0x51 & addr0005s ; regE & weirdimm
+:mem.bflip weirdimm, [regE + imm8m4] is group=7 & ins0612=0x51 & addr0005s ; regE & weirdimm
 [ imm8m4 = addr0005s << 2; ]
 {
 	local addr:4 = regE + imm8m4;
@@ -32,9 +32,9 @@
 
 #
 # [rA + imm8m4] &= ~weirdimm
-# => mem.andnot [rA + imm8m4], weirdimm
+# => mem.andnot [rA + imm8m4], #weirdimm
 #
-:mem.andnot [regE + imm8m4], weirdimm is group=7 & ins0612=0x52 & addr0005s ; regE & weirdimm
+:mem.bclear weirdimm, [regE + imm8m4] is group=7 & ins0612=0x52 & addr0005s ; regE & weirdimm
 [ imm8m4 = addr0005s << 2; ]
 {
 	local addr:4 = regE + imm8m4;
@@ -43,9 +43,9 @@
 
 #
 # [rA + imm8m4] = weirdimm
-# => mem.set [rA + imm8m4], weirdimm
+# => mem.set [rA + imm8m4], #weirdimm
 #
-:mem.set [regE + imm8m4], weirdimm is group=7 & ins0612=0x53 & addr0005s ; regE & weirdimm
+:mem.set weirdimm, [regE + imm8m4] is group=7 & ins0612=0x53 & addr0005s ; regE & weirdimm
 [ imm8m4 = addr0005s << 2; ]
 {
 	local addr:4 = regE + imm8m4;
