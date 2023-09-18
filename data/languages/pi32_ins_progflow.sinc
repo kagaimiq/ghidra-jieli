@@ -4,6 +4,80 @@
 #
 ##################
 
+#
+# Conditions
+#
+
+#0: eq       s (nzcv == 0)
+#1: ne       s (nzcv != 0)
+#2: cs         (nzcv >= 0)
+#3: cc         (nzcv <  0)
+#4: mi       s (nzcv ?? 0)
+#5: pl       s (nzcv ?? 0)
+#6: vs       s (nzcv ?? 0)
+#7: vc       s (nzcv ?? 0)
+#8: hi         (nzcv >  0)
+#9: ls         (nzcv <= 0)
+#A: ge       s (nzcv >= 0)
+#B: lt       s (nzcv <  0)
+#C: gt       s (nzcv >  0)
+#D: le       s (nzcv <= 0)
+#E:          s (nzcv ?? 0)
+
+### duplicates ?? needs to be resolved!
+
+# if (<cond>) { <true> } else { <false> }
+cond0407: "eq" is ins0407=0x0 { tmp:1 = ($(Z)) == 1;                 export tmp; }
+cond0407: "ne" is ins0407=0x1 { tmp:1 = ($(Z)) == 0;                 export tmp; }
+cond0407: "cs" is ins0407=0x2 { tmp:1 = ($(C)) == 1;                 export tmp; }
+cond0407: "cc" is ins0407=0x3 { tmp:1 = ($(C)) == 0;                 export tmp; }
+cond0407: "mi" is ins0407=0x4 { tmp:1 = ($(N)) == 1;                 export tmp; }
+cond0407: "pl" is ins0407=0x5 { tmp:1 = ($(N)) == 0;                 export tmp; }
+cond0407: "vs" is ins0407=0x6 { tmp:1 = ($(V)) == 1;                 export tmp; }
+cond0407: "vc" is ins0407=0x7 { tmp:1 = ($(V)) == 0;                 export tmp; }
+cond0407: "hi" is ins0407=0x8 { tmp:1 = ($(C) || $(Z)) == 0;         export tmp; }	# NOT SURE
+cond0407: "ls" is ins0407=0x9 { tmp:1 = ($(C) || $(Z)) == 1;         export tmp; }	# NOT SURE
+cond0407: "ge" is ins0407=0xA { tmp:1 = ($(N) ^^ $(V)) == 0;         export tmp; }
+cond0407: "lt" is ins0407=0xB { tmp:1 = ($(N) ^^ $(V)) == 1;         export tmp; }
+cond0407: "gt" is ins0407=0xC { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 0; export tmp; }
+cond0407: "le" is ins0407=0xD { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 1; export tmp; }
+cond0407: ""   is ins0407=0xE { tmp:1 = 1;                           export tmp; }
+
+# if (<cond>) goto X
+cond0811: "eq" is ins0811=0x0 { tmp:1 = ($(Z)) == 1;                 export tmp; }
+cond0811: "ne" is ins0811=0x1 { tmp:1 = ($(Z)) == 0;                 export tmp; }
+cond0811: "cs" is ins0811=0x2 { tmp:1 = ($(C)) == 1;                 export tmp; }
+cond0811: "cc" is ins0811=0x3 { tmp:1 = ($(C)) == 0;                 export tmp; }
+cond0811: "mi" is ins0811=0x4 { tmp:1 = ($(N)) == 1;                 export tmp; }
+cond0811: "pl" is ins0811=0x5 { tmp:1 = ($(N)) == 0;                 export tmp; }
+cond0811: "vs" is ins0811=0x6 { tmp:1 = ($(V)) == 1;                 export tmp; }
+cond0811: "vc" is ins0811=0x7 { tmp:1 = ($(V)) == 0;                 export tmp; }
+cond0811: "hi" is ins0811=0x8 { tmp:1 = ($(C) || $(Z)) == 0;         export tmp; }	# NOT SURE
+cond0811: "ls" is ins0811=0x9 { tmp:1 = ($(C) || $(Z)) == 1;         export tmp; }	# NOT SURE
+cond0811: "ge" is ins0811=0xA { tmp:1 = ($(N) ^^ $(V)) == 0;         export tmp; }
+cond0811: "lt" is ins0811=0xB { tmp:1 = ($(N) ^^ $(V)) == 1;         export tmp; }
+cond0811: "gt" is ins0811=0xC { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 0; export tmp; }
+cond0811: "le" is ins0811=0xD { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 1; export tmp; }
+cond0811: ""   is ins0811=0xE { tmp:1 = 1;                           export tmp; }
+
+# else 300
+cond1619: "eq" is ins1619=0x0 { tmp:1 = ($(Z)) == 1;                 export tmp; }
+cond1619: "ne" is ins1619=0x1 { tmp:1 = ($(Z)) == 0;                 export tmp; }
+cond1619: "cs" is ins1619=0x2 { tmp:1 = ($(C)) == 1;                 export tmp; }
+cond1619: "cc" is ins1619=0x3 { tmp:1 = ($(C)) == 0;                 export tmp; }
+cond1619: "mi" is ins1619=0x4 { tmp:1 = ($(N)) == 1;                 export tmp; }
+cond1619: "pl" is ins1619=0x5 { tmp:1 = ($(N)) == 0;                 export tmp; }
+cond1619: "vs" is ins1619=0x6 { tmp:1 = ($(V)) == 1;                 export tmp; }
+cond1619: "vc" is ins1619=0x7 { tmp:1 = ($(V)) == 0;                 export tmp; }
+cond1619: "hi" is ins1619=0x8 { tmp:1 = ($(C) || $(Z)) == 0;         export tmp; }	# NOT SURE
+cond1619: "ls" is ins1619=0x9 { tmp:1 = ($(C) || $(Z)) == 1;         export tmp; }	# NOT SURE
+cond1619: "ge" is ins1619=0xA { tmp:1 = ($(N) ^^ $(V)) == 0;         export tmp; }
+cond1619: "lt" is ins1619=0xB { tmp:1 = ($(N) ^^ $(V)) == 1;         export tmp; }
+cond1619: "gt" is ins1619=0xC { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 0; export tmp; }
+cond1619: "le" is ins1619=0xD { tmp:1 = ($(N) ^^ $(V) || $(Z)) == 1; export tmp; }
+cond1619: ""   is ins1619=0xE { tmp:1 = 1;                           export tmp; }
+
+
 ###########################################################################################
 # Return from Subroutine/Interrupt/Exception(emulation?)
 ###########################################################################################
