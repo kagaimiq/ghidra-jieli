@@ -1,10 +1,10 @@
 <opinions>
-	<constraint loader="Executable and Linking Format (ELF)" compilerSpecID="default">
-		<constraint primary="240" processor="JieLi pi32"   size="32" variant="default" />
-		<constraint primary="241" processor="JieLi pi32v2" size="32" variant="default" />
-		<constraint primary="242" processor="JieLi q32s"   size="32" variant="default" />
-		<!-- Don't know what's the size though.. maybe 8 or 16 bits !-->
-		<constraint primary="803" processor="JieLi f59"    size="16" variant="default" />
-		<constraint primary="804" processor="JieLi f95"    size="16" variant="default" />
-	</constraint>
+  <constraint loader="Executable and Linking Format (ELF)" compilerSpecID="default">
+    <constraint primary="240" processor="JieLi pi32"   size="32" variant="default" />
+    <constraint primary="241" processor="JieLi pi32v2" size="32" variant="default" />
+    <constraint primary="242" processor="JieLi q32s"   size="32" variant="default" />
+    <!-- Don't know what's the size though.. maybe 8 or 16 bits !-->
+    <constraint primary="803" processor="JieLi f59"    size="16" variant="default" />
+    <constraint primary="804" processor="JieLi f95"    size="16" variant="default" />
+  </constraint>
 </opinions>
