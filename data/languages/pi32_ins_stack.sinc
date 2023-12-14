@@ -4,20 +4,30 @@
 #
 ##################
 
-##### Most Demanded! #####
+:pop {ins0003} is group=6 & ins0412=0x000 & ins0003
+{
+	
+}
 
-:pop {pc ~ ins0003} is group=6 & ins0412=0x001 & pc & ins0003
+:pop {pc, ins0003} is group=6 & ins0412=0x001 & ins0003 & pc
 {
 	pc = *:4 sp;
 	sp = sp + 4;
 	return [pc];
 }
 
-:push {rets ~ ins0003} is group=6 & ins0412=0x021 & rets & ins0003
+:push {ins0003} is group=6 & ins0412=0x020 &  ins0003
+{
+	
+}
+
+:push {rets, ins0003} is group=6 & ins0412=0x021 & ins0003 & rets
 {
 	sp = sp - 4;
 	*:4 sp = rets;
 }
+
+####################################################################################
 
 #
 # {sr`ABCDEFGH`<sfr0-7>} = [sp++]
@@ -30,5 +40,3 @@
 # pushs {sr`ABCDEFGH`<sfr0-7>}
 #
 ###:pushs {imm0007} is group=6 & ins0812=0x05 & imm0007
-
-

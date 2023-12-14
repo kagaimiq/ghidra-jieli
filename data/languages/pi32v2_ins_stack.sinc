@@ -4,8 +4,6 @@
 #
 ##################
 
-##### Most Demanded! #####
-
 #
 # pc = [sp++]
 # => pop pc
@@ -25,4 +23,48 @@
 	push(rets);
 }
 
-# and more!!
+#
+# {rets, regs...} = [sp++]
+# => pop {rets, regs...}
+#
+:pop {rets, ins0003} is group=0 & ins0412=0x043 & ins0003 & rets
+{
+	pop(rets);
+}
+
+#
+# {regs...} = [sp++]
+# => pop {regs...}
+#
+:pop {ins0003} is group=0 & ins0412=0x044 & ins0003
+{
+
+}
+
+#
+# {pc, regs...} = [sp++]
+# => pop {pc, regs...}
+#
+:pop {pc, ins0003} is group=0 & ins0412=0x045 & ins0003 & pc
+{
+	pop(pc);
+	return [pc];
+}
+
+#
+# [--sp] = {rets, regs...}
+# => push {rets, regs...}
+#
+:push {rets, ins0003} is group=0 & ins0412=0x046 & ins0003 & rets
+{
+	push(rets);
+}
+
+#
+# [--sp] = {regs...}
+# => push {regs...}
+#
+:push {ins0003} is group=0 & ins0412=0x047 & ins0003
+{
+
+}

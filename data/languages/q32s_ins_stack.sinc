@@ -4,8 +4,6 @@
 #
 ##################
 
-##### Most Demanded! #####
-
 #
 # pc = [sp++]
 # => pop pc
@@ -25,7 +23,14 @@
 	push(rets);
 }
 
-# even more!
+#
+# {regs...} = [sp++]
+# => pop {regs...}
+#
+:pop {ins0003} is group=0 & ins0412=0x010 & ins0003
+{
+
+}
 
 #
 # {rets, regs...} = [sp++]
@@ -46,6 +51,15 @@
 	# ... pop registers
 	pop(pc);
 	return [pc];
+}
+
+#
+# [--sp] = {regs...}
+# => push {regs...}
+#
+:push {ins0003} is group=0 & ins0412=0x16 & ins0003
+{
+
 }
 
 #
