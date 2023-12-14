@@ -151,5 +151,17 @@
 #
 # rep nwords, rA { <nwords> instruction words }
 #
-###:rep xxx, regA is group=0 & ins0812=0x03 & regA & xxx
-### TODO
+:rep nwords, regA is group=0 & ins0812=0x03 & regA & imm0407
+[ nwords = (imm0407 << 1) + 2; ]
+{
+	RepeatBlock(nwords:1, regA:1);
+}
+
+#
+# rep nwords, uimm5 { <nwords> instruction words }
+#
+:rep nwords, imm0812 is group=4 & ins0003=0x0 & imm0407 & imm0812
+[ nwords = (imm0407 << 1) + 2; ]
+{
+	RepeatBlock(nwords:1, imm0812:1);
+}
