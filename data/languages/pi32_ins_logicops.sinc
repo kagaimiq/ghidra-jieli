@@ -30,9 +30,9 @@
 # rA = rB | xval
 # or rA, rB, xval
 #
-:or regE, regF, spimm2431 is (group=7 & ins0412=0x130 ; regE & regF) & spimm2431
+:or regE, regF, weirdimm is (group=7 & ins0412=0x130 ; regE & regF) & weirdimm
 {
-	regE = regF | spimm2431;
+	regE = regF | weirdimm;
 }
 
 ###########################################################################################
@@ -61,9 +61,9 @@
 # rA = rB ^ xval
 # xor rA, rB, xval
 #
-:xor regE, regF, spimm2431 is (group=7 & ins0412=0x134 ; regE & regF) & spimm2431
+:xor regE, regF, weirdimm is (group=7 & ins0412=0x134 ; regE & regF) & weirdimm
 {
-	regE = regF ^ spimm2431;
+	regE = regF ^ weirdimm;
 }
 
 ###########################################################################################
@@ -92,9 +92,9 @@
 # rA = rB & xval
 # and rA, rB, xval
 #
-:and regE, regF, spimm2431 is (group=7 & ins0412=0x138 ; regE & regF) & spimm2431
+:and regE, regF, weirdimm is (group=7 & ins0412=0x138 ; regE & regF) & weirdimm
 {
-	regE = regF & spimm2431;
+	regE = regF & weirdimm;
 }
 
 ###########################################################################################
@@ -114,9 +114,9 @@
 # rA = rB & ~xval
 # andnot rA, rB, xval
 #
-:andnot regE, regF, spimm2431 is (group=7 & ins0412=0x13C ; regE & regF) & spimm2431
+:andnot regE, regF, weirdimm is (group=7 & ins0412=0x13C ; regE & regF) & weirdimm
 {
-	regE = regF & ~spimm2431;
+	regE = regF & ~weirdimm;
 }
 
 ###########################################################################################

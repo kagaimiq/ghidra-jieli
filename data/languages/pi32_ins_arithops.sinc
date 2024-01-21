@@ -102,9 +102,9 @@
 # rA = rB + xval
 # add rA, rB, xval
 #
-:add regE, regF, spimm2431 is (group=7 & ins0412=0x0E1 ; regE & regF) & spimm2431
+:add regE, regF, weirdimm is (group=7 & ins0412=0x0E1 ; regE & regF) & weirdimm
 {
-	regE = regF + spimm2431;
+	regE = regF + weirdimm;
 	$(Z) = regE == 0;
 }
 
@@ -147,9 +147,9 @@
 # rA = xval - rB
 # sub rA, xval, rB
 #
-:sub regE, spimm2431, regF is (group=7 & ins0412=0x0E2 ; regE & regF) & spimm2431
+:sub regE, weirdimm, regF is (group=7 & ins0412=0x0E2 ; regE & regF) & weirdimm
 {
-	regE = spimm2431 - regF;
+	regE = weirdimm - regF;
 }
 
 #
@@ -165,9 +165,9 @@
 # rA = rB - xval
 # sub rA, rB, xval
 #
-:sub regE, regF, spimm2431 is (group=7 & ins0412=0x0E9 ; regE & regF) & spimm2431
+:sub regE, regF, weirdimm is (group=7 & ins0412=0x0E9 ; regE & regF) & weirdimm
 {
-	regE = regF - spimm2431;
+	regE = regF - weirdimm;
 }
 
 ###########################################################################################
@@ -213,9 +213,9 @@
 # rA = rB * xval
 # mul rA, rB, xval
 #
-:mul regE, regF, spimm2431 is (group=7 & ins0412=0x1C0 ; regE & regF) & spimm2431
+:mul regE, regF, weirdimm is (group=7 & ins0412=0x1C0 ; regE & regF) & weirdimm
 {
-	regE = regF * spimm2431;
+	regE = regF * weirdimm;
 }
 
 #

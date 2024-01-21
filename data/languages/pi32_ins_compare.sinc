@@ -33,11 +33,11 @@
 #
 # cmp rA, xval
 #
-:cmp regF, spimm2431 is (group=7 & ins0412=0x0F0 ; regF) & spimm2431
+:cmp regF, weirdimm is (group=7 & ins0412=0x0F0 ; regF) & weirdimm
 {
-	$(N) = regF s< spimm2431;
-	$(Z) = regF == spimm2431;
-	$(C) = regF < spimm2431;
+	$(N) = regF s< weirdimm;
+	$(Z) = regF == weirdimm;
+	$(C) = regF < weirdimm;
 	# TODO $(V)
 }
 
@@ -69,8 +69,8 @@
 #
 # tst rA, xval
 #
-:tst regF, spimm2431 is (group=7 & ins0412=0x140 ; regF) & spimm2431
+:tst regF, weirdimm is (group=7 & ins0412=0x140 ; regF) & weirdimm
 {
 	## probably
-	$(Z) = ((spimm2431 & regF) == 0);
+	$(Z) = ((weirdimm & regF) == 0);
 }

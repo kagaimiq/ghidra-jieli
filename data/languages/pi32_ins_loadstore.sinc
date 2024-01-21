@@ -36,22 +36,22 @@
 # [rA + reladdr10] |= xval
 # memor rA, reladdr10, xval
 #
-:memor regF, reladdr, spimm2431 is (group=7 & ins0812=0x02 & addr0407s ; addr1619 & regF) & spimm2431
+:memor regF, reladdr, weirdimm is (group=7 & ins0812=0x02 & addr0407s ; addr1619 & regF) & weirdimm
 [ reladdr = (addr0407s << 6) | (addr1619 << 2); ]
 {
 	local addr:4 = regF + reladdr;
-	*:4 addr = (*:4 addr) | spimm2431;
+	*:4 addr = (*:4 addr) | weirdimm;
 }
 
 #
 # [rA + reladdr10] &= (~xval)
 # memandnot rA, reladdr10, xval
 #
-:memandnot regF, reladdr, spimm2431 is (group=7 & ins0812=0x03 & addr0407s ; addr1619 & regF) & spimm2431
+:memandnot regF, reladdr, weirdimm is (group=7 & ins0812=0x03 & addr0407s ; addr1619 & regF) & weirdimm
 [ reladdr = (addr0407s << 6) | (addr1619 << 2); ]
 {
 	local addr:4 = regF + reladdr;
-	*:4 addr = (*:4 addr) & ~spimm2431;
+	*:4 addr = (*:4 addr) & ~weirdimm;
 }
 
 ###########################################################################################

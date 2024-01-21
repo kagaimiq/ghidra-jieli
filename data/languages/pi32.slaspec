@@ -264,35 +264,35 @@ sregBf: sregBh is regBs=1 & sregBh { export sregBh; }
 #
 # special immediate in bits 24-31, selected by bits 0-3
 #
-spimm2431: res is ins0003=0x0 ; imm2431 [ res = imm2431 * 0x00000001; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x1 ; imm2431 [ res = imm2431 * 0x00010001; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x2 ; imm2431 [ res = imm2431 * 0x01000100; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x3 ; imm2431 [ res = imm2431 * 0x01010101; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x0 ; imm2431 [ res = imm2431 * 0x00000001; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x1 ; imm2431 [ res = imm2431 * 0x00010001; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x2 ; imm2431 [ res = imm2431 * 0x01000100; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x3 ; imm2431 [ res = imm2431 * 0x01010101; ] { local tmp:4 = res; export tmp; }
 
-spimm2431: res is ins0003=0x4 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 24; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x4 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 23; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x5 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 22; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x5 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 21; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x6 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 20; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x6 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 19; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x7 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 18; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x7 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 17; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x8 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 16; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x8 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 15; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x9 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 14; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0x9 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 13; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xA ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 12; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xA ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 11; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xB ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 10; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xB ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  9; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xC ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  8; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xC ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  7; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xD ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  6; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xD ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  5; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xE ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  4; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xE ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  3; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xF ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  2; ] { local tmp:4 = res; export tmp; }
-spimm2431: res is ins0003=0xF ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  1; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x4 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 24; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x4 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 23; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x5 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 22; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x5 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 21; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x6 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 20; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x6 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 19; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x7 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 18; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x7 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 17; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x8 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 16; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x8 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 15; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x9 ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 14; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0x9 ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 13; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xA ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 12; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xA ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) << 11; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xB ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) << 10; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xB ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  9; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xC ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  8; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xC ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  7; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xD ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  6; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xD ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  5; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xE ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  4; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xE ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  3; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xF ; imm2430 & ins3131=0 [ res = (0x80 | imm2430) <<  2; ] { local tmp:4 = res; export tmp; }
+weirdimm: res is ins0003=0xF ; imm2430 & ins3131=1 [ res = (0x80 | imm2430) <<  1; ] { local tmp:4 = res; export tmp; }
 
 #############################################################################
 #

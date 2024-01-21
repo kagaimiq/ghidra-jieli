@@ -61,9 +61,9 @@
 # rA = xval
 # movz rA, xval
 #
-:movz regE, spimm2431 is (group=7 & ins0412=0x0A2 ; regE) & spimm2431
+:movz regE, weirdimm is (group=7 & ins0412=0x0A2 ; regE) & weirdimm
 {
-	regE = spimm2431;
+	regE = weirdimm;
 }
 
 ###########################################################################################
