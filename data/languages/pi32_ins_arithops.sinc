@@ -210,6 +210,15 @@
 ###########################################################################################
 
 #
+# rA *= rB
+# mul rA, rB
+#
+:mul regAl, regBl is group=0 & ins0612=0x18 & regAl & regBl
+{
+	regAl = regAl * regBl;
+}
+
+#
 # rA = rB * xval
 # mul rA, rB, xval
 #

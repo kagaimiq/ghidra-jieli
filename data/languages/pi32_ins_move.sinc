@@ -12,15 +12,6 @@
 # rA = rB
 # mov rA, rB
 #
-:mov regAl, regBl is group=0 & ins0612=0x18 & regAl & regBl
-{
-	regAl = regBl;
-}
-
-#
-# rA = rB
-# mov rA, rB
-#
 :mov regAf, regBf is group=6 & ins0812=0x06 & regAf & regBf
 {
 	regAf = regBf;
